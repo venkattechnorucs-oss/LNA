@@ -298,10 +298,10 @@ export const GansHeader: React.FC<GansHeaderProps> = ({
       </div>
 
       {/* =========================================================================
-          TIER 2: SITE HEADER BAR (GANS Logo on Left + LEARNING NEEDS ANALYSIS)
+          TIER 2: SITE HEADER BAR (GANS Logo on Left + TALENT MANAGEMENT)
           ========================================================================= */}
       <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200/80 px-4 sm:px-6 py-2.5 flex items-center justify-between transition-all">
-        {/* Left: GANS Logo + LEARNING NEEDS ANALYSIS Title */}
+        {/* Left: GANS Logo + TALENT MANAGEMENT Title */}
         <div className="flex items-center gap-3 sm:gap-5">
           {/* GANS Company Logo */}
           <div className="flex items-center shrink-0">
@@ -315,10 +315,10 @@ export const GansHeader: React.FC<GansHeaderProps> = ({
 
           <div className="h-5 w-[1px] bg-slate-200" />
 
-          {/* LEARNING NEEDS ANALYSIS Title */}
+          {/* TALENT MANAGEMENT Title */}
           <div className="flex items-center">
-            <h1 className="text-sm sm:text-base md:text-lg font-black tracking-wide text-[#0275a8] uppercase select-none">
-              LEARNING NEEDS ANALYSIS (LNA)
+            <h1 className="text-sm sm:text-base md:text-lg font-bold tracking-wider text-[#1a5075] uppercase select-none font-sans">
+              TALENT MANAGEMENT
             </h1>
           </div>
         </div>
