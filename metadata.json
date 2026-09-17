@@ -1,0 +1,6 @@
+{
+  "name": "GANS HR Weyak - Learning Needs Analysis",
+  "description": "Enterprise Learning Needs Analysis (LNA) portal for GANS HR Weyak supporting Employee Self-Assessment, Manager Review & Endorsement, and Centralized HR Monitoring & Analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,11 +1,44 @@
-<div align="center">
+# GANS HR Weyak - Learning Needs Analysis (LNA) System
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Enterprise Learning Needs Analysis (LNA) portal for GANS HR Weyak supporting Employee Self-Assessment, Manager Review & Endorsement, and Centralized HR Monitoring & Analytics.
 
-  <h1>Built with AI Studio</h2>
+---
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## ⚡ Instant Standalone Preview (No Setup Required)
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+If you want to view or share the complete interactive prototype without installing Node.js or running servers:
+1. Look in the root of this folder for **`GANS_LNA_Standalone_Prototype.html`**.
+2. **Double-click** `GANS_LNA_Standalone_Prototype.html` to open it in any web browser (Chrome, Edge, Safari, Firefox).
+3. The full application with all assessment steps, competency evaluations, manager reviews, and HR analytics runs immediately offline.
 
-</div>
+---
+
+## 🚀 Running the Full Project Locally (Developers)
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+)
+- `npm`
+
+### Quick Start
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the local development server:
+   ```bash
+   npm run dev
+   ```
+3. Open `http://localhost:3000` in your browser.
+
+---
+
+## 🛠️ Production Build
+
+To build the standard production assets:
+```bash
+npm run build
+```
+
+This generates:
+- `dist/index.html` + `dist/assets/` (standard multi-file distribution)
+- `GANS_LNA_Standalone_Prototype.html` (single-file bundle for instant sharing)
