@@ -20,7 +20,8 @@ import {
   Download,
   FileSpreadsheet,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Check
 } from 'lucide-react';
 
 const DEPARTMENT_LIST = [
@@ -49,6 +50,356 @@ const DIVISION_LIST = [
   'Aviation Safety & Regulatory Compliance',
   'Corporate Strategy & Governance'
 ];
+
+// Major Functional Divisions (Each has multiple specialized departments)
+export const FUNCTIONAL_DIVISIONS = [
+  'Air Traffic Management (ATM)',
+  'Technical Services & Engineering',
+  'Airport & Retail Operations',
+  'Logistics & Supply Chain',
+  'People & Organization Development',
+  'Finance, Accounts & Commercial',
+  'Quality & Operational Excellence',
+  'IT Infrastructure & Cyber Systems',
+  'Aviation Safety & Regulatory Compliance',
+  'Corporate Strategy & Governance'
+];
+
+// Standalone Departments (Where there is NO separate functional division, Department itself is considered as the Functional)
+export const STANDALONE_DEPARTMENTS = [
+  'Legal & Corporate Affairs',
+  'Internal Audit',
+  'Corporate Communications & PR',
+  'Facilities & Real Estate Management',
+  'Procurement & Contracts',
+  'Medical & Aviation Health'
+];
+
+// All available functional keys for filters & selectors
+export const ALL_FUNCTIONALS = [...FUNCTIONAL_DIVISIONS, ...STANDALONE_DEPARTMENTS];
+
+export interface FunctionalDefinition {
+  name: string;
+  isStandalone?: boolean;
+  departments: string[];
+  competencies: string[];
+}
+
+export const FUNCTIONAL_STRUCTURE_CATALOG: Record<string, FunctionalDefinition> = {
+  // 1. Air Traffic Management (ATM)
+  'Air Traffic Management (ATM)': {
+    name: 'Air Traffic Management (ATM)',
+    departments: [
+      'ATM Operations',
+      'Airspace & Sector Control',
+      'Tower & Radar Services',
+      'Aviation Safety & Compliance'
+    ],
+    competencies: [
+      'Airspace & ATM Operations',
+      'Radar Surveillance & Conflict Management',
+      'Flight Coordination & Sector Separation',
+      'Aviation Safety & Risk Compliance',
+      'Aeronautical Navigation & Meteorology',
+      'Operational Excellence'
+    ]
+  },
+
+  // 2. Technical Services & Engineering
+  'Technical Services & Engineering': {
+    name: 'Technical Services & Engineering',
+    departments: [
+      'Systems Engineering',
+      'Engineering',
+      'IT Infrastructure',
+      'CNS Systems & Radar Engineering',
+      'Telecommunications & Navaids'
+    ],
+    competencies: [
+      'CNS Systems & Radar Engineering',
+      'Technical Knowledge',
+      'Aviation Systems Architecture & Diagnostics',
+      'Navaids & Radar Surveillance Systems',
+      'Telecommunications & Network Reliability',
+      'Quality Management'
+    ]
+  },
+
+  // 3. Airport & Retail Operations
+  'Airport & Retail Operations': {
+    name: 'Airport & Retail Operations',
+    departments: [
+      'Operations',
+      'Retail Operations & Outlets',
+      'Visual Merchandising & Store Standards',
+      'Customer Experience & Terminal Services'
+    ],
+    competencies: [
+      'Operational Excellence',
+      'Process Management',
+      'Visual Merchandising & Store Standards',
+      'Inventory & Stock Optimization',
+      'Shrinkage & Retail Asset Protection',
+      'Customer Service Standards & CX'
+    ]
+  },
+
+  // 4. Logistics & Supply Chain
+  'Logistics & Supply Chain': {
+    name: 'Logistics & Supply Chain',
+    departments: [
+      'Logistics & Warehousing',
+      'Supply Chain & Procurement',
+      'Inventory Management & Distribution',
+      'Fleet & Cargo Dispatch'
+    ],
+    competencies: [
+      'Supply Chain Agility & Replenishment',
+      'Inventory & Stock Optimization',
+      'Warehouse Operations & Distribution',
+      'Vendor & Supplier Contract Oversight',
+      'Process Management'
+    ]
+  },
+
+  // 5. People & Organization Development
+  'People & Organization Development': {
+    name: 'People & Organization Development',
+    departments: [
+      'HR & Administration',
+      'Talent Development',
+      'Corporate L&D & Training Academy',
+      'Performance Management'
+    ],
+    competencies: [
+      'Performance Management',
+      'Talent Development & Capability Building',
+      'HR Operations & Regulatory Governance',
+      'Workforce Planning & Succession Management',
+      'Constructive Coaching & Leadership'
+    ]
+  },
+
+  // 6. Finance, Accounts & Commercial
+  'Finance, Accounts & Commercial': {
+    name: 'Finance, Accounts & Commercial',
+    departments: [
+      'Finance',
+      'Accounts',
+      'Sales',
+      'Commercial Planning & Revenue Management',
+      'Treasury & Audit'
+    ],
+    competencies: [
+      'Business Analysis',
+      'Financial Planning & P&L Statement Analysis',
+      'Accounting Standards & Financial Reconciliation',
+      'Commercial Pricing & Margin Optimization',
+      'Operational Variance & OPEX Audit'
+    ]
+  },
+
+  // 7. Quality & Operational Excellence
+  'Quality & Operational Excellence': {
+    name: 'Quality & Operational Excellence',
+    departments: [
+      'Quality Management',
+      'Continuous Improvement (Kaizen / Lean)',
+      'Internal Process Audit & Standards'
+    ],
+    competencies: [
+      'Quality Management',
+      'Process Management',
+      'Standard Operating Procedures (SOP) Formulation',
+      'Continuous Improvement (Kaizen / Lean)',
+      'Process Audit & Compliance Verification'
+    ]
+  },
+
+  // 8. IT Infrastructure & Cyber Systems
+  'IT Infrastructure & Cyber Systems': {
+    name: 'IT Infrastructure & Cyber Systems',
+    departments: [
+      'IT Infrastructure',
+      'Cyber Security & Threat Defense',
+      'Enterprise ERP & Business Applications',
+      'Cloud & Network Infrastructure'
+    ],
+    competencies: [
+      'Technical Knowledge',
+      'Cyber Security & Access Governance',
+      'Enterprise ERP & POS Administration',
+      'Cloud & Network Infrastructure Architecture',
+      'Process Management'
+    ]
+  },
+
+  // 9. Aviation Safety & Regulatory Compliance
+  'Aviation Safety & Regulatory Compliance': {
+    name: 'Aviation Safety & Regulatory Compliance',
+    departments: [
+      'Safety & Compliance',
+      'Regulatory Affairs & GCAA Audits',
+      'Emergency Response & Airside Safety'
+    ],
+    competencies: [
+      'Aviation Safety & Risk Compliance',
+      'Safety Management System (SMS) Compliance',
+      'Airside Incident Investigation & CAPA',
+      'Crisis Response & Emergency Command',
+      'Quality Management'
+    ]
+  },
+
+  // 10. Corporate Strategy & Governance
+  'Corporate Strategy & Governance': {
+    name: 'Corporate Strategy & Governance',
+    departments: [
+      'Corporate Strategy & PMO',
+      'Governance & Board Secretariat',
+      'Enterprise Risk Management'
+    ],
+    competencies: [
+      'Strategic Thinking & Visioning',
+      'Operations Governance & Control',
+      'Business Analysis',
+      'Enterprise Risk Mitigation & Contingency',
+      'High-Impact Decision Making'
+    ]
+  },
+
+  // Standalone Departments: Department itself is considered as the Functional
+  'Legal & Corporate Affairs': {
+    name: 'Legal & Corporate Affairs',
+    isStandalone: true,
+    departments: ['Legal & Corporate Affairs'],
+    competencies: [
+      'Legal Compliance & Regulatory Affairs',
+      'Contract Negotiation & Drafting',
+      'Corporate Governance & Risk',
+      'Dispute Resolution & Regulatory Defense',
+      'Operational Excellence'
+    ]
+  },
+
+  'Internal Audit': {
+    name: 'Internal Audit',
+    isStandalone: true,
+    departments: ['Internal Audit'],
+    competencies: [
+      'Internal Audit & Financial Controls',
+      'Fraud Risk Assessment & Forensic Auditing',
+      'Operational Compliance Verification',
+      'CAPA Remediation & Governance',
+      'Process Management'
+    ]
+  },
+
+  'Corporate Communications & PR': {
+    name: 'Corporate Communications & PR',
+    isStandalone: true,
+    departments: ['Corporate Communications & PR'],
+    competencies: [
+      'Corporate Communications & Media Relations',
+      'Crisis PR & Broadcast Briefings',
+      'Brand Strategy & Stakeholder Engagement',
+      'Executive Speechwriting & Press'
+    ]
+  },
+
+  'Facilities & Real Estate Management': {
+    name: 'Facilities & Real Estate Management',
+    isStandalone: true,
+    departments: ['Facilities & Real Estate Management'],
+    competencies: [
+      'Facility Operations & Building Maintenance',
+      'Real Estate Portfolio & Lease Administration',
+      'Workplace Health, Fire & Safety Standards',
+      'Asset Lifecycle & Space Planning'
+    ]
+  },
+
+  'Procurement & Contracts': {
+    name: 'Procurement & Contracts',
+    isStandalone: true,
+    departments: ['Procurement & Contracts'],
+    competencies: [
+      'Strategic Sourcing & Vendor Negotiation',
+      'Contract Lifecycle Administration',
+      'Spend Analytics & Cost Reduction',
+      'Supplier SLA & Risk Oversight'
+    ]
+  },
+
+  'Medical & Aviation Health': {
+    name: 'Medical & Aviation Health',
+    isStandalone: true,
+    departments: ['Medical & Aviation Health'],
+    competencies: [
+      'Aviation Medical Standards & Fitness Verification',
+      'Occupational Health & Emergency Care',
+      'Ergonomics & Fatigue Risk Management'
+    ]
+  }
+};
+
+// Helper: Check if a functional is a standalone department (Department name = Functional)
+export const isStandaloneDepartment = (functionalName: string): boolean => {
+  if (!functionalName) return false;
+  const found = FUNCTIONAL_STRUCTURE_CATALOG[functionalName];
+  if (found) return !!found.isStandalone;
+  return STANDALONE_DEPARTMENTS.includes(functionalName);
+};
+
+// Helper: Get departments inside a functional (if no functional for a department, department name itself is considered functional)
+export const getDepartmentsForFunctional = (functionalName: string): string[] => {
+  if (!functionalName) return [];
+  const found = FUNCTIONAL_STRUCTURE_CATALOG[functionalName];
+  if (found) return found.departments;
+  // Fallback: If there is no functional, the department name itself is considered as the functional
+  return [functionalName];
+};
+
+// Helper: Get competencies based on the Functional alone
+export const getCompetenciesForFunctional = (
+  functionalName: string,
+  category?: CompetencyCategory | '',
+  existingCompetencies?: Competency[]
+): string[] => {
+  if (!functionalName) return [];
+
+  if (category === 'Behavioral') {
+    return BEHAVIORAL_COMPETENCY_SUGGESTIONS;
+  }
+
+  const found = FUNCTIONAL_STRUCTURE_CATALOG[functionalName];
+  const curated = found
+    ? [...found.competencies]
+    : [
+        'Operational Excellence',
+        'Process Management',
+        'Technical Knowledge',
+        'Business Analysis',
+        'Quality Management',
+        'Performance Management',
+        'Resource Management'
+      ];
+
+  // Include any existing competencies matching this functional or its departments
+  if (existingCompetencies) {
+    existingCompetencies.forEach((c) => {
+      const matchDiv = c.division && c.division.toLowerCase() === functionalName.toLowerCase();
+      const matchDept = c.department && c.department.toLowerCase() === functionalName.toLowerCase();
+      if ((matchDiv || matchDept) && c.category !== 'Behavioral') {
+        if (!curated.includes(c.name)) {
+          curated.push(c.name);
+        }
+      }
+    });
+  }
+
+  return curated;
+};
 
 const GRADE_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
@@ -354,19 +705,30 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   const [deleteConfirm, setDeleteConfirm] = useState<{ compId: string; skillId?: string; name: string } | null>(null);
 
   // Form State Layout:
-  // Row 1: Department | Division
-  // Row 2: Grade      | Category
-  // Row 3: Competency | Skill
-  const [department, setDepartment] = useState('Operations');
-  const [division, setDivision] = useState(DIVISION_LIST[0]);
-  const [grade, setGrade] = useState(GRADE_LIST[0]);
-  const [category, setCategory] = useState<CompetencyCategory>('Functional');
-  const [competencySelection, setCompetencySelection] = useState<string>(FUNCTIONAL_COMPETENCY_SUGGESTIONS[0]);
+  // Row 1: Functional (Dropdown) | Department (Multiselect Dropdown)
+  // Row 2: Category (Dropdown)   | Competency (Dropdown)
+  // Row 3: Skill (Text box spanning full width across both columns)
+  const [selectedFunctional, setSelectedFunctional] = useState('');
+  const [customFunctional, setCustomFunctional] = useState('');
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [isDeptDropdownOpen, setIsDeptDropdownOpen] = useState(false);
+  const [category, setCategory] = useState<CompetencyCategory | ''>('');
+  const [competencySelection, setCompetencySelection] = useState<string>('');
   const [customCompetency, setCustomCompetency] = useState('');
-  const [skillSelection, setSkillSelection] = useState<string>(FUNCTIONAL_SKILL_SUGGESTIONS[0]);
-  const [customSkill, setCustomSkill] = useState('');
+  const [skillText, setSkillText] = useState('');
   const [description, setDescription] = useState('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Effective functional name (resolving custom input if selected)
+  const effectiveFunctional =
+    selectedFunctional === '__CUSTOM__' ? customFunctional.trim() : selectedFunctional.trim();
+
+  // Departments inside the selected functional
+  // If there is no functional for a department, the department name itself is considered as the functional
+  const availableDepartments = useMemo(() => {
+    if (!effectiveFunctional) return [];
+    return getDepartmentsForFunctional(effectiveFunctional);
+  }, [effectiveFunctional]);
 
   // 4 Fixed Proficiency Rows: Foundation, Intermediate, Proficient, Expert (recommendedCourse left blank)
   const [proficiencyMappings, setProficiencyMappings] = useState<ProficiencyMappingRow[]>([
@@ -392,10 +754,32 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     }
   ]);
 
-  // Curated competencies per category
+  // Competency selection is based strictly on the selected Functional alone
   const availableCompetencies = useMemo(() => {
-    return category === 'Functional' ? FUNCTIONAL_COMPETENCY_SUGGESTIONS : BEHAVIORAL_COMPETENCY_SUGGESTIONS;
-  }, [category]);
+    if (!effectiveFunctional) return [];
+    return getCompetenciesForFunctional(effectiveFunctional, category, competencies);
+  }, [effectiveFunctional, category, competencies]);
+
+  // Reset Add Modal Form fields
+  const resetAddModalForm = () => {
+    setSelectedFunctional('');
+    setCustomFunctional('');
+    setSelectedDepartments([]);
+    setIsDeptDropdownOpen(false);
+    setCategory('');
+    setCompetencySelection('');
+    setCustomCompetency('');
+    setSkillText('');
+    setDescription('');
+    setProficiencyMappings([
+      { proficiency: 'Foundation', roles: [], recommendedCourse: '' },
+      { proficiency: 'Intermediate', roles: [], recommendedCourse: '' },
+      { proficiency: 'Proficient', roles: [], recommendedCourse: '' },
+      { proficiency: 'Expert', roles: [], recommendedCourse: '' }
+    ]);
+    setFormErrors({});
+    setOpenRoleRowIndex(null);
+  };
 
   // Curated skills per category and selected competency
   const availableSkills = useMemo(() => {
@@ -413,27 +797,34 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     return Array.from(new Set([...fromComp, ...baseSuggestions]));
   }, [category, competencySelection, customCompetency, competencies]);
 
-  // Automatically close open role dropdown when clicking outside or pressing Escape
+  // Automatically close open role dropdown or department multiselect when clicking outside or pressing Escape
   useEffect(() => {
-    if (openRoleRowIndex === null) return;
+    if (openRoleRowIndex === null && !isDeptDropdownOpen) return;
 
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target && !target.closest('[data-role-dropdown-container]')) {
+      if (openRoleRowIndex !== null && target && !target.closest('[data-role-dropdown-container]')) {
         setOpenRoleRowIndex(null);
+      }
+      if (isDeptDropdownOpen && target && !target.closest('[data-dept-dropdown-container]')) {
+        setIsDeptDropdownOpen(false);
       }
     };
 
     const handleFocusIn = (event: FocusEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target && !target.closest('[data-role-dropdown-container]')) {
+      if (openRoleRowIndex !== null && target && !target.closest('[data-role-dropdown-container]')) {
         setOpenRoleRowIndex(null);
+      }
+      if (isDeptDropdownOpen && target && !target.closest('[data-dept-dropdown-container]')) {
+        setIsDeptDropdownOpen(false);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setOpenRoleRowIndex(null);
+        setIsDeptDropdownOpen(false);
       }
     };
 
@@ -448,7 +839,20 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       document.removeEventListener('focusin', handleFocusIn);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [openRoleRowIndex]);
+  }, [openRoleRowIndex, isDeptDropdownOpen]);
+
+  const handleToggleDepartment = (deptName: string) => {
+    setSelectedDepartments((prev) => {
+      const exists = prev.includes(deptName);
+      if (exists) {
+        return prev.filter((d) => d !== deptName);
+      }
+      return [...prev, deptName];
+    });
+    if (formErrors.department) {
+      setFormErrors((prev) => ({ ...prev, department: '' }));
+    }
+  };
 
   const handleToggleRole = (rowIndex: number, roleName: string) => {
     setProficiencyMappings((prev) =>
@@ -475,7 +879,8 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
 
     competencies.forEach((comp) => {
       const compDept = comp.department || 'Operations';
-      const compDiv = comp.division || 'Air Traffic Management (ATM)';
+      // If there is no functional division for a department, the department name itself is considered as functional
+      const compDiv = comp.division || comp.department || 'Air Traffic Management (ATM)';
       const compGrade = comp.grade && comp.grade !== 'All Grades (Cross-Band)' ? comp.grade : '';
       const compRole = comp.role || 'All Roles / Cross-Functional';
 
@@ -558,9 +963,19 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
-    if (!department.trim()) errs.department = 'Department is required';
-    if (!division.trim()) errs.division = 'Division is required';
-    if (!grade.trim()) errs.grade = 'Grade is required';
+
+    const finalFunctional =
+      selectedFunctional === '__CUSTOM__' ? customFunctional.trim() : selectedFunctional.trim();
+
+    if (!finalFunctional) {
+      errs.functional = 'Functional is required';
+    }
+    if (selectedDepartments.length === 0) {
+      errs.department = 'At least one Department is required';
+    }
+    if (!category) {
+      errs.category = 'Category is required';
+    }
 
     const finalCompName =
       competencySelection === '__CUSTOM__' ? customCompetency.trim() : (competencySelection || '').trim();
@@ -568,9 +983,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       errs.competency = 'Competency is required';
     }
 
-    const finalSkillName =
-      skillSelection === '__CUSTOM__' ? customSkill.trim() : (skillSelection || '').trim();
-
+    const finalSkillName = skillText.trim();
     if (!finalSkillName) {
       errs.skill = 'Skill name is required';
     }
@@ -580,17 +993,19 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       return;
     }
 
-    const compPrefix = category === 'Functional' ? 'FC' : 'BC';
+    const compCategory: CompetencyCategory = (category as CompetencyCategory) || 'Functional';
+    const compPrefix = compCategory === 'Functional' ? 'FC' : 'BC';
     const autoCode = `${compPrefix}-${Math.floor(10 + Math.random() * 90)}`;
     const newId = `comp_${Date.now()}`;
+    const deptStr = selectedDepartments.join(', ');
 
     // Build skills array from all 4 proficiency mapping rows
     const newSkills: Skill[] = proficiencyMappings.map((mrow, idx) => ({
       id: `sk_${newId}_${idx + 1}`,
       code: `${autoCode}-SK0${idx + 1}`,
       name: finalSkillName,
-      description: `Proficiency: ${mrow.proficiency}.${mrow.roles.length > 0 ? ` Role(s): ${mrow.roles.join(', ')}.` : ''}${mrow.recommendedCourse.trim() ? ` Course: ${mrow.recommendedCourse.trim()}.` : ''} ${department} | ${division} | Grade ${grade}.`,
-      category,
+      description: `Proficiency: ${mrow.proficiency}.${mrow.roles.length > 0 ? ` Role(s): ${mrow.roles.join(', ')}.` : ''}${mrow.recommendedCourse.trim() ? ` Course: ${mrow.recommendedCourse.trim()}.` : ''} Functional: ${finalFunctional} | Department: ${deptStr}.`,
+      category: compCategory,
       competencyId: newId
     }));
 
@@ -603,38 +1018,19 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       id: newId,
       code: autoCode,
       name: finalCompName,
-      category,
-      department,
-      division,
-      grade,
+      category: compCategory,
+      department: deptStr,
+      division: finalFunctional,
       role: designatedRole,
       proficiency: 'Proficient',
       recommendedCourse: proficiencyMappings[2]?.recommendedCourse || '',
-      description: description.trim() || `${finalCompName} mapped across proficiencies for ${division} (${department}).`,
+      description: description.trim() || `${finalCompName} mapped across proficiencies for ${finalFunctional} (${deptStr}).`,
       skills: newSkills
     };
 
     onAddCompetency(newComp);
     setShowAddModal(false);
-
-    // Reset Form
-    setDepartment('Operations');
-    setDivision(DIVISION_LIST[0]);
-    setGrade(GRADE_LIST[0]);
-    setCategory('Functional');
-    setCompetencySelection(FUNCTIONAL_COMPETENCY_SUGGESTIONS[0]);
-    setCustomCompetency('');
-    setSkillSelection(FUNCTIONAL_SKILL_SUGGESTIONS[0]);
-    setCustomSkill('');
-    setDescription('');
-    setProficiencyMappings([
-      { proficiency: 'Foundation', roles: [], recommendedCourse: '' },
-      { proficiency: 'Intermediate', roles: [], recommendedCourse: '' },
-      { proficiency: 'Proficient', roles: [], recommendedCourse: '' },
-      { proficiency: 'Expert', roles: [], recommendedCourse: '' }
-    ]);
-    setFormErrors({});
-    setOpenRoleRowIndex(null);
+    resetAddModalForm();
   };
 
   // Bulk Import Handlers
@@ -791,7 +1187,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
 
           <button
             type="button"
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              resetAddModalForm();
+              setShowAddModal(true);
+            }}
             className="px-5 py-2.5 bg-gradient-to-r from-[#0275a8] to-sky-600 hover:from-[#02628d] hover:to-sky-500 text-white font-extrabold text-xs rounded-xl flex items-center gap-2 shadow-md shadow-sky-950/20 transition-all cursor-pointer active:scale-95"
           >
             <PlusCircle className="w-4 h-4" />
@@ -875,6 +1274,38 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               </button>
             </div>
 
+            {/* Functional / Division Dropdown Filter */}
+            <select
+              value={selectedDivFilter}
+              onChange={(e) => {
+                const nextDiv = e.target.value;
+                setSelectedDivFilter(nextDiv);
+                if (nextDiv !== 'ALL') {
+                  const depts = getDepartmentsForFunctional(nextDiv);
+                  if (selectedDeptFilter !== 'ALL' && !depts.includes(selectedDeptFilter)) {
+                    setSelectedDeptFilter('ALL');
+                  }
+                }
+              }}
+              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 shadow-2xs cursor-pointer"
+            >
+              <option value="ALL">All Functionals / Divisions</option>
+              <optgroup label="Functional Divisions">
+                {FUNCTIONAL_DIVISIONS.map((dv) => (
+                  <option key={dv} value={dv}>
+                    {dv}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Standalone Departments">
+                {STANDALONE_DEPARTMENTS.map((sd) => (
+                  <option key={sd} value={sd}>
+                    {sd}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+
             {/* Department Dropdown Filter */}
             <select
               value={selectedDeptFilter}
@@ -882,23 +1313,12 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Departments</option>
-              {DEPARTMENT_LIST.map((d) => (
+              {(selectedDivFilter !== 'ALL'
+                ? getDepartmentsForFunctional(selectedDivFilter)
+                : DEPARTMENT_LIST
+              ).map((d) => (
                 <option key={d} value={d}>
                   {d}
-                </option>
-              ))}
-            </select>
-
-            {/* Division Dropdown Filter */}
-            <select
-              value={selectedDivFilter}
-              onChange={(e) => setSelectedDivFilter(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 shadow-2xs cursor-pointer"
-            >
-              <option value="ALL">All Divisions</option>
-              {DIVISION_LIST.map((dv) => (
-                <option key={dv} value={dv}>
-                  {dv}
                 </option>
               ))}
             </select>
@@ -1064,7 +1484,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               </div>
               <button
                 type="button"
-                onClick={() => setShowAddModal(false)}
+                onClick={() => {
+                  resetAddModalForm();
+                  setShowAddModal(false);
+                }}
                 className="text-white/80 hover:text-white transition-colors cursor-pointer p-1 rounded-lg hover:bg-white/10"
               >
                 <X className="w-5 h-5" />
@@ -1073,77 +1496,205 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
 
             {/* Modal Form */}
             <form onSubmit={handleSave} className="p-6 space-y-4.5 text-xs">
-              {/* ROW 1: DIVISION | DEPARTMENT */}
+              {/* ROW 1: FUNCTIONAL (DROPDOWN) | DEPARTMENT (MULTISELECT DROPDOWN) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Division */}
+                {/* Functional (Dropdown) */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
                     <Network className="w-3.5 h-3.5 text-[#0275a8]" />
-                    <span>Division</span> <span className="text-red-500">*</span>
+                    <span>Functional</span> <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={division}
-                    onChange={(e) => setDivision(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    value={selectedFunctional}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedFunctional(val);
+                      if (val !== '__CUSTOM__') {
+                        setCustomFunctional('');
+                        const depts = getDepartmentsForFunctional(val);
+                        if (isStandaloneDepartment(val)) {
+                          setSelectedDepartments([val]);
+                        } else {
+                          setSelectedDepartments([]);
+                        }
+                      } else {
+                        setSelectedDepartments([]);
+                      }
+                      setCompetencySelection('');
+                      setCustomCompetency('');
+                      if (formErrors.functional) {
+                        setFormErrors((prev) => ({
+                          ...prev,
+                          functional: '',
+                          department: '',
+                          competency: ''
+                        }));
+                      }
+                    }}
+                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
                   >
-                    {DIVISION_LIST.map((divItem) => (
-                      <option key={divItem} value={divItem}>
-                        {divItem}
-                      </option>
-                    ))}
+                    <option value="" disabled>
+                      Select Functional...
+                    </option>
+                    <optgroup label="Functional Divisions">
+                      {FUNCTIONAL_DIVISIONS.map((fn) => (
+                        <option key={fn} value={fn}>
+                          {fn}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Standalone Departments (Department = Functional)">
+                      {STANDALONE_DEPARTMENTS.map((sd) => (
+                        <option key={sd} value={sd}>
+                          {sd}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <option value="__CUSTOM__">+ Enter Custom Functional / Department...</option>
                   </select>
-                  {formErrors.division && (
-                    <p className="text-[10px] text-red-600 mt-1">{formErrors.division}</p>
+
+                  {selectedFunctional === '__CUSTOM__' && (
+                    <input
+                      type="text"
+                      value={customFunctional}
+                      onChange={(e) => {
+                        const customVal = e.target.value;
+                        setCustomFunctional(customVal);
+                        if (customVal.trim()) {
+                          setSelectedDepartments([customVal.trim()]);
+                        }
+                        if (formErrors.functional) {
+                          setFormErrors((prev) => ({ ...prev, functional: '' }));
+                        }
+                      }}
+                      placeholder="Type custom Functional or Department name..."
+                      className="mt-2 w-full px-3 py-2 text-xs bg-white border border-sky-400 rounded-xl shadow-inner focus:outline-hidden focus:ring-2 focus:ring-sky-500/20"
+                      autoFocus
+                    />
+                  )}
+
+                  {formErrors.functional && (
+                    <p className="text-[10px] text-red-600 mt-1">{formErrors.functional}</p>
                   )}
                 </div>
 
-                {/* Department */}
-                <div>
+                {/* Department (Multiselect Dropdown) */}
+                <div className="relative" data-dept-dropdown-container>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
                     <span>Department</span> <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+
+                  <button
+                    type="button"
+                    disabled={!effectiveFunctional}
+                    onClick={() => setIsDeptDropdownOpen((prev) => !prev)}
+                    className={`w-full min-h-[42px] px-3 py-2 border rounded-xl text-xs font-bold shadow-inner flex items-center justify-between text-left gap-2 ${
+                      !effectiveFunctional
+                        ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                        : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-white focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] cursor-pointer'
+                    }`}
                   >
-                    {DEPARTMENT_LIST.map((dept) => (
-                      <option key={dept} value={dept}>
-                        {dept}
-                      </option>
-                    ))}
-                  </select>
+                    <div className="flex flex-wrap items-center gap-1.5 flex-1 max-h-20 overflow-y-auto py-0.5">
+                      {!effectiveFunctional ? (
+                        <span className="text-slate-400 font-normal">Select Functional first...</span>
+                      ) : selectedDepartments.length === 0 ? (
+                        <span className="text-slate-400 font-normal">Select department(s)...</span>
+                      ) : (
+                        selectedDepartments.map((dept) => (
+                          <span
+                            key={dept}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#e6f4fa] text-[#0275a8] border border-[#b2ddf0] text-[11px] font-bold"
+                          >
+                            <span>{dept}</span>
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleDepartment(dept);
+                              }}
+                              className="hover:text-red-600 rounded-xs p-0.5 cursor-pointer"
+                              title={`Remove ${dept}`}
+                            >
+                              <X className="w-3 h-3" />
+                            </span>
+                          </span>
+                        ))
+                      )}
+                    </div>
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform shrink-0 ${
+                        !effectiveFunctional
+                          ? 'text-slate-300'
+                          : isDeptDropdownOpen
+                          ? 'rotate-180 text-[#0275a8]'
+                          : 'text-slate-400'
+                      }`}
+                    />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isDeptDropdownOpen && effectiveFunctional && (
+                    <div className="absolute left-0 right-0 top-full mt-1.5 z-30 bg-white border border-slate-200 rounded-xl shadow-xl max-h-56 overflow-y-auto p-1.5 animate-in fade-in zoom-in-95 duration-150">
+                      <div className="px-2 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100 flex items-center justify-between">
+                        <span>Select Departments</span>
+                        <button
+                          type="button"
+                          disabled={selectedDepartments.length === 0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDepartments([]);
+                            if (formErrors.department) {
+                              setFormErrors((prev) => ({ ...prev, department: '' }));
+                            }
+                          }}
+                          className={`font-bold text-[11px] uppercase tracking-wider transition-colors px-1.5 py-0.5 rounded ${
+                            selectedDepartments.length > 0
+                              ? 'text-[#0275a8] hover:text-red-600 hover:bg-red-50 cursor-pointer'
+                              : 'text-slate-300 cursor-not-allowed'
+                          }`}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                      <div className="divide-y divide-slate-50 mt-1">
+                        {availableDepartments.map((dept) => {
+                          const isSelected = selectedDepartments.includes(dept);
+                          return (
+                            <button
+                              key={dept}
+                              type="button"
+                              onClick={() => handleToggleDepartment(dept)}
+                              className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs text-left transition-colors cursor-pointer ${
+                                isSelected
+                                  ? 'bg-sky-50 text-[#0275a8] font-bold'
+                                  : 'text-slate-700 hover:bg-slate-50 font-medium'
+                              }`}
+                            >
+                              <span className="truncate">{dept}</span>
+                              <div
+                                className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 ml-2 transition-colors ${
+                                  isSelected
+                                    ? 'bg-[#0275a8] border-[#0275a8] text-white'
+                                    : 'border-slate-300 bg-white'
+                                }`}
+                              >
+                                {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   {formErrors.department && (
                     <p className="text-[10px] text-red-600 mt-1">{formErrors.department}</p>
                   )}
                 </div>
               </div>
 
-              {/* ROW 2: GRADE | CATEGORY */}
+              {/* ROW 2: CATEGORY | COMPETENCY */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Grade */}
-                <div>
-                  <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <GraduationCap className="w-3.5 h-3.5 text-[#0275a8]" />
-                    <span>Grade</span> <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={grade}
-                    onChange={(e) => setGrade(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
-                  >
-                    {GRADE_LIST.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                  </select>
-                  {formErrors.grade && (
-                    <p className="text-[10px] text-red-600 mt-1">{formErrors.grade}</p>
-                  )}
-                </div>
-
                 {/* Category */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
@@ -1153,26 +1704,28 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                   <select
                     value={category}
                     onChange={(e) => {
-                       const cat = e.target.value as CompetencyCategory;
-                       setCategory(cat);
-                       const compSuggestions = cat === 'Functional' ? FUNCTIONAL_COMPETENCY_SUGGESTIONS : BEHAVIORAL_COMPETENCY_SUGGESTIONS;
-                       setCompetencySelection(compSuggestions[0]);
-                       setCustomCompetency('');
-                       const skillSuggestions = cat === 'Functional' ? FUNCTIONAL_SKILL_SUGGESTIONS : BEHAVIORAL_SKILL_SUGGESTIONS;
-                       setSkillSelection(skillSuggestions[0]);
-                       setCustomSkill('');
+                      const cat = e.target.value as CompetencyCategory;
+                      setCategory(cat);
+                      setCompetencySelection('');
+                      setCustomCompetency('');
+                      if (formErrors.category) {
+                        setFormErrors((prev) => ({ ...prev, category: '' }));
+                      }
                     }}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
                   >
+                    <option value="" disabled>
+                      Select Category...
+                    </option>
                     <option value="Functional">Functional</option>
                     <option value="Behavioral">Behavioral</option>
                   </select>
+                  {formErrors.category && (
+                    <p className="text-[10px] text-red-600 mt-1">{formErrors.category}</p>
+                  )}
                 </div>
-              </div>
 
-              {/* ROW 3: COMPETENCY | SKILL */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Competency Dropdown */}
+                {/* Competency Dropdown (Based on the Functional alone) */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5 text-[#0275a8]" />
@@ -1180,29 +1733,38 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                   </label>
                   <select
                     value={competencySelection}
+                    disabled={!effectiveFunctional}
                     onChange={(e) => {
                       const val = e.target.value;
                       setCompetencySelection(val);
                       if (val !== '__CUSTOM__') {
                         setCustomCompetency('');
-                        const found = competencies.find((c) => c.name.toLowerCase() === val.toLowerCase());
-                        if (found && found.skills.length > 0) {
-                          setSkillSelection(found.skills[0].name);
-                          setCustomSkill('');
-                        }
                       }
                       if (formErrors.competency) {
                         setFormErrors((prev) => ({ ...prev, competency: '' }));
                       }
                     }}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    className={`w-full min-h-[42px] px-3 py-2.5 border rounded-xl text-xs font-bold shadow-inner ${
+                      !effectiveFunctional
+                        ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                        : 'bg-slate-50 border-slate-200 text-slate-800 focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]'
+                    }`}
                   >
+                    <option value="" disabled>
+                      {!effectiveFunctional
+                        ? 'Select Functional first...'
+                        : !category
+                        ? 'Select Category first (or select Competency)...'
+                        : 'Select Competency...'}
+                    </option>
                     {availableCompetencies.map((comp) => (
                       <option key={comp} value={comp}>
                         {comp}
                       </option>
                     ))}
-                    <option value="__CUSTOM__">+ Enter Custom Competency Name...</option>
+                    {effectiveFunctional && (
+                      <option value="__CUSTOM__">+ Enter Custom Competency Name...</option>
+                    )}
                   </select>
 
                   {competencySelection === '__CUSTOM__' && (
@@ -1224,54 +1786,29 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     <p className="text-[10px] text-red-600 mt-1">{formErrors.competency}</p>
                   )}
                 </div>
+              </div>
 
-                {/* Skill Dropdown */}
-                <div>
-                  <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Skill</span> <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={skillSelection}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setSkillSelection(val);
-                      if (val !== '__CUSTOM__') {
-                        setCustomSkill('');
-                      }
-                      if (formErrors.skill) {
-                        setFormErrors((prev) => ({ ...prev, skill: '' }));
-                      }
-                    }}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
-                  >
-                    {availableSkills.map((sk) => (
-                      <option key={sk} value={sk}>
-                        {sk}
-                      </option>
-                    ))}
-                    <option value="__CUSTOM__">+ Enter Custom Skill Name...</option>
-                  </select>
-
-                  {skillSelection === '__CUSTOM__' && (
-                    <input
-                      type="text"
-                      value={customSkill}
-                      onChange={(e) => {
-                        setCustomSkill(e.target.value);
-                        if (formErrors.skill) {
-                          setFormErrors((prev) => ({ ...prev, skill: '' }));
-                        }
-                      }}
-                      placeholder="Type custom skill name..."
-                      className="mt-2 w-full px-3 py-2 text-xs bg-white border border-sky-400 rounded-xl shadow-inner focus:outline-hidden focus:ring-2 focus:ring-sky-500/20"
-                      autoFocus
-                    />
-                  )}
-                  {formErrors.skill && (
-                    <p className="text-[10px] text-red-600 mt-1">{formErrors.skill}</p>
-                  )}
-                </div>
+              {/* ROW 3: SKILL (FULL-WIDTH LONG LINE ACROSS THE MODAL) */}
+              <div className="w-full">
+                <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Skill</span> <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={skillText}
+                  onChange={(e) => {
+                    setSkillText(e.target.value);
+                    if (formErrors.skill) {
+                      setFormErrors((prev) => ({ ...prev, skill: '' }));
+                    }
+                  }}
+                  placeholder="Enter skill name (e.g., Radar Surveillance Protocol, Conflict Resolution, Airspace Sector Separation)..."
+                  className="w-full min-h-[42px] px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                />
+                {formErrors.skill && (
+                  <p className="text-[10px] text-red-600 mt-1">{formErrors.skill}</p>
+                )}
               </div>
 
               {/* ================= PROFICIENCY, ROLE & COURSE MAPPING TABLE (4 FIXED ROWS) ================= */}
@@ -1427,7 +1964,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200/80">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => {
+                    resetAddModalForm();
+                    setShowAddModal(false);
+                  }}
                   className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
                 >
                   Cancel

@@ -177,11 +177,11 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
         {activeRole === 'hr' && (
           <div className="space-y-4">
             
-            {/* 3.1 Administration (Contains Dashboard, Masters & Reports) */}
+            {/* 3.1 HR Dashboard (Contains Dashboard, Masters & Reports) */}
             <div>
               <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#1a5075] uppercase flex items-center gap-1.5 border-b border-slate-200/80 pb-1.5 mb-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#0275a8]" />
-                <span>Administration</span>
+                <span>HR Dashboard</span>
               </div>
 
               <div className="space-y-1">
