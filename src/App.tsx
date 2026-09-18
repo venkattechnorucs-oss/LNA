@@ -17,6 +17,7 @@ import { HrPdpDashboardView } from './components/HrPdpDashboardView';
 import { HrReleaseAssessmentView } from './components/HrReleaseAssessmentView';
 import { HrAssessmentHistoryView } from './components/HrAssessmentHistoryView';
 import { HrDelegationView } from './components/HrDelegationView';
+import { HrDepartmentMasterView } from './components/HrDepartmentMasterView';
 import {
   DEFAULT_EMPLOYEE,
   ALTERNATE_EMPLOYEES,
@@ -1393,6 +1394,10 @@ export default function App() {
                 skippedEmployees={skippedEmployees}
                 onRevokeRelease={handleRevokeRelease}
                 onNavigateToHistory={() => setCurrentTab('hr-assessment-history')}
+              />
+            ) : currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department' ? (
+              <HrDepartmentMasterView
+                onNavigateToCompetencies={() => setCurrentTab('hr-competency-skills-master')}
               />
             ) : currentTab === 'hr-competency-skills-master' || currentTab === 'hr-competency-master' || currentTab === 'hr-skills-master' ? (
               <HrCompetencySkillsMasterView

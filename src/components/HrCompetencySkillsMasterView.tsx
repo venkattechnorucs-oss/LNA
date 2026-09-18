@@ -21,7 +21,9 @@ import {
   FileSpreadsheet,
   CheckCircle2,
   AlertCircle,
-  Check
+  Check,
+  Plus,
+  FolderPlus
 } from 'lucide-react';
 
 const DEPARTMENT_LIST = [
@@ -665,6 +667,12 @@ interface ProficiencyMappingRow {
   recommendedCourse: string;
 }
 
+export interface SkillEntry {
+  id: string;
+  name: string;
+  courses: Record<ProficiencyLevel, string>;
+}
+
 interface UnifiedTableRow {
   id: string;
   competencyId: string;
@@ -704,6 +712,47 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   const [openRoleRowIndex, setOpenRoleRowIndex] = useState<number | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ compId: string; skillId?: string; name: string } | null>(null);
 
+  // Custom Functionals & Departments Catalog (persisted in localStorage)
+  const [customCatalog, setCustomCatalog] = useState<Record<string, FunctionalDefinition>>(() => {
+    try {
+      const saved = localStorage.getItem('gans_custom_functionals_catalog');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  // Keep custom catalog in sync when updated from Department Master view
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const saved = localStorage.getItem('gans_custom_functionals_catalog');
+        if (saved) {
+          setCustomCatalog(JSON.parse(saved));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('gans_catalog_updated', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('gans_catalog_updated', handleStorageChange);
+    };
+  }, []);
+
+  const mergedCatalog = useMemo<Record<string, FunctionalDefinition>>(() => {
+    return {
+      ...FUNCTIONAL_STRUCTURE_CATALOG,
+      ...customCatalog
+    };
+  }, [customCatalog]);
+
+  const customFunctionalKeys = useMemo(() => Object.keys(customCatalog), [customCatalog]);
+
+  const [actionToast, setActionToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
+
   // Form State Layout:
   // Row 1: Functional (Dropdown) | Department (Multiselect Dropdown)
   // Row 2: Category (Dropdown)   | Competency (Dropdown)
@@ -715,7 +764,19 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   const [category, setCategory] = useState<CompetencyCategory | ''>('');
   const [competencySelection, setCompetencySelection] = useState<string>('');
   const [customCompetency, setCustomCompetency] = useState('');
-  const [skillText, setSkillText] = useState('');
+  const [skillsList, setSkillsList] = useState<SkillEntry[]>([
+    {
+      id: 'skill-1',
+      name: '',
+      courses: {
+        Foundation: '',
+        Intermediate: '',
+        Proficient: '',
+        Expert: ''
+      }
+    }
+  ]);
+  const [activeModalTab, setActiveModalTab] = useState<string>('roles');
   const [description, setDescription] = useState('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -727,8 +788,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   // If there is no functional for a department, the department name itself is considered as the functional
   const availableDepartments = useMemo(() => {
     if (!effectiveFunctional) return [];
-    return getDepartmentsForFunctional(effectiveFunctional);
-  }, [effectiveFunctional]);
+    const found = mergedCatalog[effectiveFunctional];
+    if (found) return found.departments;
+    return [effectiveFunctional];
+  }, [effectiveFunctional, mergedCatalog]);
 
   // 4 Fixed Proficiency Rows: Foundation, Intermediate, Proficient, Expert (recommendedCourse left blank)
   const [proficiencyMappings, setProficiencyMappings] = useState<ProficiencyMappingRow[]>([
@@ -754,11 +817,41 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     }
   ]);
 
+  // Active skill selection in Add Modal
+  const activeSkillIndex = skillsList.findIndex((s) => s.id === activeModalTab);
+  const activeSkill = activeSkillIndex !== -1 ? skillsList[activeSkillIndex] : null;
+
   // Competency selection is based strictly on the selected Functional alone
   const availableCompetencies = useMemo(() => {
     if (!effectiveFunctional) return [];
-    return getCompetenciesForFunctional(effectiveFunctional, category, competencies);
-  }, [effectiveFunctional, category, competencies]);
+    if (category === 'Behavioral') {
+      return BEHAVIORAL_COMPETENCY_SUGGESTIONS;
+    }
+    const found = mergedCatalog[effectiveFunctional];
+    const curated = found
+      ? [...found.competencies]
+      : [
+          'Operational Excellence',
+          'Process Management',
+          'Technical Knowledge',
+          'Business Analysis',
+          'Quality Management',
+          'Performance Management',
+          'Resource Management'
+        ];
+    if (competencies) {
+      competencies.forEach((c) => {
+        const matchDiv = c.division && c.division.toLowerCase() === effectiveFunctional.toLowerCase();
+        const matchDept = c.department && c.department.toLowerCase() === effectiveFunctional.toLowerCase();
+        if ((matchDiv || matchDept) && c.category !== 'Behavioral') {
+          if (!curated.includes(c.name)) {
+            curated.push(c.name);
+          }
+        }
+      });
+    }
+    return curated;
+  }, [effectiveFunctional, category, competencies, mergedCatalog]);
 
   // Reset Add Modal Form fields
   const resetAddModalForm = () => {
@@ -769,7 +862,19 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     setCategory('');
     setCompetencySelection('');
     setCustomCompetency('');
-    setSkillText('');
+    setSkillsList([
+      {
+        id: 'skill-1',
+        name: '',
+        courses: {
+          Foundation: '',
+          Intermediate: '',
+          Proficient: '',
+          Expert: ''
+        }
+      }
+    ]);
+    setActiveModalTab('roles');
     setDescription('');
     setProficiencyMappings([
       { proficiency: 'Foundation', roles: [], recommendedCourse: '' },
@@ -870,6 +975,58 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   const handleUpdateCourse = (index: number, value: string) => {
     setProficiencyMappings((prev) =>
       prev.map((row, i) => (i === index ? { ...row, recommendedCourse: value } : row))
+    );
+  };
+
+  const handleAddSkill = () => {
+    const newId = `skill-${Date.now()}`;
+    setSkillsList((prev) => [
+      ...prev,
+      {
+        id: newId,
+        name: '',
+        courses: {
+          Foundation: '',
+          Intermediate: '',
+          Proficient: '',
+          Expert: ''
+        }
+      }
+    ]);
+    setActiveModalTab(newId);
+  };
+
+  const handleRemoveSkill = (skillId: string) => {
+    if (skillsList.length <= 1) return;
+    const remaining = skillsList.filter((s) => s.id !== skillId);
+    setSkillsList(remaining);
+    if (activeModalTab === skillId) {
+      const last = remaining[remaining.length - 1];
+      setActiveModalTab(last ? last.id : 'roles');
+    }
+  };
+
+  const handleUpdateSkillName = (skillId: string, name: string) => {
+    setSkillsList((prev) =>
+      prev.map((s) => (s.id === skillId ? { ...s, name } : s))
+    );
+    if (formErrors.skill) {
+      setFormErrors((prev) => ({ ...prev, skill: '' }));
+    }
+  };
+
+  const handleUpdateSkillCourse = (skillId: string, level: ProficiencyLevel, courseName: string) => {
+    setSkillsList((prev) =>
+      prev.map((s) => {
+        if (s.id !== skillId) return s;
+        return {
+          ...s,
+          courses: {
+            ...s.courses,
+            [level]: courseName
+          }
+        };
+      })
     );
   };
 
@@ -983,9 +1140,11 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       errs.competency = 'Competency is required';
     }
 
-    const finalSkillName = skillText.trim();
-    if (!finalSkillName) {
-      errs.skill = 'Skill name is required';
+    // Validate that Skill 1 has a name
+    const validSkills = skillsList.filter((s) => s.name.trim().length > 0);
+    if (!skillsList[0] || !skillsList[0].name.trim()) {
+      errs.skill = 'Skill 1 name is required';
+      setActiveModalTab(skillsList[0]?.id || 'skill-1');
     }
 
     if (Object.keys(errs).length > 0) {
@@ -999,15 +1158,21 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     const newId = `comp_${Date.now()}`;
     const deptStr = selectedDepartments.join(', ');
 
-    // Build skills array from all 4 proficiency mapping rows
-    const newSkills: Skill[] = proficiencyMappings.map((mrow, idx) => ({
-      id: `sk_${newId}_${idx + 1}`,
-      code: `${autoCode}-SK0${idx + 1}`,
-      name: finalSkillName,
-      description: `Proficiency: ${mrow.proficiency}.${mrow.roles.length > 0 ? ` Role(s): ${mrow.roles.join(', ')}.` : ''}${mrow.recommendedCourse.trim() ? ` Course: ${mrow.recommendedCourse.trim()}.` : ''} Functional: ${finalFunctional} | Department: ${deptStr}.`,
-      category: compCategory,
-      competencyId: newId
-    }));
+    // Build skills array from all valid skills entered and the 4 proficiency levels
+    const newSkills: Skill[] = [];
+    validSkills.forEach((skEntry, skIdx) => {
+      proficiencyMappings.forEach((mrow, pIdx) => {
+        const course = skEntry.courses[mrow.proficiency] || '';
+        newSkills.push({
+          id: `sk_${newId}_${skIdx + 1}_${pIdx + 1}`,
+          code: `${autoCode}-SK0${skIdx * 4 + pIdx + 1}`,
+          name: skEntry.name.trim(),
+          description: `Proficiency: ${mrow.proficiency}.${mrow.roles.length > 0 ? ` Role(s): ${mrow.roles.join(', ')}.` : ''}${course.trim() ? ` Course: ${course.trim()}.` : ''} Functional: ${finalFunctional} | Department: ${deptStr}.`,
+          category: compCategory,
+          competencyId: newId
+        });
+      });
+    });
 
     const designatedRole =
       proficiencyMappings[2]?.roles.join(', ') ||
@@ -1023,7 +1188,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       division: finalFunctional,
       role: designatedRole,
       proficiency: 'Proficient',
-      recommendedCourse: proficiencyMappings[2]?.recommendedCourse || '',
+      recommendedCourse: validSkills[0]?.courses['Proficient'] || '',
       description: description.trim() || `${finalCompName} mapped across proficiencies for ${finalFunctional} (${deptStr}).`,
       skills: newSkills
     };
@@ -1094,7 +1259,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
           const skillNames = [cols[10], cols[11], cols[12], cols[13]].filter(Boolean);
           const rawSkills = skillNames.length > 0 ? skillNames : [`Core ${name} Skill`];
 
-          const skillsList: Skill[] = rawSkills.map((skName, sIdx) => ({
+          const importedSkills: Skill[] = rawSkills.map((skName, sIdx) => ({
             id: `sk_csv_${compId}_${sIdx + 1}`,
             code: `${code}-SK0${sIdx + 1}`,
             name: skName || `${name} Level ${sIdx + 1}`,
@@ -1115,7 +1280,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
             proficiency: prof,
             recommendedCourse: crse,
             description: desc,
-            skills: skillsList
+            skills: importedSkills
           });
         }
 
@@ -1170,7 +1335,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
           </h1>
         </div>
 
-        <div className="flex items-center gap-2.5 relative z-10 shrink-0">
+        <div className="flex items-center gap-2.5 relative z-10 shrink-0 flex-wrap sm:flex-nowrap">
           <button
             type="button"
             onClick={() => {
@@ -1179,7 +1344,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               setStagedCompetencies(SAMPLE_IMPORT_BATCH);
               setShowImportModal(true);
             }}
-            className="px-4 py-2.5 bg-white/15 hover:bg-white/25 text-white font-extrabold text-xs rounded-xl flex items-center gap-2 border border-white/20 transition-all cursor-pointer active:scale-95 shadow-2xs backdrop-blur-xs"
+            className="px-3.5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-extrabold text-xs rounded-xl flex items-center gap-2 border border-white/20 transition-all cursor-pointer active:scale-95 shadow-2xs backdrop-blur-xs"
           >
             <Upload className="w-4 h-4 text-sky-300" />
             <span>Import</span>
@@ -1198,6 +1363,29 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
           </button>
         </div>
       </div>
+
+      {/* Action Toast / Feedback Notification */}
+      {actionToast && (
+        <div
+          className={`p-3.5 rounded-2xl flex items-center justify-between gap-3 shadow-md border animate-in slide-in-from-top-2 duration-200 ${
+            actionToast.type === 'success'
+              ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
+              : 'bg-sky-50 text-sky-900 border-sky-200'
+          }`}
+        >
+          <div className="flex items-center gap-2.5 text-xs font-bold">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{actionToast.message}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActionToast(null)}
+            className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1281,7 +1469,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 const nextDiv = e.target.value;
                 setSelectedDivFilter(nextDiv);
                 if (nextDiv !== 'ALL') {
-                  const depts = getDepartmentsForFunctional(nextDiv);
+                  const depts = mergedCatalog[nextDiv]?.departments || [nextDiv];
                   if (selectedDeptFilter !== 'ALL' && !depts.includes(selectedDeptFilter)) {
                     setSelectedDeptFilter('ALL');
                   }
@@ -1290,6 +1478,15 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Functionals / Divisions</option>
+              {customFunctionalKeys.length > 0 && (
+                <optgroup label="Custom Functionals / Divisions">
+                  {customFunctionalKeys.map((cf) => (
+                    <option key={cf} value={cf}>
+                      {cf}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
               <optgroup label="Functional Divisions">
                 {FUNCTIONAL_DIVISIONS.map((dv) => (
                   <option key={dv} value={dv}>
@@ -1314,8 +1511,8 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
             >
               <option value="ALL">All Departments</option>
               {(selectedDivFilter !== 'ALL'
-                ? getDepartmentsForFunctional(selectedDivFilter)
-                : DEPARTMENT_LIST
+                ? (mergedCatalog[selectedDivFilter]?.departments || [selectedDivFilter])
+                : Array.from(new Set([...DEPARTMENT_LIST, ...(Object.values(mergedCatalog) as FunctionalDefinition[]).flatMap((c) => c.departments)]))
               ).map((d) => (
                 <option key={d} value={d}>
                   {d}
@@ -1475,7 +1672,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       {/* ================= MODAL: ADD NEW COMPETENCY & SKILL ================= */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-white/80 w-full max-w-3xl max-h-[92vh] overflow-y-auto animate-in zoom-in-95 duration-200">
+          <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-white/80 w-full max-w-4xl max-h-[92vh] overflow-y-auto animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
               <div className="flex items-center gap-2.5">
@@ -1512,17 +1709,14 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       if (val !== '__CUSTOM__') {
                         setCustomFunctional('');
                         const depts = getDepartmentsForFunctional(val);
-                        if (isStandaloneDepartment(val)) {
-                          setSelectedDepartments([val]);
-                        } else {
-                          setSelectedDepartments([]);
-                        }
+                        // Automatically select all 3 or 4 departments inside the selected functional
+                        setSelectedDepartments([...depts]);
                       } else {
                         setSelectedDepartments([]);
                       }
                       setCompetencySelection('');
                       setCustomCompetency('');
-                      if (formErrors.functional) {
+                      if (formErrors.functional || formErrors.department) {
                         setFormErrors((prev) => ({
                           ...prev,
                           functional: '',
@@ -1536,6 +1730,15 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     <option value="" disabled>
                       Select Functional...
                     </option>
+                    {customFunctionalKeys.length > 0 && (
+                      <optgroup label="Custom Functionals / Divisions">
+                        {customFunctionalKeys.map((cf) => (
+                          <option key={cf} value={cf}>
+                            {cf}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
                     <optgroup label="Functional Divisions">
                       {FUNCTIONAL_DIVISIONS.map((fn) => (
                         <option key={fn} value={fn}>
@@ -1788,163 +1991,281 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 </div>
               </div>
 
-              {/* ROW 3: SKILL (FULL-WIDTH LONG LINE ACROSS THE MODAL) */}
-              <div className="w-full">
-                <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Skill</span> <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={skillText}
-                  onChange={(e) => {
-                    setSkillText(e.target.value);
-                    if (formErrors.skill) {
-                      setFormErrors((prev) => ({ ...prev, skill: '' }));
-                    }
-                  }}
-                  placeholder="Enter skill name (e.g., Radar Surveillance Protocol, Conflict Resolution, Airspace Sector Separation)..."
-                  className="w-full min-h-[42px] px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
-                />
-                {formErrors.skill && (
-                  <p className="text-[10px] text-red-600 mt-1">{formErrors.skill}</p>
-                )}
+              {/* ================= TAB NAVIGATION: ROLES + DYNAMIC SKILLS ================= */}
+              <div className="pt-2">
+                <div className="bg-slate-100/90 p-1.5 rounded-2xl flex items-center gap-1.5 flex-wrap border border-slate-200/80 shadow-2xs">
+                  {/* Tab 1: Proficiency & Roles */}
+                  <button
+                    type="button"
+                    onClick={() => setActiveModalTab('roles')}
+                    className={`px-3.5 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer ${
+                      activeModalTab === 'roles'
+                        ? 'bg-white text-slate-900 font-extrabold shadow-sm border border-slate-200/60'
+                        : 'text-slate-500 hover:text-slate-700 font-bold hover:bg-white/40'
+                    }`}
+                  >
+                    <Briefcase className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <span>Proficiency &amp; Roles</span>
+                  </button>
+
+                  {/* Dynamic Skill Tabs: Skill 1 & Courses, Skill 2 & Courses, ... */}
+                  {skillsList.map((sk, idx) => {
+                    const isSelected = activeModalTab === sk.id;
+                    const tabTitle = sk.name.trim()
+                      ? `Skill ${idx + 1}: ${sk.name.length > 14 ? `${sk.name.slice(0, 14)}...` : sk.name}`
+                      : `Skill ${idx + 1} & Courses`;
+
+                    return (
+                      <div
+                        key={sk.id}
+                        className={`flex items-center rounded-xl text-xs transition-all ${
+                          isSelected
+                            ? 'bg-white text-slate-900 font-extrabold shadow-sm border border-slate-200/60'
+                            : 'text-slate-500 hover:text-slate-700 font-bold hover:bg-white/40'
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setActiveModalTab(sk.id)}
+                          className="px-3.5 py-2 flex items-center gap-2 cursor-pointer"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{tabTitle}</span>
+                        </button>
+                        {skillsList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveSkill(sk.id);
+                            }}
+                            className="pr-2.5 pl-0 text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
+                            title={`Remove Skill ${idx + 1}`}
+                          >
+                            <X className="w-3 h-3 hover:scale-110" />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* Add Skill Button right near the skill tabs */}
+                  <button
+                    type="button"
+                    onClick={handleAddSkill}
+                    className="px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 text-[#0275a8] hover:text-white bg-white hover:bg-[#0275a8] font-extrabold border border-dashed border-[#0275a8]/50 shadow-2xs hover:shadow-sm transition-all cursor-pointer"
+                    title={`Add Skill ${skillsList.length + 1}`}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Skill {skillsList.length + 1}</span>
+                  </button>
+                </div>
               </div>
 
-              {/* ================= PROFICIENCY, ROLE & COURSE MAPPING TABLE (4 FIXED ROWS) ================= */}
-              <div className="pt-2 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Award className="w-4 h-4 text-[#0275a8]" />
-                    <span className="text-xs font-extrabold text-slate-800">
-                      Proficiency, Role &amp; Course Mapping
-                    </span>
-                  </div>
-                </div>
+              {/* ================= TAB 1 CONTENT: PROFICIENCY & ROLES (NO RECOMMENDED COURSE) ================= */}
+              {activeModalTab === 'roles' && (
+                <div className="space-y-2 animate-in fade-in duration-150">
+                  <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="bg-slate-100/90 text-slate-700 text-[11px] font-extrabold border-b border-slate-200">
+                          <th className="py-2.5 px-3 w-40 border-r border-slate-200">
+                            Proficiency <span className="text-red-500">*</span>
+                          </th>
+                          <th className="py-2.5 px-3">
+                            Roles <span className="text-red-500">*</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 bg-white">
+                        {proficiencyMappings.map((mrow, rIdx) => {
+                          const isFoundation = mrow.proficiency === 'Foundation';
+                          const isIntermediate = mrow.proficiency === 'Intermediate';
+                          const isProficient = mrow.proficiency === 'Proficient';
+                          const isExpert = mrow.proficiency === 'Expert';
 
-                <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr className="bg-slate-100/90 text-slate-700 text-[11px] font-extrabold border-b border-slate-200">
-                        <th className="py-2.5 px-3 w-36 border-r border-slate-200">
-                          Proficiency <span className="text-red-500">*</span>
-                        </th>
-                        <th className="py-2.5 px-3 min-w-[200px] border-r border-slate-200">
-                          Roles <span className="text-red-500">*</span>
-                        </th>
-                        <th className="py-2.5 px-3 min-w-[220px]">
-                          Recommended Course <span className="text-red-500">*</span>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 bg-white">
-                      {proficiencyMappings.map((mrow, rIdx) => {
-                        const isFoundation = mrow.proficiency === 'Foundation';
-                        const isIntermediate = mrow.proficiency === 'Intermediate';
-                        const isProficient = mrow.proficiency === 'Proficient';
-                        const isExpert = mrow.proficiency === 'Expert';
+                          const badgeStyle = isFoundation
+                            ? 'bg-slate-100 text-slate-700 border-slate-300'
+                            : isIntermediate
+                            ? 'bg-amber-50 text-amber-800 border-amber-300'
+                            : isProficient
+                            ? 'bg-sky-50 text-sky-800 border-sky-300 font-bold'
+                            : 'bg-purple-50 text-purple-800 border-purple-300 font-bold';
 
-                        const badgeStyle = isFoundation
-                          ? 'bg-slate-100 text-slate-700 border-slate-300'
-                          : isIntermediate
-                          ? 'bg-amber-50 text-amber-800 border-amber-300'
-                          : isProficient
-                          ? 'bg-sky-50 text-sky-800 border-sky-300 font-bold'
-                          : 'bg-purple-50 text-purple-800 border-purple-300 font-bold';
-
-                        return (
-                          <tr key={mrow.proficiency} className="hover:bg-slate-50/70">
-                            {/* 1. Fixed Proficiency Level */}
-                            <td className="p-2.5 align-middle border-r border-slate-100">
-                              <div className="flex items-center gap-2">
+                          return (
+                            <tr key={mrow.proficiency} className="hover:bg-slate-50/70">
+                              {/* 1. Fixed Proficiency Level */}
+                              <td className="p-2.5 align-middle border-r border-slate-100">
                                 <span
                                   className={`text-[11px] px-2.5 py-1 rounded-lg border font-bold inline-block ${badgeStyle}`}
                                 >
                                   {mrow.proficiency}
                                 </span>
-                              </div>
-                            </td>
+                              </td>
 
-                            {/* 2. Role (Multi-Select for each row) */}
-                            <td className="p-2.5 align-middle relative border-r border-slate-100" data-role-dropdown-container="true">
-                              <button
-                                type="button"
-                                onClick={() => setOpenRoleRowIndex(openRoleRowIndex === rIdx ? null : rIdx)}
-                                className={`w-full flex items-center justify-between px-3 py-2 border rounded-xl text-xs font-bold cursor-pointer text-left shadow-2xs transition-all ${
-                                  openRoleRowIndex === rIdx
-                                    ? 'bg-white border-[#0275a8] ring-2 ring-[#0275a8]/20 text-slate-900'
-                                    : mrow.roles.length > 0
-                                    ? 'bg-sky-50/70 border-sky-200 text-sky-900'
-                                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-white'
-                                }`}
-                              >
-                                <span className="truncate max-w-[180px]">
-                                  {mrow.roles.length === 0
-                                    ? 'Select Roles...'
-                                    : mrow.roles.length === 1
-                                    ? mrow.roles[0]
-                                    : mrow.roles.length === ROLE_LIST.length
-                                    ? `All Roles (${ROLE_LIST.length})`
-                                    : `${mrow.roles.length} Roles (${mrow.roles[0]}...)`}
-                                </span>
-                                <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1" />
-                              </button>
+                              {/* 2. Role (Multi-Select for each row) */}
+                              <td className="p-2.5 align-middle relative" data-role-dropdown-container="true">
+                                <button
+                                  type="button"
+                                  onClick={() => setOpenRoleRowIndex(openRoleRowIndex === rIdx ? null : rIdx)}
+                                  className={`w-full flex items-center justify-between px-3 py-2 border rounded-xl text-xs font-bold cursor-pointer text-left shadow-2xs transition-all ${
+                                    openRoleRowIndex === rIdx
+                                      ? 'bg-white border-[#0275a8] ring-2 ring-[#0275a8]/20 text-slate-900'
+                                      : mrow.roles.length > 0
+                                      ? 'bg-sky-50/70 border-sky-200 text-sky-900'
+                                      : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-white'
+                                  }`}
+                                >
+                                  <span className="truncate max-w-[280px]">
+                                    {mrow.roles.length === 0
+                                      ? 'Select Roles...'
+                                      : mrow.roles.length === 1
+                                      ? mrow.roles[0]
+                                      : mrow.roles.length === ROLE_LIST.length
+                                      ? `All Roles (${ROLE_LIST.length})`
+                                      : `${mrow.roles.length} Roles (${mrow.roles[0]}...)`}
+                                  </span>
+                                  <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1" />
+                                </button>
 
-                              {openRoleRowIndex === rIdx && (
-                                <div className="absolute z-50 left-2.5 top-12 w-72 max-h-64 overflow-y-auto bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl p-2 text-xs animate-in zoom-in-95 duration-150">
-                                  <div className="space-y-1">
-                                    {ROLE_LIST.map((r) => {
-                                      const isSelected = mrow.roles.includes(r);
-                                      return (
-                                        <label
-                                          key={r}
-                                          className={`flex items-center gap-2 p-1.5 rounded-lg cursor-pointer text-[11px] transition-colors ${
-                                            isSelected ? 'bg-sky-50 text-[#0275a8] font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
-                                          }`}
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            checked={isSelected}
-                                            onChange={() => handleToggleRole(rIdx, r)}
-                                            className="rounded border-slate-300 text-[#0275a8] focus:ring-[#0275a8]"
-                                          />
-                                          <span>{r}</span>
-                                        </label>
-                                      );
-                                    })}
+                                {openRoleRowIndex === rIdx && (
+                                  <div className="absolute z-50 left-2.5 top-12 w-72 max-h-64 overflow-y-auto bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl p-2 text-xs animate-in zoom-in-95 duration-150">
+                                    <div className="space-y-1">
+                                      {ROLE_LIST.map((r) => {
+                                        const isSelected = mrow.roles.includes(r);
+                                        return (
+                                          <label
+                                            key={r}
+                                            className={`flex items-center gap-2 p-1.5 rounded-lg cursor-pointer text-[11px] transition-colors ${
+                                              isSelected ? 'bg-sky-50 text-[#0275a8] font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
+                                            }`}
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              checked={isSelected}
+                                              onChange={() => handleToggleRole(rIdx, r)}
+                                              className="rounded border-slate-300 text-[#0275a8] focus:ring-[#0275a8]"
+                                            />
+                                            <span>{r}</span>
+                                          </label>
+                                        );
+                                      })}
+                                    </div>
+                                    <div className="pt-2 mt-1.5 border-t border-slate-100 text-right">
+                                      <button
+                                        type="button"
+                                        onClick={() => setOpenRoleRowIndex(null)}
+                                        className="px-3 py-1 bg-[#1a5075] hover:bg-[#0275a8] text-white rounded-lg text-[10px] font-bold cursor-pointer"
+                                      >
+                                        Done
+                                      </button>
+                                    </div>
                                   </div>
-                                  <div className="pt-2 mt-1.5 border-t border-slate-100 text-right">
-                                    <button
-                                      type="button"
-                                      onClick={() => setOpenRoleRowIndex(null)}
-                                      className="px-3 py-1 bg-[#1a5075] hover:bg-[#0275a8] text-white rounded-lg text-[10px] font-bold cursor-pointer"
-                                    >
-                                      Done
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-                            </td>
-
-                            {/* 3. Recommended Course (Editable Input for all 4 rows - blank by default) */}
-                            <td className="p-2.5 align-middle">
-                              <input
-                                type="text"
-                                value={mrow.recommendedCourse}
-                                onChange={(e) =>
-                                  handleUpdateCourse(rIdx, e.target.value)
-                                }
-                                placeholder="Enter recommended course..."
-                                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
-                              />
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* ================= TAB 2+ CONTENT: DYNAMIC SKILLS & RECOMMENDED COURSES ================= */}
+              {activeSkill && activeModalTab !== 'roles' && (
+                <div className="space-y-3 animate-in fade-in duration-150">
+                  {/* Skill Heading & Text Box */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block font-extrabold text-slate-700 flex items-center gap-1.5 text-xs">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Skill {activeSkillIndex + 1}</span>
+                        {activeSkillIndex === 0 && <span className="text-red-500">*</span>}
+                      </label>
+                      {skillsList.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSkill(activeSkill.id)}
+                          className="text-[11px] text-red-500 hover:text-red-700 font-bold flex items-center gap-1 hover:bg-red-50 px-2 py-0.5 rounded cursor-pointer transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Remove Skill {activeSkillIndex + 1}</span>
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={activeSkill.name}
+                      onChange={(e) => handleUpdateSkillName(activeSkill.id, e.target.value)}
+                      placeholder={`Enter skill ${activeSkillIndex + 1} name (e.g., Radar Surveillance Protocol, Conflict Resolution, Airspace Sector Separation)...`}
+                      className="w-full min-h-[42px] px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    />
+                    {formErrors.skill && activeSkillIndex === 0 && !activeSkill.name.trim() && (
+                      <p className="text-[10px] text-red-600 mt-1">{formErrors.skill}</p>
+                    )}
+                  </div>
+
+                  {/* Proficiency with 4 levels & Recommended Course Table */}
+                  <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="bg-slate-100/90 text-slate-700 text-[11px] font-extrabold border-b border-slate-200">
+                          <th className="py-2.5 px-3 w-40 border-r border-slate-200">
+                            Proficiency <span className="text-red-500">*</span>
+                          </th>
+                          <th className="py-2.5 px-3">
+                            Recommended Course for Skill {activeSkillIndex + 1} <span className="text-slate-400 font-normal">(Optional)</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 bg-white">
+                        {proficiencyMappings.map((mrow) => {
+                          const level = mrow.proficiency;
+                          const isFoundation = level === 'Foundation';
+                          const isIntermediate = level === 'Intermediate';
+                          const isProficient = level === 'Proficient';
+                          const isExpert = level === 'Expert';
+
+                          const badgeStyle = isFoundation
+                            ? 'bg-slate-100 text-slate-700 border-slate-300'
+                            : isIntermediate
+                            ? 'bg-amber-50 text-amber-800 border-amber-300'
+                            : isProficient
+                            ? 'bg-sky-50 text-sky-800 border-sky-300 font-bold'
+                            : 'bg-purple-50 text-purple-800 border-purple-300 font-bold';
+
+                          return (
+                            <tr key={level} className="hover:bg-slate-50/70">
+                              {/* 1. Fixed Proficiency Level */}
+                              <td className="p-2.5 align-middle border-r border-slate-100">
+                                <span
+                                  className={`text-[11px] px-2.5 py-1 rounded-lg border font-bold inline-block ${badgeStyle}`}
+                                >
+                                  {level}
+                                </span>
+                              </td>
+
+                              {/* 2. Recommended Course Input */}
+                              <td className="p-2.5 align-middle">
+                                <input
+                                  type="text"
+                                  value={activeSkill.courses[level] || ''}
+                                  onChange={(e) =>
+                                    handleUpdateSkillCourse(activeSkill.id, level, e.target.value)
+                                  }
+                                  placeholder={`Enter recommended course for ${level} level...`}
+                                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               {/* Optional Description */}
               <div>

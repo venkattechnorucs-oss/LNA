@@ -14,7 +14,9 @@ import {
   ShieldCheck,
   Send,
   History,
-  UserCheck
+  UserCheck,
+  Building2,
+  FolderPlus
 } from 'lucide-react';
 
 interface GansSidebarProps {
@@ -230,6 +232,22 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   <div className="flex items-center gap-2.5">
                     <History className={`w-4 h-4 ${currentTab === 'hr-assessment-history' ? 'text-white' : 'text-[#0275a8]'}`} />
                     <span>Release History</span>
+                  </div>
+                </button>
+
+                {/* Department Master */}
+                <button
+                  type="button"
+                  onClick={() => onSelectTab('hr-department-master')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
+                    currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department'
+                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
+                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Building2 className={`w-4 h-4 ${currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <span>Department Master</span>
                   </div>
                 </button>
 
