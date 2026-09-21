@@ -19,11 +19,11 @@ import {
   Send,
   CheckSquare,
   Clock,
-  RefreshCw,
   Ban,
   UserX,
   History,
-  ArrowRight
+  ArrowRight,
+  UserPlus
 } from 'lucide-react';
 
 interface FlaggedEmployeeItem {
@@ -77,9 +77,107 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
   const [releaseNotice, setReleaseNotice] = useState<string | null>(null);
   const [selectionWarning, setSelectionWarning] = useState<string | null>(null);
 
-  // Sync State
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncNotice, setSyncNotice] = useState<string | null>(null);
+  // Toast & Modal State
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [deleteConfirmEmp, setDeleteConfirmEmp] = useState<{ id: string; name: string } | null>(null);
+
+  // Form State for adding / editing employee
+  const [formData, setFormData] = useState<EmployeeProfile>({
+    name: '',
+    employeeId: '',
+    email: '',
+    reportingManager: '',
+    position: '',
+    function: '',
+    division: '',
+    department: '',
+    grade: 8,
+    joinDate: '',
+    section: '',
+    location: 'Abu Dhabi HQ'
+  });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Dynamic list of Functionals (from catalog + custom catalog + existing records)
+  const availableFunctionals = useMemo(() => {
+    let custom: Record<string, any> = {};
+    let deleted: string[] = [];
+    try {
+      const saved = localStorage.getItem('gans_custom_functionals_catalog');
+      if (saved) custom = JSON.parse(saved);
+      const del = localStorage.getItem('gans_deleted_functionals');
+      if (del) deleted = JSON.parse(del);
+    } catch {}
+
+    const list = new Set<string>([
+      'Air Traffic Management',
+      'Communication, Navigation & Surveillance (CNS)',
+      'Meteorological Services',
+      'Corporate Strategy',
+      'Safety & Quality Assurance',
+      'Aviation Security',
+      'Human Resources',
+      'Finance & Administration',
+      'Engineering & Maintenance',
+      ...Object.keys(custom),
+      ...(employees.map((e) => e.function).filter(Boolean) as string[])
+    ]);
+    deleted.forEach((k) => list.delete(k));
+    return Array.from(list).sort();
+  }, [employees]);
+
+  // Dynamic list of Divisions
+  const availableDivisions = useMemo(() => {
+    const list = new Set<string>([
+      'Air Navigation Services',
+      'Technical Support Services',
+      'Corporate Strategy',
+      'Safety & Quality Assurance',
+      'Aviation Security',
+      'Human Resources',
+      'Finance & Administration',
+      ...employees.map((e) => e.division).filter(Boolean)
+    ]);
+    return Array.from(list).sort();
+  }, [employees]);
+
+  // Dynamic list of Departments
+  const availableDepartments = useMemo(() => {
+    const list = new Set<string>([
+      'ATM Operations',
+      'CNS Operations',
+      'MET Operations',
+      'Safety & QA',
+      'Corporate Strategy',
+      'Human Resources',
+      'Finance & Accounts',
+      'Technical Services',
+      ...employees.map((e) => e.department).filter(Boolean)
+    ]);
+    return Array.from(list).sort();
+  }, [employees]);
+
+  // Dynamic list of Managers
+  const availableManagers = useMemo(() => {
+    const list = new Set<string>([
+      ...employees.map((e) => e.reportingManager).filter(Boolean),
+      ...employees.filter((e) => e.grade >= 9).map((e) => e.name)
+    ]);
+    return Array.from(list).sort();
+  }, [employees]);
+
+  // Available Locations
+  const availableLocations = [
+    'Abu Dhabi HQ',
+    'Al Ain International Airport',
+    'Al Bateen Executive Airport',
+    'Delma Airport',
+    'Sir Bani Yas Airport',
+    'Sharjah Facility',
+    'Dubai Operations'
+  ];
 
   // Map of released employee IDs with their records
   const releasedMap = useMemo(() => {
@@ -113,26 +211,6 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
 
   const [modalFilterTab, setModalFilterTab] = useState<'all' | 'released' | 'skipped'>('all');
 
-  // Edit Modal state
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [deleteConfirmEmp, setDeleteConfirmEmp] = useState<{ id: string; name: string } | null>(null);
-
-  // Form State for editing employee
-  const [formData, setFormData] = useState<EmployeeProfile>({
-    name: '',
-    employeeId: '',
-    email: '',
-    reportingManager: '',
-    position: '',
-    division: '',
-    department: '',
-    grade: 8,
-    joinDate: '',
-    section: '',
-    location: ''
-  });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
   // Dynamic filter dropdown items
   const divisions = useMemo(() => {
     return Array.from(new Set(employees.map((e) => e.division))).filter(Boolean).sort();
@@ -162,21 +240,63 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
         const matchPos = emp.position.toLowerCase().includes(q);
         const matchEmail = emp.email.toLowerCase().includes(q);
         const matchManager = emp.reportingManager.toLowerCase().includes(q);
-        if (!matchName && !matchId && !matchPos && !matchEmail && !matchManager) return false;
+        const matchFunc = (emp.function || '').toLowerCase().includes(q);
+        if (!matchName && !matchId && !matchPos && !matchEmail && !matchManager && !matchFunc) return false;
       }
       return true;
     });
   }, [employees, selectedDivision, selectedDepartment, selectedGrade, searchQuery]);
 
-  // Validation for Edit Employee Form
+  // Open Add Employee Modal
+  const handleOpenAddModal = () => {
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    setModalMode('add');
+    setFormData({
+      name: '',
+      employeeId: `EMP00${randomNum}`,
+      email: '',
+      reportingManager: availableManagers[0] || 'Mansoor Al Hammadi',
+      position: '',
+      function: availableFunctionals[0] || 'Air Traffic Management',
+      division: availableDivisions[0] || 'Air Navigation Services',
+      department: availableDepartments[0] || 'ATM Operations',
+      grade: 8,
+      joinDate: new Date().toISOString().split('T')[0],
+      section: '',
+      location: 'Abu Dhabi HQ'
+    });
+    setFormErrors({});
+    setShowEditModal(true);
+  };
+
+  // Open Edit Employee Modal
+  const handleOpenEditModal = (emp: EmployeeProfile) => {
+    setModalMode('edit');
+    setFormData({
+      ...emp,
+      function: emp.function || 'Air Traffic Management',
+      location: emp.location || 'Abu Dhabi HQ'
+    });
+    setFormErrors({});
+    setShowEditModal(true);
+  };
+
+  // Validation for Add/Edit Employee Form
   const validateForm = () => {
     const errs: Record<string, string> = {};
-    if (!formData.name.trim()) errs.name = 'Full Name is required';
-    if (!formData.employeeId.trim()) errs.employeeId = 'Employee ID is required';
-    if (!formData.email.trim() || !formData.email.includes('@')) errs.email = 'Valid email is required';
+    if (!formData.name.trim()) errs.name = 'Employee Name is required';
     if (!formData.position.trim()) errs.position = 'Position is required';
+    if (!formData.employeeId.trim()) errs.employeeId = 'Employee ID is required';
+    if (!formData.email.trim()) {
+      errs.email = 'Email is required';
+    } else if (!formData.email.includes('@')) {
+      errs.email = 'Valid email is required';
+    }
+    if (!formData.function?.trim()) errs.function = 'Functional is required';
+    if (!formData.department.trim()) errs.department = 'Department is required';
     if (!formData.division.trim()) errs.division = 'Division is required';
-    if (!formData.reportingManager.trim()) errs.reportingManager = 'Reporting Manager is required';
+    if (!formData.reportingManager.trim()) errs.reportingManager = 'Manager is required';
+    if (!formData.location?.trim()) errs.location = 'Location is required';
     setFormErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -184,29 +304,43 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
   const handleSaveEmployee = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    if (onUpdateEmployee) {
-      onUpdateEmployee(formData);
-    } else if (onAddEmployee) {
-      onAddEmployee(formData);
+
+    const trimmedName = formData.name.trim();
+    const autoId = formData.employeeId.trim() || `EMP00${Math.floor(1000 + Math.random() * 9000)}`;
+    const autoEmail = formData.email.trim() || `${trimmedName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@gans.aero`;
+
+    const finalEmp: EmployeeProfile = {
+      ...formData,
+      name: trimmedName,
+      employeeId: autoId,
+      email: autoEmail,
+      function: formData.function?.trim() || 'Air Traffic Management',
+      department: formData.department.trim(),
+      division: formData.division.trim(),
+      position: formData.position.trim(),
+      reportingManager: formData.reportingManager.trim(),
+      location: formData.location?.trim() || 'Abu Dhabi HQ',
+      grade: Number(formData.grade) || 8
+    };
+
+    if (modalMode === 'add') {
+      if (onAddEmployee) {
+        onAddEmployee(finalEmp);
+      }
+      setSuccessToast(`Employee "${finalEmp.name}" has been added successfully.`);
+    } else {
+      if (onUpdateEmployee) {
+        onUpdateEmployee(finalEmp);
+      }
+      setSuccessToast(`Employee "${finalEmp.name}" profile has been updated.`);
     }
+
+    setTimeout(() => {
+      setSuccessToast(null);
+    }, 4000);
+
     setShowEditModal(false);
     setFormErrors({});
-  };
-
-  // Sync handler with Enterprise HRMS / Active Directory
-  const handleSync = () => {
-    setIsSyncing(true);
-    setSyncNotice(null);
-    setTimeout(() => {
-      setIsSyncing(false);
-      setSyncNotice(`Employee master data successfully synchronized with Enterprise HRMS (${employees.length} records verified).`);
-      if (onSyncEmployees) {
-        onSyncEmployees();
-      }
-      setTimeout(() => {
-        setSyncNotice(null);
-      }, 5000);
-    }, 700);
   };
 
   // Selection Handlers for Assessment Release
@@ -344,7 +478,6 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
               onClick={() => setShowReleaseDropdown(!showReleaseDropdown)}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-emerald-400/40"
             >
-              <Send className="w-3.5 h-3.5" />
               <span>Release</span>
               <ChevronDown className="w-3.5 h-3.5 ml-0.5" />
             </button>
@@ -395,31 +528,30 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             )}
           </div>
 
-          {/* Sync Button */}
+          {/* Add Employee Button */}
           <button
+            id="btn-add-employee"
             type="button"
-            onClick={handleSync}
-            disabled={isSyncing}
-            className="px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 disabled:opacity-75 border border-sky-300/30"
-            title="Synchronize employee records with Enterprise HRMS"
+            onClick={handleOpenAddModal}
+            className="px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white font-bold text-xs rounded-lg shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-300/30"
+            title="Add a new employee record"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-            <span>{isSyncing ? 'Syncing...' : 'Sync'}</span>
+            <span>Add Employee</span>
           </button>
         </div>
       </div>
 
-      {/* Sync Notice Banner */}
-      {syncNotice && (
-        <div className="p-3.5 bg-sky-50 border border-sky-300 rounded-xl flex items-center justify-between gap-3 text-sky-900 shadow-xs animate-in slide-in-from-top-1">
+      {/* Success Toast Banner */}
+      {successToast && (
+        <div className="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl flex items-center justify-between gap-3 text-emerald-900 shadow-xs animate-in slide-in-from-top-1">
           <div className="flex items-center gap-2.5 text-xs font-bold">
-            <CheckCircle2 className="w-4 h-4 text-[#0275a8] shrink-0" />
-            <span>{syncNotice}</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{successToast}</span>
           </div>
           <button
             type="button"
-            onClick={() => setSyncNotice(null)}
-            className="text-sky-700 hover:text-sky-900 font-bold text-xs cursor-pointer"
+            onClick={() => setSuccessToast(null)}
+            className="text-emerald-700 hover:text-emerald-900 font-bold text-xs cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -640,12 +772,13 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   </th>
                 )}
                 <th className="py-2.5 px-3.5 w-12 text-center">#</th>
-                <th className="py-2.5 px-4 w-52">Employee Name</th>
+                <th className="py-2.5 px-4 w-48">Employee Name</th>
                 <th className="py-2.5 px-4">Position</th>
-                <th className="py-2.5 px-4">Division</th>
+                <th className="py-2.5 px-4">Functional</th>
                 <th className="py-2.5 px-4">Department</th>
+                <th className="py-2.5 px-4">Division</th>
                 <th className="py-2.5 px-3 text-center w-16">Grade</th>
-                <th className="py-2.5 px-4">Reporting Manager</th>
+                <th className="py-2.5 px-4">Manager</th>
                 <th className="py-2.5 px-4">Location</th>
                 <th className="py-2.5 px-3 text-center w-24">Actions</th>
               </tr>
@@ -653,7 +786,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             <tbody className="divide-y divide-slate-200">
               {filteredEmployees.length === 0 ? (
                 <tr>
-                  <td colSpan={isSelectionMode ? 10 : 9} className="py-10 text-center text-slate-500">
+                  <td colSpan={isSelectionMode ? 11 : 10} className="py-10 text-center text-slate-500">
                     <p className="font-semibold text-sm">No employee records found</p>
                     <p className="text-xs text-slate-400 mt-1">Try adjusting your search query or filters.</p>
                   </td>
@@ -707,10 +840,13 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                         <span className="font-semibold text-slate-700 block">{emp.position}</span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="text-slate-800 font-medium block">{emp.division}</span>
+                        <span className="font-medium text-slate-800 block">{emp.function || 'Air Traffic Management'}</span>
                       </td>
                       <td className="py-3 px-4">
                         <span className="text-slate-600 block">{emp.department}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-slate-600 block">{emp.division}</span>
                       </td>
                       <td className="py-3 px-3 text-center">
                         <span className="inline-block bg-[#e5eff6] text-[#1a5075] font-bold px-2 py-0.5 rounded text-[11px] border border-[#bcd7e8]">
@@ -728,10 +864,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                           <button
                             type="button"
                             title="Edit Employee"
-                            onClick={() => {
-                              setFormData({ ...emp });
-                              setShowEditModal(true);
-                            }}
+                            onClick={() => handleOpenEditModal(emp)}
                             className="p-1 text-slate-500 hover:text-[#0275a8] hover:bg-sky-50 rounded transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
@@ -759,15 +892,21 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
         </div>
       </div>
 
-      {/* MODAL: EDIT EMPLOYEE PROFILE */}
+      {/* MODAL: ADD / EDIT EMPLOYEE PROFILE */}
       {showEditModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-[#1a5075] text-white px-5 py-3.5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Edit2 className="w-5 h-5 text-sky-300" />
-                <h3 className="font-bold text-sm sm:text-base">Edit Employee Profile</h3>
+                {modalMode === 'add' ? (
+                  <UserPlus className="w-5 h-5 text-sky-300" />
+                ) : (
+                  <Edit2 className="w-5 h-5 text-sky-300" />
+                )}
+                <h3 className="font-bold text-sm sm:text-base">
+                  {modalMode === 'add' ? 'Add New Employee' : 'Edit Employee Profile'}
+                </h3>
               </div>
               <button
                 type="button"
@@ -781,16 +920,26 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             {/* Modal Form Body */}
             <form onSubmit={handleSaveEmployee} className="p-5 space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Full Name */}
+                {/* Row 1 - Col 1: Employee Name */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Full Name <span className="text-red-500">*</span>
+                    Employee Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g. Rashid Al Nuaimi"
+                    onChange={(e) => {
+                      const newName = e.target.value;
+                      const slug = newName.trim().toLowerCase().replace(/[^a-z0-9]/g, '.');
+                      setFormData({
+                        ...formData,
+                        name: newName,
+                        email: modalMode === 'add' && (!formData.email || formData.email.endsWith('@gans.aero'))
+                          ? (slug ? `${slug}@gans.aero` : '')
+                          : formData.email
+                      });
+                    }}
+                    placeholder="e.g. Fatima Al Hosani"
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.name ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
@@ -798,7 +947,24 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.name && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.name}</span>}
                 </div>
 
-                {/* Employee ID */}
+                {/* Row 1 - Col 2: Position */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Position <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.position}
+                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                    placeholder="e.g. Senior Air Traffic Controller"
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.position ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  />
+                  {formErrors.position && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.position}</span>}
+                </div>
+
+                {/* Row 2 - Col 1: Employee ID (Mandatory) */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Employee ID <span className="text-red-500">*</span>
@@ -815,7 +981,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.employeeId && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.employeeId}</span>}
                 </div>
 
-                {/* Email Address */}
+                {/* Row 2 - Col 2: Email (Mandatory) */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Email <span className="text-red-500">*</span>
@@ -824,7 +990,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="e.g. rashid.nuaimi@gans.aero"
+                    placeholder="e.g. fatima.hosani@gans.aero"
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.email ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
@@ -832,98 +998,119 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.email && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.email}</span>}
                 </div>
 
-                {/* Reporting Manager */}
+                {/* Row 3 - Col 1: Functional */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Reporting Manager <span className="text-red-500">*</span>
+                    Functional <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.reportingManager}
-                    onChange={(e) => setFormData({ ...formData, reportingManager: e.target.value })}
-                    placeholder="e.g. Mansoor Al Hammadi"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
-                  />
+                  <select
+                    value={formData.function || ''}
+                    onChange={(e) => setFormData({ ...formData, function: e.target.value })}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.function ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="">Select Functional</option>
+                    {availableFunctionals.map((fn) => (
+                      <option key={fn} value={fn}>{fn}</option>
+                    ))}
+                  </select>
+                  {formErrors.function && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.function}</span>}
                 </div>
 
-                {/* Position */}
+                {/* Row 3 - Col 2: Department */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Position / Designation <span className="text-red-500">*</span>
+                    Department <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.position}
-                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                    placeholder="e.g. Air Traffic Controller"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
-                  />
+                  <select
+                    value={formData.department}
+                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.department ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="">Select Department</option>
+                    {availableDepartments.map((dept) => (
+                      <option key={dept} value={dept}>{dept}</option>
+                    ))}
+                  </select>
+                  {formErrors.department && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.department}</span>}
                 </div>
 
-                {/* Grade */}
+                {/* Row 4 - Col 1: Division */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Grade (1 - 12) <span className="text-red-500">*</span>
+                    Division <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.division}
+                    onChange={(e) => setFormData({ ...formData, division: e.target.value })}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.division ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="">Select Division</option>
+                    {availableDivisions.map((div) => (
+                      <option key={div} value={div}>{div}</option>
+                    ))}
+                  </select>
+                  {formErrors.division && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.division}</span>}
+                </div>
+
+                {/* Row 4 - Col 2: Grade */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Grade <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.grade}
                     onChange={(e) => setFormData({ ...formData, grade: parseInt(e.target.value, 10) })}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
                   >
-                    {[5, 6, 7, 8, 9, 10, 11, 12].map((g) => (
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((g) => (
                       <option key={g} value={g}>Grade {g}</option>
                     ))}
                   </select>
                 </div>
 
-                {/* Division */}
+                {/* Row 5 - Col 1: Manager */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Division <span className="text-red-500">*</span>
+                    Manager <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.division}
-                    onChange={(e) => setFormData({ ...formData, division: e.target.value })}
-                    placeholder="e.g. Air Navigation Services"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
-                  />
+                  <select
+                    value={formData.reportingManager}
+                    onChange={(e) => setFormData({ ...formData, reportingManager: e.target.value })}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.reportingManager ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="">Select Manager</option>
+                    {availableManagers.map((mgr) => (
+                      <option key={mgr} value={mgr}>{mgr}</option>
+                    ))}
+                  </select>
+                  {formErrors.reportingManager && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.reportingManager}</span>}
                 </div>
 
-                {/* Department */}
+                {/* Row 5 - Col 2: Location */}
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Department</label>
-                  <input
-                    type="text"
-                    value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    placeholder="e.g. ATM Operations"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
-                  />
-                </div>
-
-                {/* Section */}
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Section</label>
-                  <input
-                    type="text"
-                    value={formData.section || ''}
-                    onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                    placeholder="e.g. Area Control Center"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
-                  />
-                </div>
-
-                {/* Location */}
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Location</label>
-                  <input
-                    type="text"
-                    value={formData.location || ''}
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Location <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.location || 'Abu Dhabi HQ'}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="e.g. Abu Dhabi HQ"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
-                  />
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.location ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    {availableLocations.map((loc) => (
+                      <option key={loc} value={loc}>{loc}</option>
+                    ))}
+                  </select>
+                  {formErrors.location && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.location}</span>}
                 </div>
               </div>
 
@@ -938,9 +1125,9 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0275a8] hover:bg-[#02628d] text-white font-bold rounded-lg shadow-sm transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                  className="px-5 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white font-bold text-xs rounded-lg shadow-sm transition-all cursor-pointer active:scale-95 flex items-center justify-center"
                 >
-                  <span>Save Changes</span>
+                  <span>{modalMode === 'add' ? 'Add Employee' : 'Save Changes'}</span>
                 </button>
               </div>
             </form>

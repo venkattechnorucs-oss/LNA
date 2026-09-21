@@ -1377,8 +1377,8 @@ export default function App() {
             ) : currentTab === 'hr-employee-master' ? (
               <HrEmployeeMasterView
                 employees={hrEmployees}
+                onAddEmployee={handleAddEmployee}
                 onUpdateEmployee={handleUpdateEmployee}
-                onSyncEmployees={handleSyncEmployees}
                 onDeleteEmployee={handleDeleteEmployee}
                 onReleaseAssessments={handleReleaseAssessments}
                 releasedList={releasedAssessments}
