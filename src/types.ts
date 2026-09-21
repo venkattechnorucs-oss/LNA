@@ -25,6 +25,7 @@ export interface Competency {
   description: string;
   department?: string;
   division?: string;
+  functional?: string;
   grade?: string;
   role?: string;
   proficiency?: ProficiencyLevel;

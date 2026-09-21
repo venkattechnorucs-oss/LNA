@@ -4,13 +4,7 @@ import {
   FileSpreadsheet,
   Download,
   Calendar,
-  Filter,
-  Search,
   CheckCircle2,
-  Table,
-  BarChart3,
-  Layers,
-  Sparkles,
   FileText
 } from 'lucide-react';
 
@@ -155,54 +149,6 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
     setTimeout(() => setDownloadSuccess(null), 4000);
   };
 
-  // Trigger CSV Export of Training Demand & Skill Gaps
-  const handleExportDemandSummary = () => {
-    const courseMap: Record<string, { code: string; title: string; count: number; employees: string[] }> = {};
-
-    filteredRecords.forEach((r) => {
-      r.submission?.selectedItems.forEach((item) => {
-        const key = item.trainingCourse.courseCode;
-        if (!courseMap[key]) {
-          courseMap[key] = {
-            code: item.trainingCourse.courseCode,
-            title: item.trainingCourse.title,
-            count: 0,
-            employees: []
-          };
-        }
-        courseMap[key].count += 1;
-        courseMap[key].employees.push(`${r.employee.name} (${r.employee.division})`);
-      });
-    });
-
-    const headers = ['Course Code', 'Course Title', 'Enrollment Headcount Demand', 'Nominated Employees'];
-    const rows = Object.values(courseMap)
-      .sort((a, b) => b.count - a.count)
-      .map((c) => [c.code, c.title, c.count, c.employees.join('; ')]);
-
-    const csvContent =
-      '\uFEFF' +
-      [
-        headers.map((h) => `"${h}"`).join(','),
-        ...rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
-      ].join('\r\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `GANS_Training_Demand_Summary_${selectedYear}_${new Date().toISOString().slice(0, 10)}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setDownloadSuccess(`Exported training demand summary across ${Object.keys(courseMap).length} courses.`);
-    setTimeout(() => setDownloadSuccess(null), 4000);
-  };
-
-  const approvedCount = filteredRecords.filter((r) => r.status === 'MANAGER APPROVED').length;
-  const pendingCount = filteredRecords.filter((r) => r.status === 'SUBMITTED FOR MANAGER REVIEW').length;
-
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
@@ -241,9 +187,9 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
         </div>
       </div>
 
-      {/* Export Action Center Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {/* Card 1: Comprehensive Employee LNA Report */}
+      {/* Export Action Center Card */}
+      <div className="max-w-xl">
+        {/* Card: Comprehensive Employee LNA Report */}
         <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-6 shadow-[0_8px_30px_rgb(26,80,117,0.05)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
           <div>
             <div className="flex items-center gap-3">
@@ -263,29 +209,6 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
           >
             <Download className="w-4 h-4 text-sky-200" />
             <span>Export CSV Dataset</span>
-          </button>
-        </div>
-
-        {/* Card 2: Competency Report */}
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-6 shadow-[0_8px_30px_rgb(26,80,117,0.05)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/15 to-teal-600/20 text-emerald-700 flex items-center justify-center font-bold border border-emerald-500/20 shadow-2xs group-hover:scale-105 transition-transform">
-                <BarChart3 className="w-5 h-5 text-emerald-700" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-slate-800 text-sm tracking-tight">Competency &amp; Course Report</h3>
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleExportDemandSummary}
-            className="mt-6 w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 shadow-md shadow-emerald-950/15 transition-all cursor-pointer active:scale-98"
-          >
-            <Download className="w-4 h-4 text-emerald-200" />
-            <span>Export Demand Summary</span>
           </button>
         </div>
       </div>

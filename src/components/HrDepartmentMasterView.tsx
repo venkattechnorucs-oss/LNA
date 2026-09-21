@@ -1,13 +1,17 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Building2,
   Network,
-  Plus,
   X,
   CheckCircle2,
-  Search
+  Search,
+  ChevronDown
 } from 'lucide-react';
-import { FunctionalDefinition, FUNCTIONAL_STRUCTURE_CATALOG } from './HrCompetencySkillsMasterView';
+import {
+  FunctionalDefinition,
+  FUNCTIONAL_STRUCTURE_CATALOG,
+  DEPARTMENT_LIST
+} from './HrCompetencySkillsMasterView';
 
 interface HrDepartmentMasterViewProps {
   onNavigateToCompetencies?: () => void;
@@ -47,10 +51,41 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
 
   // Form input state
   const [newFunctionalName, setNewFunctionalName] = useState('');
-  const [newDeptInput, setNewDeptInput] = useState('');
   const [addedDepartmentsList, setAddedDepartmentsList] = useState<string[]>([]);
   const [functionalDeptErrors, setFunctionalDeptErrors] = useState<Record<string, string>>({});
   const [actionToast, setActionToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
+
+  // Department Dropdown Multiselect state
+  const [isDeptDropdownOpen, setIsDeptDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Automatically close open department dropdown when clicking outside or pressing Escape
+  useEffect(() => {
+    if (!isDeptDropdownOpen) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && !target.closest('[data-department-dropdown-container]')) {
+        setIsDeptDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDeptDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDeptDropdownOpen]);
 
   // Table search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,23 +100,45 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
 
   const allFunctionalKeys = useMemo(() => Object.keys(mergedCatalog), [mergedCatalog]);
 
+  // Comprehensive master list of available departments across all functionals & defaults
+  const availableDepartments = useMemo(() => {
+    const deptSet = new Set<string>();
+
+    DEPARTMENT_LIST.forEach((d) => deptSet.add(d));
+
+    (Object.values(FUNCTIONAL_STRUCTURE_CATALOG) as FunctionalDefinition[]).forEach((fn) => {
+      fn.departments?.forEach((d) => deptSet.add(d));
+    });
+
+    (Object.values(customCatalog) as FunctionalDefinition[]).forEach((fn) => {
+      fn.departments?.forEach((d) => deptSet.add(d));
+    });
+
+    addedDepartmentsList.forEach((d) => deptSet.add(d));
+
+    return Array.from(deptSet).sort((a, b) => a.localeCompare(b));
+  }, [customCatalog, addedDepartmentsList]);
+
   const resetForm = () => {
     setNewFunctionalName('');
-    setNewDeptInput('');
     setAddedDepartmentsList([]);
     setFunctionalDeptErrors({});
+    setIsDeptDropdownOpen(false);
   };
 
-  const handleAddDepartmentItem = () => {
-    const trimmed = newDeptInput.trim();
-    if (!trimmed) return;
-    if (addedDepartmentsList.some((d) => d.toLowerCase() === trimmed.toLowerCase())) {
-      setFunctionalDeptErrors((prev) => ({ ...prev, department: 'Department already added in list' }));
-      return;
+  // Toggle department selection in multiselect (like roles in competency skills master)
+  const handleToggleDepartment = (dept: string) => {
+    setAddedDepartmentsList((prev) => {
+      const exists = prev.includes(dept);
+      if (exists) {
+        return prev.filter((d) => d !== dept);
+      } else {
+        return [...prev, dept];
+      }
+    });
+    if (functionalDeptErrors.department) {
+      setFunctionalDeptErrors((prev) => ({ ...prev, department: '' }));
     }
-    setAddedDepartmentsList((prev) => [...prev, trimmed]);
-    setNewDeptInput('');
-    setFunctionalDeptErrors((prev) => ({ ...prev, department: '' }));
   };
 
   const handleRemoveDepartmentItem = (deptToRemove: string) => {
@@ -95,14 +152,8 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
       errs.functional = 'Functional name is required';
     }
 
-    let finalDepts = [...addedDepartmentsList];
-    const pendingDept = newDeptInput.trim();
-    if (pendingDept && !finalDepts.some((d) => d.toLowerCase() === pendingDept.toLowerCase())) {
-      finalDepts.push(pendingDept);
-    }
-
-    if (finalDepts.length === 0) {
-      errs.department = 'Please add at least one department';
+    if (addedDepartmentsList.length === 0) {
+      errs.department = 'Department is required';
     }
 
     if (Object.keys(errs).length > 0) {
@@ -110,13 +161,15 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
       return;
     }
 
+    const finalDepts = [...addedDepartmentsList];
+
     // Save to customCatalog and localStorage
     const updatedCatalog: Record<string, FunctionalDefinition> = {
       ...customCatalog,
       [trimmedFn]: {
         name: trimmedFn,
         departments: finalDepts,
-        competencies: [
+        competencies: mergedCatalog[trimmedFn]?.competencies || [
           `${trimmedFn} Core Competency`,
           'Operational Excellence',
           'Technical Knowledge',
@@ -134,7 +187,7 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
     }
 
     setActionToast({
-      message: `Functional "${trimmedFn}" with ${finalDepts.length} department(s) saved successfully.`,
+      message: `Functional "${trimmedFn}" saved successfully.`,
       type: 'success'
     });
     setTimeout(() => setActionToast(null), 4000);
@@ -188,7 +241,7 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             <div className="p-2 rounded-xl bg-white/15 border border-white/20 shadow-inner">
               <Building2 className="w-5 h-5 text-sky-300" />
             </div>
-            <span>Department Master</span>
+            <span>Functional Master</span>
           </h1>
           <p className="text-xs text-sky-100/90 mt-1 font-medium max-w-xl">
             Configure functional divisions and their associated departments across the organization.
@@ -197,29 +250,33 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
       </div>
 
       {/* ADD FUNCTIONAL & DEPARTMENT ENTRY CARD */}
-      <div className="rounded-2xl bg-white/90 backdrop-blur-xl border border-white/80 p-6 shadow-[0_8px_30px_rgb(26,80,117,0.06)] space-y-6">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-slate-200/80">
-          <div className="p-1.5 rounded-lg bg-[#0275a8]/10 text-[#0275a8]">
-            <Network className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-extrabold text-slate-800">Add Functional &amp; Department</h2>
+      <div
+        id="add-functional-form-card"
+        className="rounded-2xl bg-white/90 backdrop-blur-xl border border-white/80 p-6 shadow-[0_8px_30px_rgb(26,80,117,0.06)] space-y-6"
+      >
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-[#0275a8]/10 text-[#0275a8]">
+              <Network className="w-4 h-4" />
+            </div>
+            <h2 className="text-sm font-extrabold text-slate-800">
+              Add Functional &amp; Department
+            </h2>
           </div>
         </div>
 
         {/* TWO BOXES SIDE BY SIDE */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* BOX 1: FUNCTIONAL */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+          {/* BOX 1: FUNCTIONAL (TEXT BOX) */}
           <div
             id="box-functional"
             className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3"
           >
-            <div>
-              <label className="block font-extrabold text-slate-800 flex items-center gap-1.5 text-xs">
-                <Network className="w-4 h-4 text-[#0275a8]" />
-                <span>Functional</span> <span className="text-red-500">*</span>
-              </label>
-            </div>
+            <label className="block font-extrabold text-slate-800 flex items-center gap-1.5 text-xs">
+              <Network className="w-4 h-4 text-[#0275a8]" />
+              <span>Functional</span> <span className="text-red-500">*</span>
+            </label>
+
             <input
               id="input-functional-name"
               type="text"
@@ -230,98 +287,110 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
                   setFunctionalDeptErrors((prev) => ({ ...prev, functional: '' }));
                 }
               }}
-              placeholder="Type functional name (e.g. Ground Operations & Logistics)..."
+              placeholder="Type functional name..."
               className="w-full min-h-[44px] px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 placeholder:text-slate-400 placeholder:font-normal shadow-inner focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
             />
+
             {functionalDeptErrors.functional && (
               <p className="text-[11px] text-red-600 font-semibold">{functionalDeptErrors.functional}</p>
             )}
           </div>
 
-          {/* BOX 2: DEPARTMENT */}
+          {/* BOX 2: DEPARTMENT (DROPDOWN & MULTISELECT LIKE ROLES) */}
           <div
             id="box-department"
             className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3"
           >
-            <div>
-              <label className="block font-extrabold text-slate-800 flex items-center gap-1.5 text-xs">
-                <Building2 className="w-4 h-4 text-[#0275a8]" />
-                <span>Department</span> <span className="text-red-500">*</span>
-              </label>
-            </div>
+            <label className="block font-extrabold text-slate-800 flex items-center gap-1.5 text-xs">
+              <Building2 className="w-4 h-4 text-[#0275a8]" />
+              <span>Department</span> <span className="text-red-500">*</span>
+            </label>
 
-            <div className="flex items-center gap-2">
-              <input
-                id="input-department-name"
-                type="text"
-                value={newDeptInput}
-                onChange={(e) => {
-                  setNewDeptInput(e.target.value);
-                  if (functionalDeptErrors.department) {
-                    setFunctionalDeptErrors((prev) => ({ ...prev, department: '' }));
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddDepartmentItem();
-                  }
-                }}
-                placeholder="Type department name..."
-                className="flex-1 min-h-[44px] px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 placeholder:text-slate-400 placeholder:font-normal shadow-inner focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
-              />
+            {/* Dropdown Container */}
+            <div className="relative" data-department-dropdown-container="true" ref={dropdownRef}>
               <button
-                id="btn-add-department-item"
+                id="btn-department-dropdown"
                 type="button"
-                onClick={handleAddDepartmentItem}
-                className="px-4 py-2.5 bg-[#0275a8] hover:bg-[#02628d] text-white text-xs font-extrabold rounded-xl transition-all cursor-pointer shrink-0 flex items-center gap-1.5 active:scale-95 shadow-2xs"
+                onClick={() => setIsDeptDropdownOpen(!isDeptDropdownOpen)}
+                className={`w-full flex items-center justify-between px-3 py-2 border rounded-xl text-xs font-bold cursor-pointer text-left shadow-2xs transition-all min-h-[44px] ${
+                  isDeptDropdownOpen
+                    ? 'bg-white border-[#0275a8] ring-2 ring-[#0275a8]/20 text-slate-900'
+                    : addedDepartmentsList.length > 0
+                    ? 'bg-sky-50/70 border-sky-200 text-sky-900'
+                    : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
+                }`}
               >
-                <Plus className="w-4 h-4" />
-                <span>Add</span>
+                <span className="truncate max-w-[280px]">
+                  {addedDepartmentsList.length === 0
+                    ? 'Select Departments...'
+                    : addedDepartmentsList.length === 1
+                    ? addedDepartmentsList[0]
+                    : addedDepartmentsList.length === availableDepartments.length
+                    ? `All Departments (${availableDepartments.length})`
+                    : `${addedDepartmentsList.length} Departments (${addedDepartmentsList[0]}...)`}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-500 shrink-0 ml-1 transition-transform duration-200 ${isDeptDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-            </div>
-            {functionalDeptErrors.department && (
-              <p className="text-[11px] text-red-600 font-semibold">{functionalDeptErrors.department}</p>
-            )}
 
-            {/* Added Departments Display Container */}
-            <div className="pt-1">
-              {addedDepartmentsList.length > 0 && (
-                <div className="p-2.5 bg-white border border-slate-200 rounded-xl space-y-2 max-h-48 overflow-y-auto">
-                  <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-600 px-1 border-b border-slate-100 pb-1">
-                    <span className="flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
-                      <span>Added Departments ({addedDepartmentsList.length})</span>
-                    </span>
+              {isDeptDropdownOpen && (
+                <div className="absolute z-50 left-0 top-12 w-full max-h-64 overflow-y-auto bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl p-2 text-xs animate-in zoom-in-95 duration-150">
+                  <div className="space-y-1">
+                    {availableDepartments.map((dept) => {
+                      const isSelected = addedDepartmentsList.includes(dept);
+                      return (
+                        <label
+                          key={dept}
+                          className={`flex items-center gap-2 p-1.5 rounded-lg cursor-pointer text-[11px] transition-colors ${
+                            isSelected ? 'bg-sky-50 text-[#0275a8] font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleToggleDepartment(dept)}
+                            className="rounded border-slate-300 text-[#0275a8] focus:ring-[#0275a8]"
+                          />
+                          <span>{dept}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <div className="pt-2 mt-1.5 border-t border-slate-100 text-right">
                     <button
                       type="button"
-                      onClick={() => setAddedDepartmentsList([])}
-                      className="text-red-500 hover:text-red-700 font-bold hover:underline cursor-pointer text-[10px]"
+                      onClick={() => setIsDeptDropdownOpen(false)}
+                      className="px-3 py-1 bg-[#1a5075] hover:bg-[#0275a8] text-white rounded-lg text-[10px] font-bold cursor-pointer"
                     >
-                      Clear all
+                      Done
                     </button>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {addedDepartmentsList.map((dept, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#e6f4fa] text-[#0275a8] border border-[#b2ddf0] text-xs font-bold shadow-2xs"
-                      >
-                        <span>{dept}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveDepartmentItem(dept)}
-                          className="text-[#0275a8] hover:text-red-600 hover:bg-red-50 rounded-xs p-0.5 transition-colors cursor-pointer"
-                          title={`Remove ${dept}`}
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    ))}
                   </div>
                 </div>
               )}
             </div>
+
+            {functionalDeptErrors.department && (
+              <p className="text-[11px] text-red-600 font-semibold">{functionalDeptErrors.department}</p>
+            )}
+
+            {addedDepartmentsList.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {addedDepartmentsList.map((dept, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-50 text-sky-900 border border-sky-200 text-xs font-bold"
+                  >
+                    <span>{dept}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveDepartmentItem(dept)}
+                      className="text-sky-600 hover:text-red-500 rounded p-0.5 transition-colors cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -339,9 +408,10 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             id="btn-save-functional-dept"
             type="button"
             onClick={handleSave}
-            className="px-6 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white font-extrabold rounded-xl shadow-md transition-all cursor-pointer active:scale-95 text-xs"
+            className="px-6 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white font-extrabold rounded-xl shadow-md transition-all cursor-pointer active:scale-95 text-xs flex items-center gap-1.5"
           >
-            Save
+            <CheckCircle2 className="w-4 h-4" />
+            <span>Save</span>
           </button>
         </div>
       </div>
@@ -349,14 +419,14 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
       {/* MASTER DATA VIEW: ADDED DETAILS DOWN THERE */}
       <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
         {/* Table Toolbar */}
-        <div className="p-4 bg-slate-50/70 border-b border-slate-200/80 flex items-center justify-between gap-3">
+        <div className="p-4 bg-slate-50/70 border-b border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="relative w-full max-w-md">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by functional or configured department name..."
+              placeholder="Search..."
               className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 shadow-inner focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
             />
           </div>
@@ -368,7 +438,7 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             <thead className="bg-slate-100/80 text-slate-600 font-extrabold border-b border-slate-200 uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="py-3.5 px-4 w-[35%]">Functional</th>
-                <th className="py-3.5 px-4 w-[65%]">Configured Departments</th>
+                <th className="py-3.5 px-4 w-[65%]">Department</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
@@ -423,3 +493,5 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
     </div>
   );
 };
+
+export const HrFunctionalMasterView = HrDepartmentMasterView;

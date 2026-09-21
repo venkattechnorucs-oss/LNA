@@ -75,10 +75,10 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
               <thead className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
                 <tr>
                   <th className="p-3 border-r border-slate-200/80 text-center">Year</th>
-                  <th className="p-3 border-r border-slate-200/80 text-center">Action</th>
                   <th className="p-3 border-r border-slate-200/80 text-center whitespace-nowrap">Date</th>
                   <th className="p-3 border-r border-slate-200/80 text-center">Manager</th>
-                  <th className="p-3 text-center">Status</th>
+                  <th className="p-3 border-r border-slate-200/80 text-center">Status</th>
+                  <th className="p-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -89,28 +89,13 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
                       2026
                     </span>
                   </td>
-                  <td className="p-3 border-r border-slate-100 text-center">
-                    <button
-                      type="button"
-                      onClick={onNavigateToLna}
-                      className="text-[#0275a8] hover:text-[#014d70] hover:underline font-bold text-center cursor-pointer inline-flex items-center justify-center group"
-                    >
-                      <span className="font-extrabold">
-                        {submission?.status === 'MANAGER APPROVED' || submission?.status === 'SUBMITTED FOR MANAGER REVIEW'
-                          ? 'View'
-                          : submission?.status === 'SENT BACK TO EMPLOYEE'
-                          ? 'Edit'
-                          : 'Start'}
-                      </span>
-                    </button>
-                  </td>
                   <td className="p-3 text-slate-700 font-medium border-r border-slate-100 whitespace-nowrap text-center">
                     {submission?.submissionDate || '15 Jan 2026'}
                   </td>
                   <td className="p-3 text-slate-800 font-medium border-r border-slate-100 text-center">
                     {employee.reportingManager || 'Suresh Nair'}
                   </td>
-                  <td className="p-3 text-center">
+                  <td className="p-3 border-r border-slate-100 text-center">
                     {submission?.status === 'MANAGER APPROVED' ? (
                       <span className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-800 border border-emerald-300/70 px-2.5 py-1 rounded-full font-bold text-[10px] shadow-2xs">
                         <CheckCircle2 className="w-3 h-3 text-emerald-600" />
@@ -133,6 +118,21 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
                       </span>
                     )}
                   </td>
+                  <td className="p-3 text-center">
+                    <button
+                      type="button"
+                      onClick={onNavigateToLna}
+                      className="text-[#0275a8] hover:text-[#014d70] hover:underline font-bold text-center cursor-pointer inline-flex items-center justify-center group"
+                    >
+                      <span className="font-extrabold">
+                        {submission?.status === 'MANAGER APPROVED' || submission?.status === 'SUBMITTED FOR MANAGER REVIEW'
+                          ? 'View'
+                          : submission?.status === 'SENT BACK TO EMPLOYEE'
+                          ? 'Edit'
+                          : 'Start'}
+                      </span>
+                    </button>
+                  </td>
                 </tr>
 
                 {/* Previous Cycles (Completed) */}
@@ -141,7 +141,19 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
                     <td className="p-3 font-bold text-slate-700 border-r border-slate-100 text-center">
                       {prev.cycleYear}
                     </td>
-                    <td className="p-3 text-slate-700 font-medium border-r border-slate-100 text-center">
+                    <td className="p-3 text-slate-600 border-r border-slate-100 whitespace-nowrap text-center">
+                      {prev.completionDate}
+                    </td>
+                    <td className="p-3 text-slate-700 border-r border-slate-100 text-center">
+                      {prev.reportingManager || 'Suresh Nair'}
+                    </td>
+                    <td className="p-3 border-r border-slate-100 text-center">
+                      <span className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-800 border border-emerald-300/70 px-2.5 py-1 rounded-full font-bold text-[10px] shadow-2xs">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        {prev.status}
+                      </span>
+                    </td>
+                    <td className="p-3 text-slate-700 font-medium text-center">
                       <button
                         type="button"
                         onClick={onNavigateToLna}
@@ -149,18 +161,6 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
                       >
                         <span>View</span>
                       </button>
-                    </td>
-                    <td className="p-3 text-slate-600 border-r border-slate-100 whitespace-nowrap text-center">
-                      {prev.completionDate}
-                    </td>
-                    <td className="p-3 text-slate-700 border-r border-slate-100 text-center">
-                      {prev.reportingManager || 'Suresh Nair'}
-                    </td>
-                    <td className="p-3 text-center">
-                      <span className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-800 border border-emerald-300/70 px-2.5 py-1 rounded-full font-bold text-[10px] shadow-2xs">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                        {prev.status}
-                      </span>
                     </td>
                   </tr>
                 ))}

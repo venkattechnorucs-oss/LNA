@@ -1395,7 +1395,7 @@ export default function App() {
                 onRevokeRelease={handleRevokeRelease}
                 onNavigateToHistory={() => setCurrentTab('hr-assessment-history')}
               />
-            ) : currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department' ? (
+            ) : currentTab === 'hr-functional-master' || currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department' ? (
               <HrDepartmentMasterView
                 onNavigateToCompetencies={() => setCurrentTab('hr-competency-skills-master')}
               />
