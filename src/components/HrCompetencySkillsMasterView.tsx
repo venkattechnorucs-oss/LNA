@@ -737,6 +737,15 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     }
   });
 
+  const [deletedFunctionals, setDeletedFunctionals] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('gans_deleted_functionals');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
   // Keep custom catalog in sync when updated from Department Master view
   useEffect(() => {
     const handleStorageChange = () => {
@@ -744,6 +753,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
         const saved = localStorage.getItem('gans_custom_functionals_catalog');
         if (saved) {
           setCustomCatalog(JSON.parse(saved));
+        }
+        const savedDeleted = localStorage.getItem('gans_deleted_functionals');
+        if (savedDeleted) {
+          setDeletedFunctionals(JSON.parse(savedDeleted));
         }
       } catch (err) {
         console.error(err);
@@ -758,11 +771,15 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   }, []);
 
   const mergedCatalog = useMemo<Record<string, FunctionalDefinition>>(() => {
-    return {
+    const res: Record<string, FunctionalDefinition> = {
       ...FUNCTIONAL_STRUCTURE_CATALOG,
       ...customCatalog
     };
-  }, [customCatalog]);
+    deletedFunctionals.forEach((k) => {
+      delete res[k];
+    });
+    return res;
+  }, [customCatalog, deletedFunctionals]);
 
   const customFunctionalKeys = useMemo(() => Object.keys(customCatalog), [customCatalog]);
 

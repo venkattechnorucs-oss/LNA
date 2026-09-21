@@ -5,7 +5,9 @@ import {
   X,
   CheckCircle2,
   Search,
-  ChevronDown
+  ChevronDown,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 import {
   FunctionalDefinition,
@@ -28,6 +30,20 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
     }
   });
 
+  // Track deleted functional keys (persisted in localStorage)
+  const [deletedFunctionals, setDeletedFunctionals] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('gans_deleted_functionals');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Edit and Delete Confirmation State
+  const [editingOriginalKey, setEditingOriginalKey] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ fnKey: string; name: string } | null>(null);
+
   // Listen for storage events across components
   useEffect(() => {
     const handleStorageChange = () => {
@@ -35,6 +51,10 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
         const saved = localStorage.getItem('gans_custom_functionals_catalog');
         if (saved) {
           setCustomCatalog(JSON.parse(saved));
+        }
+        const savedDeleted = localStorage.getItem('gans_deleted_functionals');
+        if (savedDeleted) {
+          setDeletedFunctionals(JSON.parse(savedDeleted));
         }
       } catch (err) {
         console.error(err);
@@ -90,13 +110,17 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
   // Table search state
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Merged catalog of standard catalog + custom catalog
+  // Merged catalog of standard catalog + custom catalog, excluding deleted functionals
   const mergedCatalog = useMemo<Record<string, FunctionalDefinition>>(() => {
-    return {
+    const res: Record<string, FunctionalDefinition> = {
       ...FUNCTIONAL_STRUCTURE_CATALOG,
       ...customCatalog
     };
-  }, [customCatalog]);
+    deletedFunctionals.forEach((k) => {
+      delete res[k];
+    });
+    return res;
+  }, [customCatalog, deletedFunctionals]);
 
   const allFunctionalKeys = useMemo(() => Object.keys(mergedCatalog), [mergedCatalog]);
 
@@ -124,6 +148,65 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
     setAddedDepartmentsList([]);
     setFunctionalDeptErrors({});
     setIsDeptDropdownOpen(false);
+    setEditingOriginalKey(null);
+  };
+
+  // Populate form with row data to edit
+  const handleEditFunctional = (fnKey: string) => {
+    const fn = mergedCatalog[fnKey];
+    if (!fn) return;
+    setEditingOriginalKey(fnKey);
+    setNewFunctionalName(fn.name);
+    setAddedDepartmentsList(fn.departments ? [...fn.departments] : []);
+    setFunctionalDeptErrors({});
+    setIsDeptDropdownOpen(false);
+
+    // Smoothly scroll to the form card above
+    const formCard = document.getElementById('add-functional-form-card');
+    if (formCard) {
+      formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Confirm and execute removal of functional
+  const handleConfirmDelete = () => {
+    if (!deleteConfirm) return;
+    const { fnKey, name } = deleteConfirm;
+
+    const updatedCatalog = { ...customCatalog };
+    delete updatedCatalog[fnKey];
+    delete updatedCatalog[name];
+
+    let updatedDeleted = [...deletedFunctionals];
+    if (!updatedDeleted.includes(fnKey)) {
+      updatedDeleted.push(fnKey);
+    }
+    if (!updatedDeleted.includes(name)) {
+      updatedDeleted.push(name);
+    }
+
+    setCustomCatalog(updatedCatalog);
+    setDeletedFunctionals(updatedDeleted);
+
+    try {
+      localStorage.setItem('gans_custom_functionals_catalog', JSON.stringify(updatedCatalog));
+      localStorage.setItem('gans_deleted_functionals', JSON.stringify(updatedDeleted));
+      window.dispatchEvent(new Event('gans_catalog_updated'));
+    } catch (e) {
+      console.error('Failed to delete functional', e);
+    }
+
+    if (editingOriginalKey === fnKey || editingOriginalKey === name) {
+      resetForm();
+    }
+
+    setActionToast({
+      message: `Functional "${name}" removed successfully.`,
+      type: 'info'
+    });
+    setTimeout(() => setActionToast(null), 4000);
+
+    setDeleteConfirm(null);
   };
 
   // Toggle department selection in multiselect (like roles in competency skills master)
@@ -163,31 +246,46 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
 
     const finalDepts = [...addedDepartmentsList];
 
-    // Save to customCatalog and localStorage
-    const updatedCatalog: Record<string, FunctionalDefinition> = {
-      ...customCatalog,
-      [trimmedFn]: {
-        name: trimmedFn,
-        departments: finalDepts,
-        competencies: mergedCatalog[trimmedFn]?.competencies || [
-          `${trimmedFn} Core Competency`,
-          'Operational Excellence',
-          'Technical Knowledge',
-          'Compliance & Standards'
-        ]
+    // If editing and renamed, clean up old key
+    let updatedCatalog: Record<string, FunctionalDefinition> = { ...customCatalog };
+    let updatedDeleted = [...deletedFunctionals];
+
+    if (editingOriginalKey && editingOriginalKey !== trimmedFn) {
+      delete updatedCatalog[editingOriginalKey];
+      if (!updatedDeleted.includes(editingOriginalKey)) {
+        updatedDeleted.push(editingOriginalKey);
       }
+    }
+
+    // Ensure the new name is not marked as deleted
+    updatedDeleted = updatedDeleted.filter((k) => k !== trimmedFn);
+
+    updatedCatalog[trimmedFn] = {
+      name: trimmedFn,
+      departments: finalDepts,
+      competencies: mergedCatalog[editingOriginalKey || trimmedFn]?.competencies || [
+        `${trimmedFn} Core Competency`,
+        'Operational Excellence',
+        'Technical Knowledge',
+        'Compliance & Standards'
+      ]
     };
 
     setCustomCatalog(updatedCatalog);
+    setDeletedFunctionals(updatedDeleted);
+
     try {
       localStorage.setItem('gans_custom_functionals_catalog', JSON.stringify(updatedCatalog));
+      localStorage.setItem('gans_deleted_functionals', JSON.stringify(updatedDeleted));
       window.dispatchEvent(new Event('gans_catalog_updated'));
     } catch (e) {
       console.error('Failed to save custom functionals catalog', e);
     }
 
     setActionToast({
-      message: `Functional "${trimmedFn}" saved successfully.`,
+      message: editingOriginalKey
+        ? `Functional "${trimmedFn}" updated successfully.`
+        : `Functional "${trimmedFn}" saved successfully.`,
       type: 'success'
     });
     setTimeout(() => setActionToast(null), 4000);
@@ -259,8 +357,13 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             <div className="p-1.5 rounded-lg bg-[#0275a8]/10 text-[#0275a8]">
               <Network className="w-4 h-4" />
             </div>
-            <h2 className="text-sm font-extrabold text-slate-800">
-              Add Functional &amp; Department
+            <h2 className="text-sm font-extrabold text-slate-800 flex items-center gap-2">
+              <span>{editingOriginalKey ? 'Edit Functional & Department' : 'Add Functional & Department'}</span>
+              {editingOriginalKey && (
+                <span className="text-[10px] font-bold bg-sky-100 text-[#0275a8] border border-sky-300/70 px-2 py-0.5 rounded-full">
+                  Editing: {editingOriginalKey}
+                </span>
+              )}
             </h2>
           </div>
         </div>
@@ -408,10 +511,9 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             id="btn-save-functional-dept"
             type="button"
             onClick={handleSave}
-            className="px-6 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white font-extrabold rounded-xl shadow-md transition-all cursor-pointer active:scale-95 text-xs flex items-center gap-1.5"
+            className="px-6 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white font-extrabold rounded-xl shadow-md transition-all cursor-pointer active:scale-95 text-xs text-center"
           >
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Save</span>
+            <span>{editingOriginalKey ? 'Update' : 'Save'}</span>
           </button>
         </div>
       </div>
@@ -437,14 +539,15 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-100/80 text-slate-600 font-extrabold border-b border-slate-200 uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="py-3.5 px-4 w-[35%]">Functional</th>
-                <th className="py-3.5 px-4 w-[65%]">Department</th>
+                <th className="py-3.5 px-4 w-[30%]">Functional</th>
+                <th className="py-3.5 px-4 w-[55%]">Department</th>
+                <th className="py-3.5 px-3 w-[15%] text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {filteredFunctionals.length === 0 ? (
                 <tr>
-                  <td colSpan={2} className="py-12 text-center text-slate-400">
+                  <td colSpan={3} className="py-12 text-center text-slate-400">
                     <Building2 className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                     <p className="text-xs font-bold text-slate-600">No functional units or departments found</p>
                     <p className="text-[11px] text-slate-400 mt-1">Try adjusting your search query or add a new one above</p>
@@ -482,6 +585,28 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
                           ))}
                         </div>
                       </td>
+
+                      {/* Action Column with Edit and Remove Symbols */}
+                      <td className="py-3.5 px-3 text-center align-middle">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleEditFunctional(fnKey)}
+                            className="p-1.5 text-slate-400 hover:text-[#0275a8] hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
+                            title="Edit Functional"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirm({ fnKey, name: fn.name })}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            title="Remove Functional"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   );
                 })
@@ -490,6 +615,45 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
           </table>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setDeleteConfirm(null)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 space-y-4 text-center animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-slate-800 text-sm">Remove Functional</h3>
+              <p className="text-xs text-slate-500">
+                Are you sure you want to remove <strong>{deleteConfirm.name}</strong> and its department mappings?
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold rounded-xl shadow-md cursor-pointer active:scale-95 transition-all"
+              >
+                Yes, Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
