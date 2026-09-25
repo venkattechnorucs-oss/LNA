@@ -67,12 +67,12 @@ export const EmployeeDetailsSection: React.FC<EmployeeDetailsSectionProps> = ({ 
             <span>{employee.department}</span>
           </div>
 
-          {/* Row 4: Function & Manager */}
+          {/* Row 4: Section & Manager */}
           <div className="bg-[#f2f7fa]/90 p-3 font-extrabold text-slate-700 flex items-center">
-            <span>Function</span>
+            <span>Section</span>
           </div>
           <div className="bg-white/95 p-3 text-xs font-semibold text-slate-800 flex items-center">
-            <span>{employee.function || employee.department}</span>
+            <span>{employee.section || employee.function || employee.department}</span>
           </div>
 
           <div className="bg-[#f2f7fa]/90 p-3 font-extrabold text-slate-700 flex items-center">

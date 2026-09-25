@@ -5,7 +5,8 @@ import {
   Download,
   Calendar,
   CheckCircle2,
-  FileText
+  FileText,
+  Building2
 } from 'lucide-react';
 
 interface HrReportsViewProps {
@@ -14,6 +15,7 @@ interface HrReportsViewProps {
 
 export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
   const [selectedYear, setSelectedYear] = useState<string>('2026');
+  const [selectedEntity, setSelectedEntity] = useState<string>('ALL');
   const [selectedDivision, setSelectedDivision] = useState<string>('ALL');
   const [selectedDepartment, setSelectedDepartment] = useState<string>('ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
@@ -45,6 +47,10 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
   const filteredRecords = useMemo(() => {
     return records.filter((r) => {
       if (selectedYear !== 'ALL' && getRecordYear(r).toString() !== selectedYear) return false;
+      if (selectedEntity !== 'ALL') {
+        const empEntity = r.employee.entity || 'GANS';
+        if (empEntity !== selectedEntity) return false;
+      }
       if (selectedDivision !== 'ALL' && r.employee.division !== selectedDivision) return false;
       if (selectedDepartment !== 'ALL' && r.employee.department !== selectedDepartment) return false;
       if (selectedStatus !== 'ALL' && r.status !== selectedStatus) return false;
@@ -57,12 +63,13 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
       }
       return true;
     });
-  }, [records, selectedYear, selectedDivision, selectedDepartment, selectedStatus, searchQuery]);
+  }, [records, selectedYear, selectedEntity, selectedDivision, selectedDepartment, selectedStatus, searchQuery]);
 
   // Trigger CSV Export of Employee Details & LNA Assessments
   const handleExportLnaReport = () => {
     const headers = [
       'Year',
+      'Entity',
       'Employee Name',
       'Employee ID',
       'Email Address',
@@ -98,6 +105,7 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
 
       return [
         getRecordYear(r),
+        r.employee.entity || 'GANS',
         r.employee.name,
         r.employee.employeeId,
         r.employee.email,
@@ -165,25 +173,47 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
           </h1>
         </div>
 
-        {/* Year Selector in Banner */}
-        <div className="relative z-10 flex items-center gap-2.5 bg-white/15 hover:bg-white/20 transition-colors backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.15)] shrink-0">
-          <Calendar className="w-4 h-4 text-sky-300 shrink-0" />
-          <label htmlFor="report-year-select" className="text-xs font-bold text-sky-100 whitespace-nowrap">
-            Report Year:
-          </label>
-          <select
-            id="report-year-select"
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="bg-[#0b3350] text-white font-bold text-xs rounded-lg px-3 py-1.5 border border-white/30 focus:outline-hidden focus:ring-2 focus:ring-sky-400 cursor-pointer transition-all shadow-inner"
-          >
-            {years.map((yr) => (
-              <option key={yr} value={yr} className="bg-[#104060] text-white font-medium">
-                {yr} {yr === '2026' ? '(Active)' : ''}
-              </option>
-            ))}
-            <option value="ALL" className="bg-[#104060] text-white font-medium">All Years</option>
-          </select>
+        {/* Entity & Year Selectors in Banner */}
+        <div className="relative z-10 flex flex-wrap items-center gap-3">
+          {/* Entity Selector in Banner */}
+          <div className="flex items-center gap-2 bg-white/15 hover:bg-white/20 transition-colors backdrop-blur-md px-3 py-2 rounded-xl border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.15)] shrink-0">
+            <Building2 className="w-4 h-4 text-sky-300 shrink-0" />
+            <label htmlFor="report-entity-select" className="text-xs font-bold text-sky-100 whitespace-nowrap">
+              Entity:
+            </label>
+            <select
+              id="report-entity-select"
+              value={selectedEntity}
+              onChange={(e) => setSelectedEntity(e.target.value)}
+              className="bg-[#0b3350] text-white font-bold text-xs rounded-lg px-2.5 py-1.5 border border-white/30 focus:outline-hidden focus:ring-2 focus:ring-sky-400 cursor-pointer transition-all shadow-inner"
+            >
+              <option value="ALL" className="bg-[#104060] text-white font-medium">All Entities</option>
+              <option value="GANS" className="bg-[#104060] text-white font-medium">GANS</option>
+              <option value="Eshara" className="bg-[#104060] text-white font-medium">Eshara</option>
+              <option value="YHA" className="bg-[#104060] text-white font-medium">YHA</option>
+            </select>
+          </div>
+
+          {/* Year Selector in Banner */}
+          <div className="flex items-center gap-2 bg-white/15 hover:bg-white/20 transition-colors backdrop-blur-md px-3 py-2 rounded-xl border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.15)] shrink-0">
+            <Calendar className="w-4 h-4 text-sky-300 shrink-0" />
+            <label htmlFor="report-year-select" className="text-xs font-bold text-sky-100 whitespace-nowrap">
+              Report Year:
+            </label>
+            <select
+              id="report-year-select"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="bg-[#0b3350] text-white font-bold text-xs rounded-lg px-2.5 py-1.5 border border-white/30 focus:outline-hidden focus:ring-2 focus:ring-sky-400 cursor-pointer transition-all shadow-inner"
+            >
+              {years.map((yr) => (
+                <option key={yr} value={yr} className="bg-[#104060] text-white font-medium">
+                  {yr} {yr === '2026' ? '(Active)' : ''}
+                </option>
+              ))}
+              <option value="ALL" className="bg-[#104060] text-white font-medium">All Years</option>
+            </select>
+          </div>
         </div>
       </div>
 

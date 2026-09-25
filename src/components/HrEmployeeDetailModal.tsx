@@ -152,8 +152,8 @@ export const HrEmployeeDetailModal: React.FC<HrEmployeeDetailModalProps> = ({
                 </span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Function:</span>
-                <span className="text-slate-700 text-xs">{employee.function || employee.department}</span>
+                <span className="text-slate-500 block text-[11px]">Section:</span>
+                <span className="text-slate-700 text-xs">{employee.section || employee.function || employee.department}</span>
               </div>
               <div>
                 <span className="text-slate-500 block text-[11px]">Manager:</span>

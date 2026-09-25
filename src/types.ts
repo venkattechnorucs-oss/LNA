@@ -26,6 +26,7 @@ export interface Competency {
   department?: string;
   division?: string;
   functional?: string;
+  entity?: string;
   grade?: string;
   role?: string;
   proficiency?: ProficiencyLevel;
@@ -57,6 +58,7 @@ export interface EmployeeProfile {
   reviewPeriod?: string;
   section?: string;
   location?: string;
+  entity?: string;
 }
 
 export interface SelectedCompetencyState {
@@ -170,4 +172,5 @@ export interface ManagerDelegation {
   remarks?: string;
   createdAt?: string;
   createdBy?: string;
+  entity?: 'GANS' | 'Eshara' | 'YHA' | string;
 }

@@ -219,6 +219,22 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   </div>
                 </button>
 
+                {/* Department Master */}
+                <button
+                  type="button"
+                  onClick={() => onSelectTab('hr-department-master')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
+                    currentTab === 'hr-department-master'
+                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
+                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Building2 className={`w-4 h-4 ${currentTab === 'hr-department-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <span>Department Master</span>
+                  </div>
+                </button>
+
                 {/* Release History */}
                 <button
                   type="button"
@@ -240,13 +256,13 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   type="button"
                   onClick={() => onSelectTab('hr-functional-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
-                    currentTab === 'hr-functional-master' || currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department'
+                    currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department'
                       ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
                       : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Building2 className={`w-4 h-4 ${currentTab === 'hr-functional-master' || currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <Layers className={`w-4 h-4 ${currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department' ? 'text-white' : 'text-[#0275a8]'}`} />
                     <span>Functional Master</span>
                   </div>
                 </button>
@@ -267,6 +283,22 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   </div>
                 </button>
 
+                {/* Delegation (above Reports) */}
+                <button
+                  type="button"
+                  onClick={() => onSelectTab('hr-delegation')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
+                    currentTab === 'hr-delegation'
+                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
+                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <UserCheck className={`w-4 h-4 ${currentTab === 'hr-delegation' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <span>Delegation</span>
+                  </div>
+                </button>
+
                 {/* Reports (inside Administration) */}
                 <button
                   type="button"
@@ -280,22 +312,6 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   <div className="flex items-center gap-2.5">
                     <FileText className={`w-4 h-4 ${currentTab === 'hr-reports' ? 'text-white' : 'text-[#0275a8]'}`} />
                     <span>Reports</span>
-                  </div>
-                </button>
-
-                {/* Delegation (under Competency and Reports) */}
-                <button
-                  type="button"
-                  onClick={() => onSelectTab('hr-delegation')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
-                    currentTab === 'hr-delegation'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <UserCheck className={`w-4 h-4 ${currentTab === 'hr-delegation' ? 'text-white' : 'text-[#0275a8]'}`} />
-                    <span>Delegation</span>
                   </div>
                 </button>
               </div>

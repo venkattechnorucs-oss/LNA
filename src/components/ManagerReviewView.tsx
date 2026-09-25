@@ -777,12 +777,12 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                 <span>{effectiveSubmission.employee.department}</span>
               </div>
 
-              {/* Row 4: Function & Manager */}
+              {/* Row 4: Section & Manager */}
               <div className="bg-[#f2f7fa]/90 p-3 font-extrabold text-slate-700 flex items-center">
-                <span>Function</span>
+                <span>Section</span>
               </div>
               <div className="bg-white/95 p-3 text-xs font-semibold text-slate-800 flex items-center">
-                <span>{effectiveSubmission.employee.function || effectiveSubmission.employee.department}</span>
+                <span>{effectiveSubmission.employee.section || effectiveSubmission.employee.function || effectiveSubmission.employee.department}</span>
               </div>
 
               <div className="bg-[#f2f7fa]/90 p-3 font-extrabold text-slate-700 flex items-center">

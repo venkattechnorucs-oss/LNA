@@ -18,6 +18,7 @@ import { HrReleaseAssessmentView } from './components/HrReleaseAssessmentView';
 import { HrAssessmentHistoryView } from './components/HrAssessmentHistoryView';
 import { HrDelegationView } from './components/HrDelegationView';
 import { HrDepartmentMasterView } from './components/HrDepartmentMasterView';
+import { HrFunctionalMasterView } from './components/HrFunctionalMasterView';
 import {
   DEFAULT_EMPLOYEE,
   ALTERNATE_EMPLOYEES,
@@ -68,7 +69,19 @@ export default function App() {
   const [activeRole, setActiveRole] = useState<'employee' | 'manager' | 'hr'>('employee');
 
   // Centralized Organization Assessment Records (Single Source of Truth across Employee, Manager, HR)
-  const [orgRecords, setOrgRecords] = useState<OrgAssessmentRecord[]>(INITIAL_ORG_ASSESSMENTS);
+  const [orgRecords, setOrgRecords] = useState<OrgAssessmentRecord[]>(() => {
+    return INITIAL_ORG_ASSESSMENTS.map((rec, idx) => {
+      if (rec.employee.entity) return rec;
+      const assignedEntity = idx % 5 === 3 ? 'Eshara' : idx % 5 === 4 ? 'YHA' : 'GANS';
+      return {
+        ...rec,
+        employee: {
+          ...rec.employee,
+          entity: assignedEntity
+        }
+      };
+    });
+  });
 
   // Current active employee profile
   const [employee, setEmployee] = useState<EmployeeProfile>(DEFAULT_EMPLOYEE);
@@ -84,7 +97,11 @@ export default function App() {
         list.push(r.employee);
       }
     });
-    return list;
+    return list.map((emp, idx) => {
+      if (emp.entity) return emp;
+      const assignedEntity = idx % 5 === 3 ? 'Eshara' : idx % 5 === 4 ? 'YHA' : 'GANS';
+      return { ...emp, entity: assignedEntity };
+    });
   });
 
   const [hrCompetencies, setHrCompetencies] = useState<Competency[]>([
@@ -488,7 +505,8 @@ export default function App() {
       status: 'Active',
       remarks: 'Covering during overseas operational training',
       createdAt: '2026-09-01T08:30:00Z',
-      createdBy: 'HR Admin'
+      createdBy: 'HR Admin',
+      entity: 'GANS'
     },
     {
       id: 'DEL-002',
@@ -506,7 +524,8 @@ export default function App() {
       status: 'Active',
       remarks: 'Project assignment coverage',
       createdAt: '2026-09-05T09:00:00Z',
-      createdBy: 'HR Admin'
+      createdBy: 'HR Admin',
+      entity: 'GANS'
     },
     {
       id: 'DEL-003',
@@ -523,7 +542,8 @@ export default function App() {
       status: 'Active',
       remarks: 'Systems restructuring coverage',
       createdAt: '2026-08-15T11:00:00Z',
-      createdBy: 'HR Admin'
+      createdBy: 'HR Admin',
+      entity: 'Eshara'
     },
     {
       id: 'DEL-004',
@@ -541,7 +561,8 @@ export default function App() {
       status: 'Active',
       remarks: 'Executive committee leave coverage',
       createdAt: '2026-09-02T14:20:00Z',
-      createdBy: 'HR Admin'
+      createdBy: 'HR Admin',
+      entity: 'YHA'
     }
   ]);
 
@@ -1378,12 +1399,14 @@ export default function App() {
               <HrEmployeeMasterView
                 employees={hrEmployees}
                 onAddEmployee={handleAddEmployee}
+                onImportEmployees={handleImportEmployees}
                 onUpdateEmployee={handleUpdateEmployee}
                 onDeleteEmployee={handleDeleteEmployee}
                 onReleaseAssessments={handleReleaseAssessments}
                 releasedList={releasedAssessments}
                 skippedEmployees={skippedEmployees}
                 onNavigateToHistory={() => setCurrentTab('hr-assessment-history')}
+                onNavigateToDepartmentMaster={() => setCurrentTab('hr-department-master')}
               />
             ) : currentTab === 'hr-release-assessment' ? (
               <HrReleaseAssessmentView
@@ -1395,8 +1418,12 @@ export default function App() {
                 onRevokeRelease={handleRevokeRelease}
                 onNavigateToHistory={() => setCurrentTab('hr-assessment-history')}
               />
-            ) : currentTab === 'hr-functional-master' || currentTab === 'hr-department-master' || currentTab === 'hr-add-functional-department' ? (
+            ) : currentTab === 'hr-department-master' ? (
               <HrDepartmentMasterView
+                onNavigateToEmployeeMaster={() => setCurrentTab('hr-employee-master')}
+              />
+            ) : currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department' ? (
+              <HrFunctionalMasterView
                 onNavigateToCompetencies={() => setCurrentTab('hr-competency-skills-master')}
               />
             ) : currentTab === 'hr-competency-skills-master' || currentTab === 'hr-competency-master' || currentTab === 'hr-skills-master' ? (
@@ -1408,8 +1435,6 @@ export default function App() {
                 onAddSkill={handleAddSkill}
                 onDeleteSkill={handleDeleteSkill}
               />
-            ) : currentTab === 'hr-reports' ? (
-              <HrReportsView records={orgRecords} />
             ) : currentTab === 'hr-delegation' ? (
               <HrDelegationView
                 delegations={delegations}
@@ -1418,6 +1443,8 @@ export default function App() {
                 onUpdateDelegation={handleUpdateDelegation}
                 onDeleteDelegation={handleDeleteDelegation}
               />
+            ) : currentTab === 'hr-reports' ? (
+              <HrReportsView records={orgRecords} />
             ) : currentTab === 'hr-lna-dashboard' ? (
               <EmployeeDashboardView
                 employee={employee}

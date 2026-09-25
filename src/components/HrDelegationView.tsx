@@ -13,9 +13,12 @@ import {
   ChevronsLeft,
   ChevronsRight,
   AlertCircle,
-  User
+  User,
+  Building2
 } from 'lucide-react';
 import { ManagerDelegation, EmployeeProfile } from '../types';
+
+export type DelegationEntity = 'GANS' | 'Eshara' | 'YHA';
 
 interface HrDelegationViewProps {
   delegations: ManagerDelegation[];
@@ -32,6 +35,9 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
   onUpdateDelegation,
   onDeleteDelegation
 }) => {
+  // Entity state for the popup modal
+  const [selectedEntity, setSelectedEntity] = useState<DelegationEntity>('GANS');
+
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -55,11 +61,20 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
   const [remarks, setRemarks] = useState('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  // Relevant employees for the modal based on selected entity
+  const modalEmployees = useMemo(() => {
+    const list = employees.filter((e) => (e.entity || 'GANS') === selectedEntity);
+    return list.length > 0 ? list : employees;
+  }, [employees, selectedEntity]);
+
   // Reset or initialize form
   const handleOpenNewModal = () => {
     setEditingDelegation(null);
-    setFromEmpId(employees[0]?.employeeId || '');
-    setToEmpId(employees[1]?.employeeId || '');
+    setSelectedEntity('GANS');
+    const pool = employees.filter((e) => (e.entity || 'GANS') === 'GANS');
+    const candidateList = pool.length >= 2 ? pool : employees;
+    setFromEmpId(candidateList[0]?.employeeId || '');
+    setToEmpId(candidateList[1]?.employeeId || '');
     setStartDate(new Date().toISOString().split('T')[0]);
     setEndDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     setRemarks('');
@@ -69,6 +84,8 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
 
   const handleOpenEditModal = (del: ManagerDelegation) => {
     setEditingDelegation(del);
+    const delEntity = (del.entity as DelegationEntity) || 'GANS';
+    setSelectedEntity(delEntity);
     setFromEmpId(del.fromEmployeeId);
     setToEmpId(del.toEmployeeId);
     setStartDate(del.startDate);
@@ -135,7 +152,8 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
         toDepartment,
         startDate,
         endDate,
-        remarks: remarks.trim() || undefined
+        remarks: remarks.trim() || undefined,
+        entity: selectedEntity
       });
     } else {
       onAddDelegation({
@@ -151,7 +169,8 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
         endDate,
         status: 'Active',
         remarks: remarks.trim() || undefined,
-        createdBy: 'HR Admin'
+        createdBy: 'HR Admin',
+        entity: selectedEntity
       });
     }
 
@@ -512,6 +531,30 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
             {/* Modal Form Content */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
               
+              {/* Field 0: Entity * */}
+              <div className="space-y-1.5">
+                <label className="block font-bold text-slate-700 flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <span>Entity</span> <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={selectedEntity}
+                  onChange={(e) => {
+                    const nextEnt = e.target.value as DelegationEntity;
+                    setSelectedEntity(nextEnt);
+                    const entEmps = employees.filter((emp) => (emp.entity || 'GANS') === nextEnt);
+                    const candidatePool = entEmps.length >= 2 ? entEmps : employees;
+                    setFromEmpId(candidatePool[0]?.employeeId || '');
+                    setToEmpId(candidatePool[1]?.employeeId || '');
+                  }}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all cursor-pointer"
+                >
+                  <option value="GANS">GANS</option>
+                  <option value="Eshara">Eshara</option>
+                  <option value="YHA">YHA</option>
+                </select>
+              </div>
+
               {/* Field 1: From * */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-slate-700 flex items-center gap-1.5">
@@ -531,7 +574,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                   }`}
                 >
                   <option value="" disabled>Select From</option>
-                  {employees.map((emp) => (
+                  {modalEmployees.map((emp) => (
                     <option key={emp.employeeId} value={emp.employeeId}>
                       {emp.name} ({emp.position || 'Staff'} • {emp.department || 'General'})
                     </option>
@@ -564,7 +607,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                   }`}
                 >
                   <option value="" disabled>Select To</option>
-                  {employees
+                  {modalEmployees
                     .filter((emp) => emp.employeeId !== fromEmpId)
                     .map((emp) => (
                       <option key={emp.employeeId} value={emp.employeeId}>

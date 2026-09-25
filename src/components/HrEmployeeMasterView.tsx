@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { EmployeeProfile, AssessmentReleaseRecord, SkippedEmployeeLna } from '../types';
 import {
   Users,
@@ -23,7 +23,10 @@ import {
   UserX,
   History,
   ArrowRight,
-  UserPlus
+  UserPlus,
+  Upload,
+  Download,
+  FileSpreadsheet
 } from 'lucide-react';
 
 interface FlaggedEmployeeItem {
@@ -32,6 +35,109 @@ interface FlaggedEmployeeItem {
   record?: AssessmentReleaseRecord;
   skipRecord?: SkippedEmployeeLna;
 }
+
+const ENTITY_STRUCTURE_MAP: Record<string, { functional: { name: string; departments: string[] }[]; nonFunctional: { name: string; department: string }[] }> = {
+  GANS: {
+    functional: [
+      { name: 'Air Operations', departments: ['Air Traffic Management', 'Aeronautical Meteorology'] },
+      { name: 'Engineering Services', departments: ['CNS Systems Engineering', 'IT Infrastructure'] },
+      { name: 'Safety & Quality Assurance', departments: ['Aviation Safety & Quality', 'Airside Compliance'] }
+    ],
+    nonFunctional: [
+      { name: 'Human Resources', department: 'Human Resources' },
+      { name: 'Finance & Accounts', department: 'Finance & Accounts' },
+      { name: 'Legal & Regulatory', department: 'Legal & Regulatory' }
+    ]
+  },
+  Eshara: {
+    functional: [
+      { name: 'Air Traffic Management', departments: ['En-Route Air Traffic Operations', 'Terminal Control & Aerodromes', 'Sheikh Zayed Centre', 'ATM Operations'] },
+      { name: 'CNS Systems', departments: ['Navigation & Surveillance Engineering', 'Radar Systems & Navaids', 'CNS Operations'] },
+      { name: 'Aviation Safety', departments: ['Operational Safety Assurance', 'Air Traffic Investigations', 'Safety & QA'] },
+      { name: 'Workforce Development', departments: ['Training Academy', 'Simulator Training & Licensing'] },
+      { name: 'Air Navigation Services', departments: ['Tower Control', 'Approach Control', 'Flight Information Center'] }
+    ],
+    nonFunctional: [
+      { name: 'Human Resources', department: 'Human Resources' },
+      { name: 'Finance & Administration', department: 'Finance & Administration' },
+      { name: 'Procurement & Commercial', department: 'Procurement & Commercial' },
+      { name: 'Information Technology', department: 'Information Technology' }
+    ]
+  },
+  YHA: {
+    functional: [
+      { name: 'Aviation Consulting', departments: ['Aviation Advisory & Strategy', 'Master Planning & Advisory'] },
+      { name: 'Airspace Optimization', departments: ['Airspace Engineering', 'Route Optimization'] },
+      { name: 'Regulatory & Standards', departments: ['Regulatory Compliance', 'Aviation Safety Standards'] },
+      { name: 'Green Aviation', departments: ['Sustainability Solutions', 'Environmental Aviation Standards'] }
+    ],
+    nonFunctional: [
+      { name: 'Corporate Strategy', department: 'Corporate Strategy' },
+      { name: 'Finance & Commercial', department: 'Finance & Commercial' },
+      { name: 'Client Relations', department: 'Client Relations' }
+    ]
+  }
+};
+
+const getEntityFunctionals = (entity: string): { functional: string[]; nonFunctional: string[] } => {
+  const base = ENTITY_STRUCTURE_MAP[entity] || ENTITY_STRUCTURE_MAP['Eshara'] || ENTITY_STRUCTURE_MAP['GANS'];
+  const funcList = [...base.functional.map((f) => f.name)];
+  const nonFuncList = [...base.nonFunctional.map((f) => f.name)];
+
+  try {
+    const savedV2 = localStorage.getItem('functional_master_entity_records_v4') || localStorage.getItem('functional_master_entity_records_v3') || localStorage.getItem('functional_master_entity_records_v2');
+    if (savedV2) {
+      const list = JSON.parse(savedV2);
+      list.forEach((item: { entity: string; functional: string; departments?: string[] }) => {
+        if (item.entity === entity && item.functional) {
+          if (!funcList.includes(item.functional) && !nonFuncList.includes(item.functional)) {
+            if (item.departments && item.departments.length > 1) {
+              funcList.push(item.functional);
+            } else {
+              nonFuncList.push(item.functional);
+            }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return { functional: funcList, nonFunctional: nonFuncList };
+};
+
+const getDepartmentsForEntityAndFunctional = (entity: string, functional: string): string[] => {
+  const deptSet = new Set<string>();
+  const base = ENTITY_STRUCTURE_MAP[entity] || ENTITY_STRUCTURE_MAP['GANS'];
+  if (base) {
+    const fMatch = base.functional.find((f) => f.name === functional);
+    if (fMatch) {
+      fMatch.departments.forEach((d) => deptSet.add(d));
+    }
+    const nfMatch = base.nonFunctional.find((f) => f.name === functional);
+    if (nfMatch) {
+      deptSet.add(nfMatch.department);
+    }
+  }
+  try {
+    const saved = localStorage.getItem('functional_master_entity_records_v2');
+    if (saved) {
+      const records = JSON.parse(saved);
+      records.forEach((r: { entity: string; functional: string; departments?: string[] }) => {
+        if (r.entity === entity && r.functional === functional && r.departments) {
+          r.departments.forEach((d) => deptSet.add(d));
+        }
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  if (deptSet.size === 0 && functional) {
+    deptSet.add(functional);
+  }
+  return Array.from(deptSet).sort();
+};
 
 interface HrEmployeeMasterViewProps {
   employees: EmployeeProfile[];
@@ -49,6 +155,7 @@ interface HrEmployeeMasterViewProps {
   releasedList?: AssessmentReleaseRecord[];
   skippedEmployees?: SkippedEmployeeLna[];
   onNavigateToHistory?: () => void;
+  onNavigateToDepartmentMaster?: () => void;
 }
 
 export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
@@ -61,7 +168,8 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
   onReleaseAssessments,
   releasedList = [],
   skippedEmployees = [],
-  onNavigateToHistory
+  onNavigateToHistory,
+  onNavigateToDepartmentMaster
 }) => {
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,37 +204,10 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
     grade: 8,
     joinDate: '',
     section: '',
-    location: 'Abu Dhabi HQ'
+    location: 'Abu Dhabi HQ',
+    entity: 'GANS'
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
-  // Dynamic list of Functionals (from catalog + custom catalog + existing records)
-  const availableFunctionals = useMemo(() => {
-    let custom: Record<string, any> = {};
-    let deleted: string[] = [];
-    try {
-      const saved = localStorage.getItem('gans_custom_functionals_catalog');
-      if (saved) custom = JSON.parse(saved);
-      const del = localStorage.getItem('gans_deleted_functionals');
-      if (del) deleted = JSON.parse(del);
-    } catch {}
-
-    const list = new Set<string>([
-      'Air Traffic Management',
-      'Communication, Navigation & Surveillance (CNS)',
-      'Meteorological Services',
-      'Corporate Strategy',
-      'Safety & Quality Assurance',
-      'Aviation Security',
-      'Human Resources',
-      'Finance & Administration',
-      'Engineering & Maintenance',
-      ...Object.keys(custom),
-      ...(employees.map((e) => e.function).filter(Boolean) as string[])
-    ]);
-    deleted.forEach((k) => list.delete(k));
-    return Array.from(list).sort();
-  }, [employees]);
 
   // Dynamic list of Divisions
   const availableDivisions = useMemo(() => {
@@ -158,6 +239,17 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
     ]);
     return Array.from(list).sort();
   }, [employees]);
+
+  const currentEntity = formData.entity || 'GANS';
+  const entityFunctionals = useMemo(() => {
+    return getEntityFunctionals(currentEntity);
+  }, [currentEntity]);
+
+  const currentEntityDepartments = useMemo(() => {
+    const fromFunc = getDepartmentsForEntityAndFunctional(currentEntity, formData.function || '');
+    if (fromFunc.length > 0) return fromFunc;
+    return availableDepartments;
+  }, [currentEntity, formData.function, availableDepartments]);
 
   // Dynamic list of Managers
   const availableManagers = useMemo(() => {
@@ -211,6 +303,13 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
 
   const [modalFilterTab, setModalFilterTab] = useState<'all' | 'released' | 'skipped'>('all');
 
+  // Bulk CSV Import Modal State
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importParsedList, setImportParsedList] = useState<EmployeeProfile[]>([]);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importFileName, setImportFileName] = useState<string>('');
+  const importFileInputRef = useRef<HTMLInputElement>(null);
+
   // Dynamic filter dropdown items
   const divisions = useMemo(() => {
     return Array.from(new Set(employees.map((e) => e.division))).filter(Boolean).sort();
@@ -241,7 +340,8 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
         const matchEmail = emp.email.toLowerCase().includes(q);
         const matchManager = emp.reportingManager.toLowerCase().includes(q);
         const matchFunc = (emp.function || '').toLowerCase().includes(q);
-        if (!matchName && !matchId && !matchPos && !matchEmail && !matchManager && !matchFunc) return false;
+        const matchSec = (emp.section || '').toLowerCase().includes(q);
+        if (!matchName && !matchId && !matchPos && !matchEmail && !matchManager && !matchFunc && !matchSec) return false;
       }
       return true;
     });
@@ -251,19 +351,26 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
   const handleOpenAddModal = () => {
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     setModalMode('add');
+    const initialEntity = 'Eshara';
+    const funcs = getEntityFunctionals(initialEntity);
+    const initialFunc = funcs.functional[0] || 'Air Traffic Management';
+    const depts = getDepartmentsForEntityAndFunctional(initialEntity, initialFunc);
+    const initialDept = depts[0] || availableDepartments[0] || 'ATM Operations';
+
     setFormData({
       name: '',
       employeeId: `EMP00${randomNum}`,
       email: '',
       reportingManager: availableManagers[0] || 'Mansoor Al Hammadi',
       position: '',
-      function: availableFunctionals[0] || 'Air Traffic Management',
+      function: initialFunc,
+      section: initialFunc,
       division: availableDivisions[0] || 'Air Navigation Services',
-      department: availableDepartments[0] || 'ATM Operations',
+      department: initialDept,
       grade: 8,
       joinDate: new Date().toISOString().split('T')[0],
-      section: '',
-      location: 'Abu Dhabi HQ'
+      location: 'Abu Dhabi HQ',
+      entity: initialEntity
     });
     setFormErrors({});
     setShowEditModal(true);
@@ -272,29 +379,32 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
   // Open Edit Employee Modal
   const handleOpenEditModal = (emp: EmployeeProfile) => {
     setModalMode('edit');
+    const empEntity = emp.entity || 'GANS';
+    const empFunc = emp.function || emp.section || 'Air Traffic Management';
     setFormData({
       ...emp,
-      function: emp.function || 'Air Traffic Management',
+      entity: empEntity,
+      function: empFunc,
+      section: empFunc,
+      joinDate: emp.joinDate || new Date().toISOString().split('T')[0],
       location: emp.location || 'Abu Dhabi HQ'
     });
     setFormErrors({});
     setShowEditModal(true);
   };
 
-  // Validation for Add/Edit Employee Form
+  // Validation for Add/Edit Employee Form (11 inputs)
   const validateForm = () => {
     const errs: Record<string, string> = {};
     if (!formData.name.trim()) errs.name = 'Employee Name is required';
-    if (!formData.position.trim()) errs.position = 'Position is required';
+    if (!formData.position.trim()) errs.position = 'Position/Designation is required';
     if (!formData.employeeId.trim()) errs.employeeId = 'Employee ID is required';
-    if (!formData.email.trim()) {
-      errs.email = 'Email is required';
-    } else if (!formData.email.includes('@')) {
-      errs.email = 'Valid email is required';
-    }
+    if (!formData.joinDate?.trim()) errs.joinDate = 'DOJ is required';
+    if (!formData.entity?.trim()) errs.entity = 'Entity is required';
     if (!formData.function?.trim()) errs.function = 'Functional is required';
     if (!formData.department.trim()) errs.department = 'Department is required';
     if (!formData.division.trim()) errs.division = 'Division is required';
+    if (!formData.grade) errs.grade = 'Grade is required';
     if (!formData.reportingManager.trim()) errs.reportingManager = 'Manager is required';
     if (!formData.location?.trim()) errs.location = 'Location is required';
     setFormErrors(errs);
@@ -307,20 +417,25 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
 
     const trimmedName = formData.name.trim();
     const autoId = formData.employeeId.trim() || `EMP00${Math.floor(1000 + Math.random() * 9000)}`;
-    const autoEmail = formData.email.trim() || `${trimmedName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@gans.aero`;
+    const curEntity = formData.entity || 'GANS';
+    const autoEmail = formData.email?.trim() || `${trimmedName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@${curEntity.toLowerCase()}.aero`;
+    const chosenFunc = formData.function?.trim() || 'Air Traffic Management';
 
     const finalEmp: EmployeeProfile = {
       ...formData,
       name: trimmedName,
       employeeId: autoId,
       email: autoEmail,
-      function: formData.function?.trim() || 'Air Traffic Management',
+      entity: curEntity,
+      function: chosenFunc,
+      section: chosenFunc,
       department: formData.department.trim(),
       division: formData.division.trim(),
       position: formData.position.trim(),
       reportingManager: formData.reportingManager.trim(),
       location: formData.location?.trim() || 'Abu Dhabi HQ',
-      grade: Number(formData.grade) || 8
+      grade: Number(formData.grade) || 8,
+      joinDate: formData.joinDate || new Date().toISOString().split('T')[0]
     };
 
     if (modalMode === 'add') {
@@ -456,6 +571,159 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
     executeRelease(mode, targetIds);
   };
 
+  // Bulk Import Handlers
+  const handleDownloadSampleEmployeeCsv = () => {
+    const headers = 'Employee Name,Position,Employee ID,DOJ,Entity,Functional,Department,Division,Grade,Reporting Manager,Location,Email\n';
+    const sampleRows = [
+      'Ahmed Al Mansoori,Senior Air Traffic Controller,EMP00801,2024-03-15,Eshara,Air Traffic Management,En-Route Air Traffic Operations,ATM Operations,8,Madhesh Maasi,Abu Dhabi HQ,ahmed.almansoori@eshara.aero',
+      'Fatima Al Zaabi,CNS Avionics Engineer,EMP00802,2023-11-01,Eshara,CNS Systems,Navigation & Surveillance Engineering,CNS Operations,7,Suresh Nair,Al Ain International Airport,fatima.alzaabi@eshara.aero',
+      'Rashid Al Shamsi,Aviation Strategy Analyst,EMP00803,2024-01-10,YHA,Aviation Consulting,Aviation Advisory & Strategy,Corporate Strategy,7,Anita Rao,Dubai Operations,rashid.alshamsi@yha.aero'
+    ].join('\n');
+
+    const blob = new Blob([headers + sampleRows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'employee_master_import_template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImportError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImportFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const text = evt.target?.result as string;
+        if (!text) {
+          setImportError('Uploaded file appears empty or unreadable.');
+          return;
+        }
+
+        const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+        if (lines.length <= 1) {
+          setImportError('No data rows found in the uploaded CSV. Ensure the first line is the header.');
+          return;
+        }
+
+        const headerCols = lines[0].split(',').map((c) => c.trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
+        
+        const nameIdx = headerCols.findIndex((c) => c.includes('name'));
+        const posIdx = headerCols.findIndex((c) => c.includes('position') || c.includes('designation') || c.includes('title'));
+        const idIdx = headerCols.findIndex((c) => c.includes('id') || c.includes('empid') || c.includes('employeeid'));
+        const dojIdx = headerCols.findIndex((c) => c.includes('doj') || c.includes('date') || c.includes('join'));
+        const entityIdx = headerCols.findIndex((c) => c.includes('entity'));
+        const funcIdx = headerCols.findIndex((c) => c.includes('func'));
+        const deptIdx = headerCols.findIndex((c) => c.includes('dept') || c.includes('department'));
+        const divIdx = headerCols.findIndex((c) => c.includes('div') || c.includes('division'));
+        const gradeIdx = headerCols.findIndex((c) => c.includes('grade'));
+        const mgrIdx = headerCols.findIndex((c) => c.includes('manager') || c.includes('reporting'));
+        const locIdx = headerCols.findIndex((c) => c.includes('location'));
+        const emailIdx = headerCols.findIndex((c) => c.includes('email'));
+
+        const parsed: EmployeeProfile[] = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const rawLine = lines[i];
+          const parts: string[] = [];
+          let current = '';
+          let inQuotes = false;
+          for (let charIndex = 0; charIndex < rawLine.length; charIndex++) {
+            const char = rawLine[charIndex];
+            if (char === '"' || char === "'") {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              parts.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          parts.push(current.trim());
+
+          const name = (nameIdx >= 0 ? parts[nameIdx] : parts[0]) || '';
+          if (!name.trim()) continue;
+
+          const position = (posIdx >= 0 ? parts[posIdx] : parts[1]) || 'Specialist';
+          let empId = (idIdx >= 0 ? parts[idIdx] : parts[2]) || '';
+          if (!empId.trim()) {
+            empId = `EMP${String(Math.floor(10000 + Math.random() * 90000))}`;
+          }
+
+          const joinDate = (dojIdx >= 0 ? parts[dojIdx] : parts[3]) || new Date().toISOString().split('T')[0];
+          let entity = (entityIdx >= 0 ? parts[entityIdx] : parts[4]) || 'Eshara';
+          if (entity.toUpperCase().includes('ESHARA')) {
+            entity = 'Eshara';
+          } else if (entity.toUpperCase().includes('YHA')) {
+            entity = 'YHA';
+          } else if (entity.toUpperCase().includes('GANS') || entity.toUpperCase() === 'SQL') {
+            entity = 'GANS';
+          } else {
+            entity = 'Eshara';
+          }
+
+          const funcVal = (funcIdx >= 0 ? parts[funcIdx] : parts[5]) || 'Air Traffic Management';
+          const department = (deptIdx >= 0 ? parts[deptIdx] : parts[6]) || 'Operations';
+          const division = (divIdx >= 0 ? parts[divIdx] : parts[7]) || 'Operations';
+          const gradeRaw = gradeIdx >= 0 ? parseInt(parts[gradeIdx], 10) : 7;
+          const grade = isNaN(gradeRaw) || gradeRaw < 1 || gradeRaw > 12 ? 7 : gradeRaw;
+          const reportingManager = (mgrIdx >= 0 ? parts[mgrIdx] : parts[9]) || (employees[0]?.name || 'Management');
+          const location = (locIdx >= 0 ? parts[locIdx] : parts[10]) || 'Abu Dhabi HQ';
+          const email = (emailIdx >= 0 && parts[emailIdx]) ? parts[emailIdx] : `${name.toLowerCase().replace(/[^a-z0-9]/g, '.')}@${entity.toLowerCase()}.aero`;
+
+          parsed.push({
+            name: name.replace(/^["']|["']$/g, ''),
+            position: position.replace(/^["']|["']$/g, ''),
+            employeeId: empId.replace(/^["']|["']$/g, ''),
+            joinDate: joinDate.replace(/^["']|["']$/g, ''),
+            entity,
+            function: funcVal.replace(/^["']|["']$/g, ''),
+            department: department.replace(/^["']|["']$/g, ''),
+            division: division.replace(/^["']|["']$/g, ''),
+            grade,
+            reportingManager: reportingManager.replace(/^["']|["']$/g, ''),
+            location: location.replace(/^["']|["']$/g, ''),
+            email: email.replace(/^["']|["']$/g, '')
+          });
+        }
+
+        if (parsed.length === 0) {
+          setImportError('No valid employee records could be parsed. Check column formats.');
+          return;
+        }
+
+        setImportParsedList(parsed);
+      } catch (err) {
+        setImportError('Failed to parse file: ' + String(err));
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleConfirmImport = () => {
+    if (importParsedList.length === 0) return;
+    if (onImportEmployees) {
+      onImportEmployees(importParsedList);
+    } else if (onAddEmployee) {
+      importParsedList.forEach((emp) => onAddEmployee(emp));
+    }
+    setSuccessToast(`Successfully imported ${importParsedList.length} employee record${importParsedList.length > 1 ? 's' : ''}.`);
+    setTimeout(() => setSuccessToast(null), 4000);
+    setIsImportModalOpen(false);
+    setImportParsedList([]);
+    setImportFileName('');
+    setImportError(null);
+    if (importFileInputRef.current) {
+      importFileInputRef.current.value = '';
+    }
+  };
+
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
       
@@ -527,6 +795,24 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
               </>
             )}
           </div>
+
+          {/* Import Button (Placed between Release and Add Employee) */}
+          <button
+            id="btn-import-employees"
+            type="button"
+            onClick={() => {
+              setImportError(null);
+              setImportParsedList([]);
+              setImportFileName('');
+              if (importFileInputRef.current) importFileInputRef.current.value = '';
+              setIsImportModalOpen(true);
+            }}
+            className="px-4 py-2 bg-white hover:bg-slate-100 text-[#1a5075] hover:text-[#0275a8] font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-slate-200"
+            title="Import employee records from CSV file"
+          >
+            <Upload className="w-3.5 h-3.5 text-[#0275a8]" />
+            <span>Import</span>
+          </button>
 
           {/* Add Employee Button */}
           <button
@@ -773,7 +1059,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 )}
                 <th className="py-2.5 px-3.5 w-12 text-center">#</th>
                 <th className="py-2.5 px-4 w-48">Employee Name</th>
-                <th className="py-2.5 px-4">Position</th>
+                <th className="py-2.5 px-4">Position/Designation</th>
                 <th className="py-2.5 px-4">Functional</th>
                 <th className="py-2.5 px-4">Department</th>
                 <th className="py-2.5 px-4">Division</th>
@@ -833,6 +1119,9 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                           </div>
                           <div>
                             <div className="font-bold text-slate-800 text-xs">{emp.name}</div>
+                            {emp.entity && (
+                              <span className="text-[10px] text-slate-400 font-semibold">{emp.entity}</span>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -840,7 +1129,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                         <span className="font-semibold text-slate-700 block">{emp.position}</span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="font-medium text-slate-800 block">{emp.function || 'Air Traffic Management'}</span>
+                        <span className="font-medium text-slate-800 block">{emp.function || emp.section || 'Air Traffic Management'}</span>
                       </td>
                       <td className="py-3 px-4">
                         <span className="text-slate-600 block">{emp.department}</span>
@@ -920,7 +1209,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             {/* Modal Form Body */}
             <form onSubmit={handleSaveEmployee} className="p-5 space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Row 1 - Col 1: Employee Name */}
+                {/* 1. Employee Name */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Employee Name <span className="text-red-500">*</span>
@@ -930,14 +1219,8 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                     value={formData.name}
                     onChange={(e) => {
                       const newName = e.target.value;
-                      const slug = newName.trim().toLowerCase().replace(/[^a-z0-9]/g, '.');
-                      setFormData({
-                        ...formData,
-                        name: newName,
-                        email: modalMode === 'add' && (!formData.email || formData.email.endsWith('@gans.aero'))
-                          ? (slug ? `${slug}@gans.aero` : '')
-                          : formData.email
-                      });
+                      setFormData({ ...formData, name: newName });
+                      if (formErrors.name) setFormErrors((prev) => ({ ...prev, name: '' }));
                     }}
                     placeholder="e.g. Fatima Al Hosani"
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
@@ -947,15 +1230,18 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.name && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.name}</span>}
                 </div>
 
-                {/* Row 1 - Col 2: Position */}
+                {/* 2. Position/Designation */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Position <span className="text-red-500">*</span>
+                    Position/Designation <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.position}
-                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, position: e.target.value });
+                      if (formErrors.position) setFormErrors((prev) => ({ ...prev, position: '' }));
+                    }}
                     placeholder="e.g. Senior Air Traffic Controller"
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.position ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
@@ -964,7 +1250,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.position && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.position}</span>}
                 </div>
 
-                {/* Row 2 - Col 1: Employee ID (Mandatory) */}
+                {/* 3. Employee ID */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Employee ID <span className="text-red-500">*</span>
@@ -972,7 +1258,10 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   <input
                     type="text"
                     value={formData.employeeId}
-                    onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, employeeId: e.target.value });
+                      if (formErrors.employeeId) setFormErrors((prev) => ({ ...prev, employeeId: '' }));
+                    }}
                     placeholder="e.g. EMP00590"
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 font-mono focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.employeeId ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
@@ -981,71 +1270,135 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.employeeId && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.employeeId}</span>}
                 </div>
 
-                {/* Row 2 - Col 2: Email (Mandatory) */}
+                {/* 4. DOJ */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Email <span className="text-red-500">*</span>
+                    DOJ <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="e.g. fatima.hosani@gans.aero"
+                    type="date"
+                    value={formData.joinDate || ''}
+                    onChange={(e) => {
+                      setFormData({ ...formData, joinDate: e.target.value });
+                      if (formErrors.joinDate) setFormErrors((prev) => ({ ...prev, joinDate: '' }));
+                    }}
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
-                      formErrors.email ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                      formErrors.joinDate ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   />
-                  {formErrors.email && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.email}</span>}
+                  {formErrors.joinDate && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.joinDate}</span>}
                 </div>
 
-                {/* Row 3 - Col 1: Functional */}
+                {/* 5. Entity */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Entity <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.entity || 'Eshara'}
+                    onChange={(e) => {
+                      const newEnt = e.target.value;
+                      const funcs = getEntityFunctionals(newEnt);
+                      const defFunc = funcs.functional[0] || '';
+                      const newDepts = getDepartmentsForEntityAndFunctional(newEnt, defFunc);
+                      const defDept = newDepts[0] || '';
+                      setFormData({
+                        ...formData,
+                        entity: newEnt,
+                        function: defFunc,
+                        section: defFunc,
+                        department: defDept
+                      });
+                      if (formErrors.entity) setFormErrors((prev) => ({ ...prev, entity: '' }));
+                    }}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 font-bold focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.entity ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="Eshara">Eshara</option>
+                    <option value="YHA">YHA</option>
+                    {formData.entity === 'GANS' && <option value="GANS">GANS (Synced)</option>}
+                  </select>
+                  {formErrors.entity && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.entity}</span>}
+                </div>
+
+                {/* 6. Functional */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Functional <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.function || ''}
-                    onChange={(e) => setFormData({ ...formData, function: e.target.value })}
+                    onChange={(e) => {
+                      const newFunc = e.target.value;
+                      const curEntity = formData.entity || 'GANS';
+                      const newDepts = getDepartmentsForEntityAndFunctional(curEntity, newFunc);
+                      const defDept = newDepts[0] || formData.department;
+                      setFormData({
+                        ...formData,
+                        function: newFunc,
+                        section: newFunc,
+                        department: defDept
+                      });
+                      if (formErrors.function) setFormErrors((prev) => ({ ...prev, function: '' }));
+                    }}
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.function ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
                     <option value="">Select Functional</option>
-                    {availableFunctionals.map((fn) => (
-                      <option key={fn} value={fn}>{fn}</option>
-                    ))}
+                    {entityFunctionals.functional.length > 0 && (
+                      <optgroup label="Functional">
+                        {entityFunctionals.functional.map((fn) => (
+                          <option key={fn} value={fn}>{fn}</option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {entityFunctionals.nonFunctional.length > 0 && (
+                      <optgroup label="NON functional">
+                        {entityFunctionals.nonFunctional.map((nfn) => (
+                          <option key={nfn} value={nfn}>{nfn}</option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                   {formErrors.function && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.function}</span>}
                 </div>
 
-                {/* Row 3 - Col 2: Department */}
+                {/* 7. Department */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Department <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, department: e.target.value });
+                      if (formErrors.department) setFormErrors((prev) => ({ ...prev, department: '' }));
+                    }}
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.department ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
                     <option value="">Select Department</option>
-                    {availableDepartments.map((dept) => (
+                    {currentEntityDepartments.map((dept) => (
                       <option key={dept} value={dept}>{dept}</option>
                     ))}
                   </select>
                   {formErrors.department && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.department}</span>}
                 </div>
 
-                {/* Row 4 - Col 1: Division */}
+                {/* 8. Division */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Division <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.division}
-                    onChange={(e) => setFormData({ ...formData, division: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, division: e.target.value });
+                      if (formErrors.division) setFormErrors((prev) => ({ ...prev, division: '' }));
+                    }}
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.division ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
@@ -1058,30 +1411,37 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.division && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.division}</span>}
                 </div>
 
-                {/* Row 4 - Col 2: Grade */}
+                {/* 9. Grade */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Grade <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.grade}
-                    onChange={(e) => setFormData({ ...formData, grade: parseInt(e.target.value, 10) })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, grade: parseInt(e.target.value, 10) });
+                      if (formErrors.grade) setFormErrors((prev) => ({ ...prev, grade: '' }));
+                    }}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((g) => (
                       <option key={g} value={g}>Grade {g}</option>
                     ))}
                   </select>
+                  {formErrors.grade && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.grade}</span>}
                 </div>
 
-                {/* Row 5 - Col 1: Manager */}
+                {/* 10. Manager */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Manager <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.reportingManager}
-                    onChange={(e) => setFormData({ ...formData, reportingManager: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, reportingManager: e.target.value });
+                      if (formErrors.reportingManager) setFormErrors((prev) => ({ ...prev, reportingManager: '' }));
+                    }}
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.reportingManager ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
@@ -1094,14 +1454,17 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.reportingManager && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.reportingManager}</span>}
                 </div>
 
-                {/* Row 5 - Col 2: Location */}
-                <div>
+                {/* 11. Location */}
+                <div className="sm:col-span-2">
                   <label className="block font-bold text-slate-700 mb-1">
                     Location <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.location || 'Abu Dhabi HQ'}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, location: e.target.value });
+                      if (formErrors.location) setFormErrors((prev) => ({ ...prev, location: '' }));
+                    }}
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
                       formErrors.location ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
@@ -1275,6 +1638,192 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
           </div>
         );
       })()}
+
+      {/* =========================================================================
+          BULK IMPORT EMPLOYEES MODAL
+          ========================================================================= */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="p-5 bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white flex items-center justify-between gap-4 border-b border-white/10 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center text-white backdrop-blur-xs border border-white/20">
+                  <Upload className="w-5 h-5 text-sky-200" />
+                </div>
+                <div>
+                  <h2 className="text-base font-black tracking-tight text-white">
+                    Bulk Import Employees
+                  </h2>
+                  <p className="text-[11px] text-sky-100">
+                    Upload a CSV file to batch onboard employee records
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsImportModalOpen(false);
+                  setImportParsedList([]);
+                  setImportError(null);
+                }}
+                className="p-1.5 rounded-xl hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4 overflow-y-auto text-xs">
+              
+              {/* Template Download Section */}
+              <div className="p-4 bg-sky-50/70 border border-sky-200/80 rounded-2xl flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-sky-100 text-[#0275a8] flex items-center justify-center shrink-0">
+                    <FileSpreadsheet className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-800 text-xs">Download CSV Template</h4>
+                    <p className="text-[11px] text-slate-500">
+                      Standard format with pre-configured headers for Eshara &amp; YHA
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadSampleEmployeeCsv}
+                  className="px-3.5 py-1.5 bg-white hover:bg-sky-50 text-[#0275a8] hover:text-[#1a5075] font-bold text-xs rounded-xl border border-sky-300 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Sample</span>
+                </button>
+              </div>
+
+              {/* Hidden File Input */}
+              <input
+                ref={importFileInputRef}
+                type="file"
+                accept=".csv"
+                onChange={handleImportFileChange}
+                className="hidden"
+              />
+
+              {/* Upload Zone */}
+              <div
+                onClick={() => importFileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
+                  importParsedList.length > 0
+                    ? 'border-emerald-300 bg-emerald-50/40 hover:bg-emerald-50/60'
+                    : 'border-slate-300 hover:border-[#0275a8] bg-slate-50 hover:bg-white'
+                }`}
+              >
+                <div className="w-12 h-12 rounded-2xl bg-white shadow-xs border border-slate-200 flex items-center justify-center mx-auto mb-2 text-[#0275a8]">
+                  <Upload className="w-6 h-6" />
+                </div>
+                {importFileName ? (
+                  <div>
+                    <p className="font-bold text-slate-800 text-xs">{importFileName}</p>
+                    <p className="text-[11px] text-emerald-700 font-bold mt-1">
+                      ✓ {importParsedList.length} employee record{importParsedList.length !== 1 ? 's' : ''} ready to import
+                    </p>
+                    <span className="text-[10px] text-slate-400 mt-1 inline-block underline">
+                      Click to choose another CSV file
+                    </span>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="font-bold text-slate-700 text-xs">
+                      Click to choose a CSV file
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Supports comma-separated values (.csv)
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Error Notice */}
+              {importError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-[11px] flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                  <span>{importError}</span>
+                </div>
+              )}
+
+              {/* Records Preview Table */}
+              {importParsedList.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold px-1">
+                    <span>Parsed Preview ({importParsedList.length} records)</span>
+                    <span className="text-emerald-700 font-bold">Ready</span>
+                  </div>
+                  <div className="border border-slate-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                    <table className="w-full text-left text-[11px]">
+                      <thead className="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                        <tr>
+                          <th className="py-2 px-3">Name</th>
+                          <th className="py-2 px-3">Emp ID</th>
+                          <th className="py-2 px-3">Entity</th>
+                          <th className="py-2 px-3">Designation</th>
+                          <th className="py-2 px-3">Department</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {importParsedList.slice(0, 6).map((emp, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50">
+                            <td className="py-2 px-3 font-semibold text-slate-800">{emp.name}</td>
+                            <td className="py-2 px-3 font-mono text-slate-500">{emp.employeeId}</td>
+                            <td className="py-2 px-3">
+                              <span className="px-1.5 py-0.5 rounded bg-sky-50 text-sky-800 font-bold text-[10px]">
+                                {emp.entity || 'GANS'}
+                              </span>
+                            </td>
+                            <td className="py-2 px-3 text-slate-600 truncate max-w-[120px]">{emp.position}</td>
+                            <td className="py-2 px-3 text-slate-600 truncate max-w-[120px]">{emp.department}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {importParsedList.length > 6 && (
+                    <p className="text-[10px] text-center text-slate-400 italic">
+                      + {importParsedList.length - 6} more employee records included
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsImportModalOpen(false);
+                  setImportParsedList([]);
+                  setImportError(null);
+                }}
+                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                disabled={importParsedList.length === 0}
+                onClick={handleConfirmImport}
+                className="px-5 py-2 text-xs font-bold text-white bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] disabled:opacity-50 disabled:pointer-events-none rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Import {importParsedList.length > 0 ? `${importParsedList.length} Employees` : 'Employees'}</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

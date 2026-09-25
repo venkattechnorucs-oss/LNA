@@ -786,14 +786,174 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   const [actionToast, setActionToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
 
   // Form State Layout:
-  // Row 1: Functional (Dropdown) | Department (Multiselect Dropdown)
+  // Row 1: Entity (Dropdown) | Functional (Dropdown) | Department (Multiselect Dropdown)
   // Row 2: Category (Dropdown)   | Competency (Dropdown)
   // Row 3: Skill (Text box spanning full width across both columns)
+  const [selectedEntity, setSelectedEntity] = useState<'GANS' | 'Eshara' | 'YHA' | ''>('');
   const [selectedFunctional, setSelectedFunctional] = useState('');
   const [customFunctional, setCustomFunctional] = useState('');
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [selectedCompetencyDropdown, setSelectedCompetencyDropdown] = useState<string>('');
+  const [customCompetencyName, setCustomCompetencyName] = useState<string>('');
+
+  // Dual sections under Functional: Functional (multiple depts) & Non Functional (function alone is dept)
+  const ENTITY_STRUCTURE_MAP: Record<string, { functional: { name: string; departments: string[] }[]; nonFunctional: { name: string; department: string }[] }> = {
+    GANS: {
+      functional: [
+        { name: 'Air Operations', departments: ['Air Traffic Management', 'Aeronautical Meteorology'] },
+        { name: 'Engineering Services', departments: ['CNS Systems Engineering', 'IT Infrastructure'] },
+        { name: 'Safety & Quality Assurance', departments: ['Aviation Safety & Quality', 'Airside Compliance'] }
+      ],
+      nonFunctional: [
+        { name: 'Human Resources', department: 'Human Resources' },
+        { name: 'Finance & Accounts', department: 'Finance & Accounts' },
+        { name: 'Legal & Regulatory', department: 'Legal & Regulatory' }
+      ]
+    },
+    Eshara: {
+      functional: [
+        { name: 'Air Traffic Management', departments: ['En-Route Air Traffic Operations', 'Terminal Control & Aerodromes', 'Sheikh Zayed Centre'] },
+        { name: 'CNS Systems', departments: ['Navigation & Surveillance Engineering', 'Radar Systems & Navaids'] },
+        { name: 'Aviation Safety', departments: ['Operational Safety Assurance', 'Air Traffic Investigations'] },
+        { name: 'Workforce Development', departments: ['Training Academy', 'Simulator Training & Licensing'] },
+        { name: 'Air Navigation Services', departments: ['Tower Control', 'Approach Control', 'Flight Information Center'] }
+      ],
+      nonFunctional: [
+        { name: 'Human Resources', department: 'Human Resources' },
+        { name: 'Finance & Administration', department: 'Finance & Administration' },
+        { name: 'Procurement & Commercial', department: 'Procurement & Commercial' },
+        { name: 'Information Technology', department: 'Information Technology' }
+      ]
+    },
+    YHA: {
+      functional: [
+        { name: 'Aviation Consulting', departments: ['Aviation Advisory & Strategy', 'Master Planning & Advisory'] },
+        { name: 'Airspace Optimization', departments: ['Airspace Engineering', 'Route Optimization'] },
+        { name: 'Regulatory & Standards', departments: ['Regulatory Compliance', 'Aviation Safety Standards'] },
+        { name: 'Green Aviation', departments: ['Sustainability Solutions', 'Environmental Aviation Standards'] }
+      ],
+      nonFunctional: [
+        { name: 'Corporate Strategy', department: 'Corporate Strategy' },
+        { name: 'Finance & Commercial', department: 'Finance & Commercial' },
+        { name: 'Client Relations', department: 'Client Relations' }
+      ]
+    }
+  };
+
+  // Compute functional and nonFunctional items for selected entity
+  const entityFunctionals = useMemo(() => {
+    if (!selectedEntity || !ENTITY_STRUCTURE_MAP[selectedEntity]) {
+      return { functional: [], nonFunctional: [] };
+    }
+    const base = ENTITY_STRUCTURE_MAP[selectedEntity];
+    const funcList = [...base.functional.map((f) => f.name)];
+    const nonFuncList = [...base.nonFunctional.map((f) => f.name)];
+
+    // Check localStorage from Functional Master
+    try {
+      const savedV2 = localStorage.getItem('functional_master_entity_records_v4') || localStorage.getItem('functional_master_entity_records_v3') || localStorage.getItem('functional_master_entity_records_v2');
+      if (savedV2) {
+        const list = JSON.parse(savedV2);
+        list.forEach((item: { entity: string; functional: string; departments?: string[] }) => {
+          if (item.entity === selectedEntity && item.functional) {
+            if (!funcList.includes(item.functional) && !nonFuncList.includes(item.functional)) {
+              if (item.departments && item.departments.length > 1) {
+                funcList.push(item.functional);
+              } else {
+                nonFuncList.push(item.functional);
+              }
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    return { functional: funcList, nonFunctional: nonFuncList };
+  }, [selectedEntity]);
+
+  // Handle functional selection: autoselect multiple departments for Functional, function alone for Non Functional
+  const handleSelectFunctional = (val: string) => {
+    setSelectedFunctional(val);
+    setSelectedCompetencyDropdown('');
+    setCustomCompetencyName('');
+
+    if (!selectedEntity || !val) {
+      setSelectedDepartments([]);
+      return;
+    }
+
+    const structure = ENTITY_STRUCTURE_MAP[selectedEntity];
+    if (structure) {
+      // 1. Check if under Functional section (multiple departments autoselected)
+      const fMatch = structure.functional.find((f) => f.name === val);
+      if (fMatch) {
+        setSelectedDepartments([...fMatch.departments]);
+        if (formErrors.functional || formErrors.department) {
+          setFormErrors((prev) => ({ ...prev, functional: '', department: '' }));
+        }
+        return;
+      }
+
+      // 2. Check if under Non Functional section (function alone shows in department)
+      const nfMatch = structure.nonFunctional.find((f) => f.name === val);
+      if (nfMatch) {
+        setSelectedDepartments([nfMatch.department]);
+        if (formErrors.functional || formErrors.department) {
+          setFormErrors((prev) => ({ ...prev, functional: '', department: '' }));
+        }
+        return;
+      }
+    }
+
+    // Check localStorage
+    try {
+      const savedV2 = localStorage.getItem('functional_master_entity_records_v2');
+      if (savedV2) {
+        const list = JSON.parse(savedV2);
+        const match = list.find((item: { entity: string; functional: string; departments?: string[] }) =>
+          item.entity === selectedEntity && item.functional === val
+        );
+        if (match && match.departments && match.departments.length > 0) {
+          setSelectedDepartments([...match.departments]);
+          return;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Default: function alone shows in department
+    setSelectedDepartments([val]);
+  };
+
   const [category, setCategory] = useState<CompetencyCategory | ''>('');
-  const [competencyName, setCompetencyName] = useState<string>('');
+
+  // Curated competencies for the dropdown
+  const competencyOptions = useMemo(() => {
+    const list = getCompetenciesForFunctional(selectedFunctional, category, competencies);
+    const set = new Set<string>();
+    list.forEach((c) => set.add(c));
+
+    if (set.size < 5) {
+      [
+        'Airspace Management & Separation Assurance',
+        'Aeronautical Meteorological Analysis',
+        'Aviation Safety Management System (SMS)',
+        'CNS Radar & Navaids Engineering',
+        'Quality Compliance & Regulatory Auditing',
+        'Emergency Crisis Management',
+        'Human Capital & Talent Development',
+        'Financial Planning & Accounting Operations',
+        'Cybersecurity & Network Infrastructure',
+        'Corporate Governance & Treaty Compliance',
+        'Strategic Planning & Operational Leadership'
+      ].forEach((c) => set.add(c));
+    }
+
+    return Array.from(set);
+  }, [selectedFunctional, category, competencies]);
   const [skillsList, setSkillsList] = useState<SkillEntry[]>([
     {
       id: 'skill-1',
@@ -844,11 +1004,12 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
 
   // Reset Add Modal Form fields
   const resetAddModalForm = () => {
+    setSelectedEntity('');
     setSelectedFunctional('');
-    setCustomFunctional('');
     setSelectedDepartments([]);
+    setSelectedCompetencyDropdown('');
+    setCustomCompetencyName('');
     setCategory('');
-    setCompetencyName('');
     setSkillsList([
       {
         id: 'skill-1',
@@ -875,7 +1036,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
 
   // Curated skills per category and selected competency
   const availableSkills = useMemo(() => {
-    const selectedCompName = competencyName.trim();
+    const selectedCompName = (
+      selectedCompetencyDropdown === '__NEW__' ? customCompetencyName : selectedCompetencyDropdown
+    ).trim();
 
     const existingComp = competencies.find(
       (c) => c.name.toLowerCase() === selectedCompName.toLowerCase()
@@ -886,7 +1049,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       category === 'Functional' ? FUNCTIONAL_SKILL_SUGGESTIONS : BEHAVIORAL_SKILL_SUGGESTIONS;
 
     return Array.from(new Set([...fromComp, ...baseSuggestions]));
-  }, [category, competencyName, competencies]);
+  }, [category, selectedCompetencyDropdown, customCompetencyName, competencies]);
 
   // Automatically close open role dropdown when clicking outside or pressing Escape
   useEffect(() => {
@@ -1069,8 +1232,11 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     e.preventDefault();
     const errs: Record<string, string> = {};
 
-    const finalFunctional =
-      selectedFunctional === '__CUSTOM__' ? customFunctional.trim() : selectedFunctional.trim();
+    if (!selectedEntity) {
+      errs.entity = 'Entity is required';
+    }
+
+    const finalFunctional = selectedFunctional.trim();
 
     if (!finalFunctional) {
       errs.functional = 'Functional is required';
@@ -1082,7 +1248,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       errs.category = 'Category is required';
     }
 
-    const finalCompName = competencyName.trim();
+    const finalCompName = (
+      selectedCompetencyDropdown === '__NEW__' ? customCompetencyName : selectedCompetencyDropdown
+    ).trim();
+
     if (!finalCompName) {
       errs.competency = 'Competency is required';
     }
@@ -1131,6 +1300,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       code: autoCode,
       name: finalCompName,
       category: compCategory,
+      entity: selectedEntity,
       functional: finalFunctional,
       department: deptStr,
       division: FUNCTIONAL_TO_DIVISION_MAP[finalFunctional] || finalFunctional || 'Air Navigation Services',
@@ -1599,94 +1769,86 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
 
             {/* Modal Form */}
             <form onSubmit={handleSave} className="p-6 space-y-4.5 text-xs">
-              {/* ROW 1: FUNCTIONAL (DROPDOWN) | DEPARTMENT (MULTISELECT DROPDOWN) */}
+              {/* ROW 1: ENTITY (DROPDOWN) | FUNCTIONAL (DROPDOWN WITH 2 SECTIONS) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Functional (Dropdown) */}
+                {/* 1. Entity (Dropdown) */}
+                <div>
+                  <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <span>Entity</span> <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={selectedEntity}
+                    onChange={(e) => {
+                      const newEnt = e.target.value as 'GANS' | 'Eshara' | 'YHA' | '';
+                      setSelectedEntity(newEnt);
+                      setSelectedFunctional('');
+                      setSelectedDepartments([]);
+                      setSelectedCompetencyDropdown('');
+                      setCustomCompetencyName('');
+                      if (formErrors.entity) {
+                        setFormErrors((prev) => ({ ...prev, entity: '' }));
+                      }
+                    }}
+                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                  >
+                    <option value="" disabled>
+                      Select Entity...
+                    </option>
+                    <option value="GANS">GANS</option>
+                    <option value="Eshara">Eshara</option>
+                    <option value="YHA">YHA</option>
+                  </select>
+                  {formErrors.entity && (
+                    <p className="text-[10px] text-red-600 mt-1">{formErrors.entity}</p>
+                  )}
+                </div>
+
+                {/* 2. Functional (Dropdown with 2 sections: Functional & Non Functional, No Add New) */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
                     <Network className="w-3.5 h-3.5 text-[#0275a8]" />
                     <span>Functional</span> <span className="text-red-500">*</span>
                   </label>
                   <select
+                    disabled={!selectedEntity}
                     value={selectedFunctional}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setSelectedFunctional(val);
-                      if (val !== '__CUSTOM__') {
-                        setCustomFunctional('');
-                        const depts = getDepartmentsForFunctional(val);
-                        // Automatically select all 3 or 4 departments inside the selected functional
-                        setSelectedDepartments([...depts]);
-                      } else {
-                        setSelectedDepartments([]);
-                      }
-                      setCompetencyName('');
-                      if (formErrors.functional || formErrors.department) {
-                        setFormErrors((prev) => ({
-                          ...prev,
-                          functional: '',
-                          department: '',
-                          competency: ''
-                        }));
-                      }
-                    }}
-                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    onChange={(e) => handleSelectFunctional(e.target.value)}
+                    className={`w-full min-h-[42px] px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] ${
+                      !selectedEntity ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-50'
+                    }`}
                   >
                     <option value="" disabled>
-                      Select Functional...
+                      {!selectedEntity ? 'Select Entity first...' : 'Select Functional...'}
                     </option>
-                    {customFunctionalKeys.length > 0 && (
-                      <optgroup label="Custom Functionals / Divisions">
-                        {customFunctionalKeys.map((cf) => (
-                          <option key={cf} value={cf}>
-                            {cf}
+                    {entityFunctionals.functional.length > 0 && (
+                      <optgroup label="Functional">
+                        {entityFunctionals.functional.map((fn) => (
+                          <option key={fn} value={fn}>
+                            {fn}
                           </option>
                         ))}
                       </optgroup>
                     )}
-                    <optgroup label="Functional Divisions">
-                      {FUNCTIONAL_DIVISIONS.map((fn) => (
-                        <option key={fn} value={fn}>
-                          {fn}
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Standalone Departments (Department = Functional)">
-                      {STANDALONE_DEPARTMENTS.map((sd) => (
-                        <option key={sd} value={sd}>
-                          {sd}
-                        </option>
-                      ))}
-                    </optgroup>
-                    <option value="__CUSTOM__">+ Enter Custom Functional / Department...</option>
+                    {entityFunctionals.nonFunctional.length > 0 && (
+                      <optgroup label="Non Functional">
+                        {entityFunctionals.nonFunctional.map((nfn) => (
+                          <option key={nfn} value={nfn}>
+                            {nfn}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
-
-                  {selectedFunctional === '__CUSTOM__' && (
-                    <input
-                      type="text"
-                      value={customFunctional}
-                      onChange={(e) => {
-                        const customVal = e.target.value;
-                        setCustomFunctional(customVal);
-                        if (customVal.trim()) {
-                          setSelectedDepartments([customVal.trim()]);
-                        }
-                        if (formErrors.functional) {
-                          setFormErrors((prev) => ({ ...prev, functional: '' }));
-                        }
-                      }}
-                      placeholder="Type custom Functional or Department name..."
-                      className="mt-2 w-full px-3 py-2 text-xs bg-white border border-sky-400 rounded-xl shadow-inner focus:outline-hidden focus:ring-2 focus:ring-sky-500/20"
-                      autoFocus
-                    />
-                  )}
-
                   {formErrors.functional && (
                     <p className="text-[10px] text-red-600 mt-1">{formErrors.functional}</p>
                   )}
                 </div>
+              </div>
 
-                {/* Department (Auto-populated from Functional, Not Editable) */}
+              {/* ROW 2: DEPARTMENT | CATEGORY */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* 3. Department (Auto-populated from Functional) */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
@@ -1696,19 +1858,21 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                   <div
                     id="non-editable-dept-display"
                     className="w-full min-h-[42px] px-3.5 py-2 bg-slate-100/90 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-inner flex items-center gap-1.5 flex-wrap cursor-default"
-                    title="Department is auto-populated based on the selected Functional and is not editable here."
+                    title="Department is auto-populated based on the selected Functional"
                   >
-                    {!effectiveFunctional ? (
+                    {!selectedEntity ? (
+                      <span className="text-slate-400 font-normal">Select Entity first...</span>
+                    ) : !selectedFunctional ? (
                       <span className="text-slate-400 font-normal">Select Functional first to load departments...</span>
                     ) : selectedDepartments.length === 0 ? (
-                      <span className="text-slate-400 font-normal">No departments configured for this Functional</span>
+                      <span className="text-slate-400 font-normal">No departments configured</span>
                     ) : (
                       selectedDepartments.map((dept) => (
                         <span
                           key={dept}
-                          className="inline-flex items-center px-2.5 py-1 rounded-lg bg-white text-[#1a5075] border border-slate-200 text-[11px] font-bold shadow-2xs"
+                          className="inline-flex items-center px-2 py-0.5 rounded-lg bg-white text-[#1a5075] border border-slate-200 text-[11px] font-bold shadow-2xs"
                         >
-                          <Building2 className="w-3 h-3 text-[#0275a8] mr-1.5 shrink-0" />
+                          <Building2 className="w-3 h-3 text-[#0275a8] mr-1 shrink-0" />
                           <span>{dept}</span>
                         </span>
                       ))
@@ -1719,11 +1883,8 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     <p className="text-[10px] text-red-600 mt-1">{formErrors.department}</p>
                   )}
                 </div>
-              </div>
 
-              {/* ROW 2: CATEGORY | COMPETENCY */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Category */}
+                {/* 4. Category */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
                     <Tag className="w-3.5 h-3.5 text-[#0275a8]" />
@@ -1750,30 +1911,59 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     <p className="text-[10px] text-red-600 mt-1">{formErrors.category}</p>
                   )}
                 </div>
+              </div>
 
-                {/* Competency (Text Box) */}
-                <div>
-                  <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-[#0275a8]" />
-                    <span>Competency</span> <span className="text-red-500">*</span>
-                  </label>
+              {/* ROW 3: COMPETENCY (ALONE) */}
+              <div>
+                <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <span>Competency</span> <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={selectedCompetencyDropdown}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedCompetencyDropdown(val);
+                    if (val !== '__NEW__') {
+                      setCustomCompetencyName('');
+                    }
+                    if (formErrors.competency) {
+                      setFormErrors((prev) => ({ ...prev, competency: '' }));
+                    }
+                  }}
+                  className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                >
+                  <option value="" disabled>
+                    Select Competency...
+                  </option>
+                  <option value="__NEW__">+ Enter New Competency...</option>
+                  {competencyOptions.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedCompetencyDropdown === '__NEW__' && (
                   <input
-                    id="input-competency-name"
+                    id="input-competency-name-custom"
                     type="text"
-                    value={competencyName}
+                    value={customCompetencyName}
                     onChange={(e) => {
-                      setCompetencyName(e.target.value);
+                      setCustomCompetencyName(e.target.value);
                       if (formErrors.competency) {
                         setFormErrors((prev) => ({ ...prev, competency: '' }));
                       }
                     }}
-                    placeholder="Enter competency name (e.g., Strategic Planning, Operational Excellence)..."
-                    className="w-full min-h-[42px] px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    placeholder="Enter new competency name (e.g., Strategic Planning, Operational Excellence)..."
+                    className="mt-2 w-full min-h-[42px] px-3.5 py-2.5 bg-white border border-sky-400 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:outline-hidden focus:ring-2 focus:ring-sky-500/20"
+                    autoFocus
                   />
-                  {formErrors.competency && (
-                    <p className="text-[10px] text-red-600 mt-1">{formErrors.competency}</p>
-                  )}
-                </div>
+                )}
+
+                {formErrors.competency && (
+                  <p className="text-[10px] text-red-600 mt-1">{formErrors.competency}</p>
+                )}
               </div>
 
               {/* ================= TAB NAVIGATION: ROLES + DYNAMIC SKILLS ================= */}
