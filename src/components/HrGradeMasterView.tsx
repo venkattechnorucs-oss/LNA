@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   Award,
   Plus,
-  Pencil,
   Trash2,
   Search,
   X,
@@ -75,16 +74,10 @@ export const HrGradeMasterView: React.FC = () => {
 
   // Filtered grades
   const filteredGrades = useMemo(() => {
-    return grades.filter((grd) => {
-      const matchesEntity = entityFilter === 'All' || grd.entity === entityFilter;
-      const matchesSearch =
-        !searchQuery.trim() ||
-        grd.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        grd.entity.toLowerCase().includes(searchQuery.toLowerCase().trim());
-
-      return matchesEntity && matchesSearch;
-    });
-  }, [grades, entityFilter, searchQuery]);
+    if (!searchQuery.trim()) return grades;
+    const q = searchQuery.toLowerCase().trim();
+    return grades.filter((grd) => grd.name.toLowerCase().includes(q));
+  }, [grades, searchQuery]);
 
   // Modal State (Add / Edit)
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -104,22 +97,12 @@ export const HrGradeMasterView: React.FC = () => {
     setFormMode('add');
     setEditingGradeId(null);
     setFormName('');
-    setFormEntity(entityFilter === 'All' ? 'GANS' : entityFilter);
+    setFormEntity('GANS');
     setFormError('');
     setIsFormModalOpen(true);
   };
 
-  // Open Edit
-  const handleOpenEdit = (grd: GradeRecord) => {
-    setFormMode('edit');
-    setEditingGradeId(grd.id);
-    setFormName(grd.name);
-    setFormEntity(grd.entity);
-    setFormError('');
-    setIsFormModalOpen(true);
-  };
-
-  // Save Add / Edit
+  // Save Add
   const handleSaveForm = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -128,23 +111,14 @@ export const HrGradeMasterView: React.FC = () => {
       return;
     }
 
-    if (formMode === 'add') {
-      const newGrade: GradeRecord = {
-        id: `grd-${formEntity.toLowerCase()}-${Date.now()}`,
-        name: formName.trim(),
-        entity: formEntity
-      };
+    const newGrade: GradeRecord = {
+      id: `grd-${formEntity.toLowerCase()}-${Date.now()}`,
+      name: formName.trim(),
+      entity: formEntity
+    };
 
-      setGrades((prev) => [...prev, newGrade]);
-      setActionToast({ message: `Grade added successfully to ${formEntity}.`, type: 'success' });
-    } else {
-      setGrades((prev) =>
-        prev.map((g) =>
-          g.id === editingGradeId ? { ...g, name: formName.trim(), entity: formEntity } : g
-        )
-      );
-      setActionToast({ message: 'Grade updated successfully.', type: 'success' });
-    }
+    setGrades((prev) => [...prev, newGrade]);
+    setActionToast({ message: 'Grade added successfully.', type: 'success' });
 
     setTimeout(() => setActionToast(null), 3000);
     setIsFormModalOpen(false);
@@ -185,24 +159,8 @@ export const HrGradeMasterView: React.FC = () => {
           </h1>
         </div>
 
-        {/* Right side controls: Entity Filter + Add Grade Button */}
+        {/* Right side controls: Add Grade Button */}
         <div className="flex items-center gap-3 self-end sm:self-auto flex-wrap">
-          {/* Entity Filter Dropdown */}
-          <div className="flex items-center gap-2 bg-white/15 px-3 py-1.5 border border-white/20 rounded-xl shadow-2xs backdrop-blur-xs">
-            <span className="text-xs font-bold text-sky-200">Entity:</span>
-            <select
-              value={entityFilter}
-              onChange={(e) => setEntityFilter(e.target.value as any)}
-              className="text-xs font-extrabold text-white bg-transparent focus:outline-hidden cursor-pointer"
-            >
-              <option value="All" className="text-slate-800">All Entities</option>
-              <option value="GANS" className="text-slate-800">GANS</option>
-              <option value="Eshara" className="text-slate-800">Eshara</option>
-              <option value="YHA" className="text-slate-800">YHA</option>
-            </select>
-          </div>
-
-          {/* Add Grade Button */}
           <button
             type="button"
             onClick={handleOpenAdd}
@@ -228,21 +186,20 @@ export const HrGradeMasterView: React.FC = () => {
         </div>
       </div>
 
-      {/* Grades Table: Grade Name | Entity | Action */}
+      {/* Grades Table: Grade Name | Action */}
       <div className="rounded-xl bg-white border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50 text-slate-700 font-extrabold border-b border-slate-200 uppercase text-[11px]">
               <tr>
                 <th className="py-3 px-4">Grade Name</th>
-                <th className="py-3 px-4 w-36">Entity</th>
-                <th className="py-3 px-4 text-center w-28">Action</th>
+                <th className="py-3 px-4 text-center w-24">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {filteredGrades.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="py-12 text-center text-slate-400">
+                  <td colSpan={2} className="py-12 text-center text-slate-400">
                     No grades found
                   </td>
                 </tr>
@@ -250,34 +207,13 @@ export const HrGradeMasterView: React.FC = () => {
                 filteredGrades.map((grd) => (
                   <tr key={grd.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3 px-4 font-bold text-slate-900">{grd.name}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block ${
-                          grd.entity === 'GANS'
-                            ? 'bg-sky-50 text-[#0275a8] border border-sky-200'
-                            : grd.entity === 'Eshara'
-                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                            : 'bg-amber-50 text-amber-800 border border-amber-200'
-                        }`}
-                      >
-                        {grd.entity}
-                      </span>
-                    </td>
                     <td className="py-3 px-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEdit(grd)}
-                          className="p-1.5 text-slate-500 hover:text-[#0275a8] hover:bg-sky-50 rounded-lg cursor-pointer"
-                          title="Edit"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
+                      <div className="flex items-center justify-center">
                         <button
                           type="button"
                           onClick={() => setDeleteConfirmGrade(grd)}
-                          className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
-                          title="Delete"
+                          className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                          title="Delete Grade"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -381,7 +317,7 @@ export const HrGradeMasterView: React.FC = () => {
             <div className="space-y-1">
               <h3 className="font-bold text-slate-900 text-sm">Remove Grade</h3>
               <p className="text-xs text-slate-600">
-                Are you sure you want to remove <strong>{deleteConfirmGrade.name}</strong> ({deleteConfirmGrade.entity})?
+                Are you sure you want to remove <strong>{deleteConfirmGrade.name}</strong>?
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 pt-2">
