@@ -17,7 +17,8 @@ import {
   Filter,
   CheckSquare,
   MessageSquare,
-  X
+  X,
+  Info
 } from 'lucide-react';
 import {
   EmployeeProfile,
@@ -104,13 +105,13 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
   const [showConfirmModal, setShowConfirmModal] = useState<'approve' | 'resend' | null>(null);
   const [showApprovalSuccessPopup, setShowApprovalSuccessPopup] = useState<boolean>(false);
 
-  // Auto-dismiss manager approval success modal after 2.5 seconds and return to list
+  // Auto-dismiss manager approval success modal after 4.5 seconds and return to list
   React.useEffect(() => {
     if (showApprovalSuccessPopup) {
       const timer = setTimeout(() => {
         setShowApprovalSuccessPopup(false);
         onSelectEmployee(null);
-      }, 2500);
+      }, 4500);
       return () => clearTimeout(timer);
     }
   }, [showApprovalSuccessPopup, onSelectEmployee]);
@@ -715,6 +716,18 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
           </div>
         )}
 
+        {/* Talent Management Course Incorporation Notice Banner (Beginning of Form) */}
+        <div className="bg-sky-50/90 border border-sky-200/80 rounded-2xl p-4 sm:p-4.5 text-xs text-slate-700 flex items-start gap-3.5 shadow-2xs">
+          <div className="w-8 h-8 rounded-xl bg-sky-100/90 text-[#0275a8] flex items-center justify-center border border-sky-200 shrink-0 mt-0.5">
+            <Info className="w-4 h-4 text-[#0275a8]" />
+          </div>
+          <div className="leading-relaxed">
+            <p className="font-semibold text-slate-800">
+              “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
+            </p>
+          </div>
+        </div>
+
         {/* SECTION 1: EMPLOYEE INFORMATION */}
         <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
           <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3.5 flex items-center justify-between">
@@ -955,6 +968,14 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             </div>
           )}
 
+          {/* Talent Management Course Incorporation Notice (Point of Submission) */}
+          <div className="mb-4 p-3.5 bg-sky-50/90 border border-sky-200/80 rounded-xl text-xs text-slate-700 flex items-start gap-2.5 shadow-2xs">
+            <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+            <p className="text-[11px] sm:text-xs leading-relaxed text-slate-700 font-medium">
+              “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
+            </p>
+          </div>
+
           {/* ACTION BUTTONS (RETURN TO EMPLOYEE or APPROVE LNA) */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="text-xs text-slate-500">
@@ -1020,12 +1041,20 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
 
             <div className="p-6 text-xs text-slate-700 space-y-3 leading-relaxed">
               {showConfirmModal === 'approve' ? (
-                <p>
-                  Approve the Learning Needs Analysis (LNA) for{' '}
-                  <strong className="text-slate-900 font-bold">{effectiveSubmission.employee.name}</strong>?
-                  <br />
-                  This will change the status to <strong className="text-emerald-700 font-bold">APPROVED</strong> and forward the record to the HR Department.
-                </p>
+                <>
+                  <p>
+                    Approve the Learning Needs Analysis (LNA) for{' '}
+                    <strong className="text-slate-900 font-bold">{effectiveSubmission.employee.name}</strong>?
+                    <br />
+                    This will change the status to <strong className="text-emerald-700 font-bold">APPROVED</strong> and forward the record to the HR Department.
+                  </p>
+                  <div className="p-3 bg-sky-50/90 border border-sky-200/90 rounded-xl text-[11px] text-slate-700 flex items-start gap-2.5">
+                    <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+                    <p className="font-medium text-slate-800">
+                      “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
+                    </p>
+                  </div>
+                </>
               ) : (
                 <p>
                   Returning this LNA to <strong className="text-slate-900 font-bold">{effectiveSubmission.employee.name}</strong> will change the status to <strong className="text-amber-700 font-bold">RETURNED TO EMPLOYEE</strong> and allow them to update competency selections and resubmit.
@@ -1067,7 +1096,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
           }}
         >
           <div
-            className="bg-white/95 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200 p-6 text-center relative"
+            className="bg-white/95 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200 p-6 sm:p-7 text-center relative"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -1098,6 +1127,15 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             <p className="text-xs text-slate-600 mt-2 font-medium leading-relaxed">
               This submission has been <strong className="text-emerald-700 font-bold">APPROVED</strong> and forwarded to <strong className="text-slate-800 font-bold">HR Department</strong>.
             </p>
+
+            {/* Talent Management Notification Banner */}
+            <div className="mt-4 p-3.5 bg-sky-50/90 border border-sky-200/90 rounded-2xl text-[11px] text-slate-700 leading-relaxed text-left flex items-start gap-2.5 shadow-2xs">
+              <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+              <p className="font-medium text-slate-800">
+                “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
+              </p>
+            </div>
+
             <div className="mt-5 pt-3 border-t border-slate-100">
               <button
                 type="button"
@@ -1107,7 +1145,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                 }}
                 className="w-full py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md active:scale-95"
               >
-                Done
+                Acknowledge &amp; Return to List
               </button>
             </div>
           </div>

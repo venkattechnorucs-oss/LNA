@@ -681,7 +681,7 @@ interface HrCompetencySkillsMasterViewProps {
 }
 
 interface ProficiencyMappingRow {
-  proficiency: ProficiencyLevel;
+  proficiency: string;
   roles: string[];
   recommendedCourse: string;
 }
@@ -689,7 +689,7 @@ interface ProficiencyMappingRow {
 export interface SkillEntry {
   id: string;
   name: string;
-  courses: Record<ProficiencyLevel, string>;
+  courses: Record<string, string>;
 }
 
 interface UnifiedTableRow {
@@ -969,6 +969,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   const [activeModalTab, setActiveModalTab] = useState<string>('roles');
   const [description, setDescription] = useState('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [editingProficiencyIndex, setEditingProficiencyIndex] = useState<number | null>(null);
 
   // Effective functional name (resolving custom input if selected)
   const effectiveFunctional =
@@ -1032,6 +1033,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     ]);
     setFormErrors({});
     setOpenRoleRowIndex(null);
+    setEditingProficiencyIndex(null);
   };
 
   // Curated skills per category and selected competency
@@ -1107,19 +1109,49 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     );
   };
 
+  const handleUpdateProficiencyName = (rowIndex: number, newName: string) => {
+    const oldName = proficiencyMappings[rowIndex]?.proficiency;
+    setProficiencyMappings((prev) =>
+      prev.map((row, i) => (i === rowIndex ? { ...row, proficiency: newName } : row))
+    );
+
+    if (formErrors.proficiency) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next.proficiency;
+        return next;
+      });
+    }
+
+    if (oldName && oldName !== newName) {
+      setSkillsList((prev) =>
+        prev.map((sk) => {
+          const nextCourses = { ...sk.courses };
+          if (oldName in nextCourses) {
+            nextCourses[newName] = nextCourses[oldName];
+            delete nextCourses[oldName];
+          }
+          return {
+            ...sk,
+            courses: nextCourses
+          };
+        })
+      );
+    }
+  };
+
   const handleAddSkill = () => {
     const newId = `skill-${Date.now()}`;
+    const initialCourses: Record<string, string> = {};
+    proficiencyMappings.forEach((m) => {
+      initialCourses[m.proficiency] = '';
+    });
     setSkillsList((prev) => [
       ...prev,
       {
         id: newId,
         name: '',
-        courses: {
-          Foundation: '',
-          Intermediate: '',
-          Proficient: '',
-          Expert: ''
-        }
+        courses: initialCourses
       }
     ]);
     setActiveModalTab(newId);
@@ -1144,7 +1176,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     }
   };
 
-  const handleUpdateSkillCourse = (skillId: string, level: ProficiencyLevel, courseName: string) => {
+  const handleUpdateSkillCourse = (skillId: string, level: string, courseName: string) => {
     setSkillsList((prev) =>
       prev.map((s) => {
         if (s.id !== skillId) return s;
@@ -1256,6 +1288,16 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       errs.competency = 'Competency is required';
     }
 
+    // Validate that Description is mandatory
+    if (!description.trim()) {
+      errs.description = 'Description is required';
+    }
+
+    // Validate that all 4 proficiency names are filled
+    if (proficiencyMappings.some((m) => !m.proficiency.trim())) {
+      errs.proficiency = 'All 4 proficiency level names must be filled';
+    }
+
     // Validate that Skill 1 has a name
     const validSkills = skillsList.filter((s) => s.name.trim().length > 0);
     if (!skillsList[0] || !skillsList[0].name.trim()) {
@@ -1295,6 +1337,8 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       proficiencyMappings.find((m) => m.roles.length > 0)?.roles.join(', ') ||
       'General';
 
+    const defaultProfKey = proficiencyMappings[2]?.proficiency || 'Proficient';
+
     const newComp: Competency = {
       id: newId,
       code: autoCode,
@@ -1305,9 +1349,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
       department: deptStr,
       division: FUNCTIONAL_TO_DIVISION_MAP[finalFunctional] || finalFunctional || 'Air Navigation Services',
       role: designatedRole,
-      proficiency: 'Proficient',
-      recommendedCourse: validSkills[0]?.courses['Proficient'] || '',
-      description: description.trim() || `${finalCompName} mapped for ${finalFunctional} (${deptStr}).`,
+      proficiency: (defaultProfKey as ProficiencyLevel) || 'Proficient',
+      recommendedCourse: validSkills[0]?.courses[defaultProfKey] || validSkills[0]?.courses['Proficient'] || '',
+      description: description.trim(),
       skills: newSkills
     };
 
@@ -1983,12 +2027,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     <span>Proficiency &amp; Roles</span>
                   </button>
 
-                  {/* Dynamic Skill Tabs: Skill 1 & Courses, Skill 2 & Courses, ... */}
+                  {/* Next Tabs: Skill 1, Skill 2, Skill 3, ... */}
                   {skillsList.map((sk, idx) => {
                     const isSelected = activeModalTab === sk.id;
-                    const tabTitle = sk.name.trim()
-                      ? `Skill ${idx + 1}: ${sk.name.length > 14 ? `${sk.name.slice(0, 14)}...` : sk.name}`
-                      : `Skill ${idx + 1} & Courses`;
+                    const tabTitle = `Skill ${idx + 1}`;
 
                     return (
                       <div
@@ -2024,7 +2066,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     );
                   })}
 
-                  {/* Add Skill Button right near the skill tabs */}
+                  {/* Add Skill Button */}
                   <button
                     type="button"
                     onClick={handleAddSkill}
@@ -2037,14 +2079,14 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 </div>
               </div>
 
-              {/* ================= TAB 1 CONTENT: PROFICIENCY & ROLES (NO RECOMMENDED COURSE) ================= */}
+              {/* ================= TAB 1 CONTENT: PROFICIENCY & ROLES ================= */}
               {activeModalTab === 'roles' && (
                 <div className="space-y-2 animate-in fade-in duration-150">
                   <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="bg-slate-100/90 text-slate-700 text-[11px] font-extrabold border-b border-slate-200">
-                          <th className="py-2.5 px-3 w-40 border-r border-slate-200">
+                          <th className="py-2.5 px-3 w-44 border-r border-slate-200">
                             Proficiency <span className="text-red-500">*</span>
                           </th>
                           <th className="py-2.5 px-3">
@@ -2054,28 +2096,44 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       </thead>
                       <tbody className="divide-y divide-slate-200 bg-white">
                         {proficiencyMappings.map((mrow, rIdx) => {
-                          const isFoundation = mrow.proficiency === 'Foundation';
-                          const isIntermediate = mrow.proficiency === 'Intermediate';
-                          const isProficient = mrow.proficiency === 'Proficient';
-                          const isExpert = mrow.proficiency === 'Expert';
-
-                          const badgeStyle = isFoundation
-                            ? 'bg-slate-100 text-slate-700 border-slate-300'
-                            : isIntermediate
+                          const badgeStyle = rIdx === 0
+                            ? 'bg-slate-50 text-slate-700 border-slate-300'
+                            : rIdx === 1
                             ? 'bg-amber-50 text-amber-800 border-amber-300'
-                            : isProficient
+                            : rIdx === 2
                             ? 'bg-sky-50 text-sky-800 border-sky-300 font-bold'
                             : 'bg-purple-50 text-purple-800 border-purple-300 font-bold';
 
+                          const isEditing = editingProficiencyIndex === rIdx;
+
                           return (
-                            <tr key={mrow.proficiency} className="hover:bg-slate-50/70">
-                              {/* 1. Fixed Proficiency Level */}
+                            <tr key={`prof-mapping-${rIdx}`} className="hover:bg-slate-50/70">
+                              {/* 1. Proficiency Level (Double-click to edit) */}
                               <td className="p-2.5 align-middle border-r border-slate-100">
-                                <span
-                                  className={`text-[11px] px-2.5 py-1 rounded-lg border font-bold inline-block ${badgeStyle}`}
-                                >
-                                  {mrow.proficiency}
-                                </span>
+                                {isEditing ? (
+                                  <input
+                                    type="text"
+                                    autoFocus
+                                    value={mrow.proficiency}
+                                    onChange={(e) => handleUpdateProficiencyName(rIdx, e.target.value)}
+                                    onBlur={() => setEditingProficiencyIndex(null)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        setEditingProficiencyIndex(null);
+                                      }
+                                    }}
+                                    className={`text-[11px] px-2.5 py-1 w-full rounded-lg border font-bold focus:bg-white focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] outline-hidden shadow-2xs transition-all ${badgeStyle}`}
+                                    placeholder={`Level ${rIdx + 1} Name`}
+                                  />
+                                ) : (
+                                  <span
+                                    onDoubleClick={() => setEditingProficiencyIndex(rIdx)}
+                                    className={`text-[11px] px-2.5 py-1 rounded-lg border font-bold inline-block select-none cursor-pointer transition-transform active:scale-95 ${badgeStyle}`}
+                                    title="Double-click to edit"
+                                  >
+                                    {mrow.proficiency}
+                                  </span>
+                                )}
                               </td>
 
                               {/* 2. Role (Multi-Select for each row) */}
@@ -2144,6 +2202,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       </tbody>
                     </table>
                   </div>
+                  {formErrors.proficiency && (
+                    <p className="text-[10px] text-red-600 mt-1 font-medium">{formErrors.proficiency}</p>
+                  )}
                 </div>
               )}
 
@@ -2186,39 +2247,55 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="bg-slate-100/90 text-slate-700 text-[11px] font-extrabold border-b border-slate-200">
-                          <th className="py-2.5 px-3 w-40 border-r border-slate-200">
+                          <th className="py-2.5 px-3 w-44 border-r border-slate-200">
                             Proficiency <span className="text-red-500">*</span>
                           </th>
                           <th className="py-2.5 px-3">
-                            Recommended Course for Skill {activeSkillIndex + 1} <span className="text-slate-400 font-normal">(Optional)</span>
+                            Recommended Course
                           </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200 bg-white">
-                        {proficiencyMappings.map((mrow) => {
+                        {proficiencyMappings.map((mrow, mrowIdx) => {
                           const level = mrow.proficiency;
-                          const isFoundation = level === 'Foundation';
-                          const isIntermediate = level === 'Intermediate';
-                          const isProficient = level === 'Proficient';
-                          const isExpert = level === 'Expert';
-
-                          const badgeStyle = isFoundation
-                            ? 'bg-slate-100 text-slate-700 border-slate-300'
-                            : isIntermediate
+                          const badgeStyle = mrowIdx === 0
+                            ? 'bg-slate-50 text-slate-700 border-slate-300'
+                            : mrowIdx === 1
                             ? 'bg-amber-50 text-amber-800 border-amber-300'
-                            : isProficient
+                            : mrowIdx === 2
                             ? 'bg-sky-50 text-sky-800 border-sky-300 font-bold'
                             : 'bg-purple-50 text-purple-800 border-purple-300 font-bold';
 
+                          const isEditing = editingProficiencyIndex === mrowIdx;
+
                           return (
-                            <tr key={level} className="hover:bg-slate-50/70">
-                              {/* 1. Fixed Proficiency Level */}
+                            <tr key={`skill-prof-row-${mrowIdx}`} className="hover:bg-slate-50/70">
+                              {/* 1. Proficiency Level (Double-click to edit) */}
                               <td className="p-2.5 align-middle border-r border-slate-100">
-                                <span
-                                  className={`text-[11px] px-2.5 py-1 rounded-lg border font-bold inline-block ${badgeStyle}`}
-                                >
-                                  {level}
-                                </span>
+                                {isEditing ? (
+                                  <input
+                                    type="text"
+                                    autoFocus
+                                    value={mrow.proficiency}
+                                    onChange={(e) => handleUpdateProficiencyName(mrowIdx, e.target.value)}
+                                    onBlur={() => setEditingProficiencyIndex(null)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        setEditingProficiencyIndex(null);
+                                      }
+                                    }}
+                                    className={`text-[11px] px-2.5 py-1 w-full rounded-lg border font-bold focus:bg-white focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] outline-hidden shadow-2xs transition-all ${badgeStyle}`}
+                                    placeholder={`Level ${mrowIdx + 1} Name`}
+                                  />
+                                ) : (
+                                  <span
+                                    onDoubleClick={() => setEditingProficiencyIndex(mrowIdx)}
+                                    className={`text-[11px] px-2.5 py-1 rounded-lg border font-bold inline-block select-none cursor-pointer transition-transform active:scale-95 ${badgeStyle}`}
+                                    title="Double-click to edit"
+                                  >
+                                    {mrow.proficiency}
+                                  </span>
+                                )}
                               </td>
 
                               {/* 2. Recommended Course Input */}
@@ -2229,7 +2306,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                                   onChange={(e) =>
                                     handleUpdateSkillCourse(activeSkill.id, level, e.target.value)
                                   }
-                                  placeholder={`Enter recommended course for ${level} level...`}
+                                  placeholder={`Enter recommended course for ${level || `Level ${mrowIdx + 1}`}...`}
                                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
                                 />
                               </td>
@@ -2239,21 +2316,38 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       </tbody>
                     </table>
                   </div>
+                  {formErrors.proficiency && (
+                    <p className="text-[10px] text-red-600 mt-1 font-medium">{formErrors.proficiency}</p>
+                  )}
                 </div>
               )}
 
-              {/* Optional Description */}
+              {/* Mandatory Description */}
               <div>
                 <label className="block font-extrabold text-slate-700 mb-1.5">
-                  Description <span className="text-slate-400 font-normal">(Optional)</span>
+                  Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   rows={2}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (formErrors.description) {
+                      setFormErrors((prev) => {
+                        const next = { ...prev };
+                        delete next.description;
+                        return next;
+                      });
+                    }
+                  }}
                   placeholder="Describe operational benchmarks, indicators, or scope..."
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                  className={`w-full px-3 py-2 text-xs bg-slate-50 border rounded-xl shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] ${
+                    formErrors.description ? 'border-red-400 bg-red-50/20 ring-1 ring-red-400' : 'border-slate-200'
+                  }`}
                 />
+                {formErrors.description && (
+                  <p className="text-[10px] text-red-600 mt-1 font-medium">{formErrors.description}</p>
+                )}
               </div>
 
               {/* Action Buttons */}

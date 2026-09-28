@@ -18,6 +18,9 @@ import { HrReleaseAssessmentView } from './components/HrReleaseAssessmentView';
 import { HrAssessmentHistoryView } from './components/HrAssessmentHistoryView';
 import { HrDelegationView } from './components/HrDelegationView';
 import { HrDepartmentMasterView } from './components/HrDepartmentMasterView';
+import { HrDivisionMasterView } from './components/HrDivisionMasterView';
+import { HrGradeMasterView } from './components/HrGradeMasterView';
+import { HrOrgMasterView } from './components/HrOrgMasterView';
 import { HrFunctionalMasterView } from './components/HrFunctionalMasterView';
 import {
   DEFAULT_EMPLOYEE,
@@ -61,7 +64,8 @@ import {
   Lock,
   ArrowRight,
   ArrowLeft,
-  LayoutDashboard
+  LayoutDashboard,
+  Info
 } from 'lucide-react';
 
 export default function App() {
@@ -1418,10 +1422,16 @@ export default function App() {
                 onRevokeRelease={handleRevokeRelease}
                 onNavigateToHistory={() => setCurrentTab('hr-assessment-history')}
               />
+            ) : currentTab === 'hr-org-master' ? (
+              <HrOrgMasterView />
             ) : currentTab === 'hr-department-master' ? (
               <HrDepartmentMasterView
                 onNavigateToEmployeeMaster={() => setCurrentTab('hr-employee-master')}
               />
+            ) : currentTab === 'hr-division-master' ? (
+              <HrDivisionMasterView />
+            ) : currentTab === 'hr-grade-master' ? (
+              <HrGradeMasterView />
             ) : currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department' ? (
               <HrFunctionalMasterView
                 onNavigateToCompetencies={() => setCurrentTab('hr-competency-skills-master')}
@@ -1563,7 +1573,7 @@ export default function App() {
                       </span>
                     </div>
                     <p className="mt-1 text-amber-900/90 leading-relaxed">
-                      Your reporting manager (<strong>{employee.reportingManager}</strong>) reviewed your submission and requested changes before approval. Please update your competency selections or comments below and click <strong>Submit LNA Assessment</strong> again.
+                      Your reporting manager (<strong>{employee.reportingManager}</strong>) reviewed your submission and requested changes before approval. Please update your competency selections or comments below and click <strong>Submit Assessment</strong> again.
                     </p>
                     {submission.managerComments && (
                       <div className="mt-3 p-3 bg-white/95 border border-amber-200/80 rounded-xl text-slate-800 shadow-2xs">
@@ -1792,6 +1802,18 @@ export default function App() {
                   {/* FORM CONTAINER */}
                   <div className="space-y-6">
                     
+                    {/* Talent Management Course Incorporation Notice (Beginning of Form) */}
+                    <div className="bg-sky-50/90 border border-sky-200/80 rounded-2xl p-4 sm:p-4.5 text-xs text-slate-700 flex items-start gap-3.5 shadow-2xs">
+                      <div className="w-8 h-8 rounded-xl bg-sky-100/90 text-[#0275a8] flex items-center justify-center border border-sky-200 shrink-0 mt-0.5">
+                        <Info className="w-4 h-4 text-[#0275a8]" />
+                      </div>
+                      <div className="leading-relaxed">
+                        <p className="font-semibold text-slate-800">
+                          “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
+                        </p>
+                      </div>
+                    </div>
+
                     {/* SECTION 1 – EMPLOYEE DETAILS */}
                     <EmployeeDetailsSection employee={employee} />
 
@@ -1827,8 +1849,14 @@ export default function App() {
                       isReadOnly={submission?.status === 'MANAGER APPROVED'}
                     />
                     {/* SUBMISSION ACTION BAR */}
-                    <div className="rounded-2xl bg-white/90 backdrop-blur-xl border border-white/90 p-4 sm:p-5 shadow-[0_-4px_24px_rgba(26,80,117,0.08)] flex flex-col sm:flex-row items-center justify-end gap-3 sticky bottom-4 z-20">
-                      <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                    <div className="rounded-2xl bg-white/95 backdrop-blur-xl border border-white/90 p-4 sm:p-5 shadow-[0_-4px_24px_rgba(26,80,117,0.08)] flex flex-col md:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
+                      <div className="flex items-start gap-2.5 text-xs text-slate-600 max-w-2xl">
+                        <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+                        <p className="text-[11px] sm:text-xs leading-relaxed text-slate-700 font-medium">
+                          “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3 w-full md:w-auto justify-end shrink-0">
                         {/* Reset / Cancel Button */}
                         {submission?.status !== 'MANAGER APPROVED' && (
                           <button
@@ -1841,7 +1869,7 @@ export default function App() {
                           </button>
                         )}
 
-                        {/* Submit / Resubmit LNA Assessment Button */}
+                        {/* Submit / Resubmit Assessment Button */}
                         {submission?.status !== 'MANAGER APPROVED' && (
                           <button
                             type="button"
@@ -1851,8 +1879,8 @@ export default function App() {
                             <Send className="w-3.5 h-3.5 text-white" />
                             <span>
                               {submission?.status === 'SENT BACK TO EMPLOYEE'
-                                ? 'Resubmit LNA'
-                                : 'Submit LNA'}
+                                ? 'Resubmit'
+                                : 'Submit'}
                             </span>
                           </button>
                         )}

@@ -393,12 +393,17 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
     setShowEditModal(true);
   };
 
-  // Validation for Add/Edit Employee Form (11 inputs)
+  // Validation for Add/Edit Employee Form (12 inputs)
   const validateForm = () => {
     const errs: Record<string, string> = {};
     if (!formData.name.trim()) errs.name = 'Employee Name is required';
     if (!formData.position.trim()) errs.position = 'Position/Designation is required';
     if (!formData.employeeId.trim()) errs.employeeId = 'Employee ID is required';
+    if (!formData.email?.trim()) {
+      errs.email = 'Corporate Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errs.email = 'Valid corporate email address is required';
+    }
     if (!formData.joinDate?.trim()) errs.joinDate = 'DOJ is required';
     if (!formData.entity?.trim()) errs.entity = 'Entity is required';
     if (!formData.function?.trim()) errs.function = 'Functional is required';
@@ -807,10 +812,10 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
               if (importFileInputRef.current) importFileInputRef.current.value = '';
               setIsImportModalOpen(true);
             }}
-            className="px-4 py-2 bg-white hover:bg-slate-100 text-[#1a5075] hover:text-[#0275a8] font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-slate-200"
+            className="px-4 py-2 bg-white/15 hover:bg-white/25 text-white font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95 border border-white/20 backdrop-blur-xs"
             title="Import employee records from CSV file"
           >
-            <Upload className="w-3.5 h-3.5 text-[#0275a8]" />
+            <Upload className="w-3.5 h-3.5 text-sky-300" />
             <span>Import</span>
           </button>
 
@@ -1209,7 +1214,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             {/* Modal Form Body */}
             <form onSubmit={handleSaveEmployee} className="p-5 space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* 1. Employee Name */}
+                {/* Row 1, Col 1: Employee Name */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Employee Name <span className="text-red-500">*</span>
@@ -1230,7 +1235,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.name && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.name}</span>}
                 </div>
 
-                {/* 2. Position/Designation */}
+                {/* Row 1, Col 2: Position/Designation */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Position/Designation <span className="text-red-500">*</span>
@@ -1250,7 +1255,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.position && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.position}</span>}
                 </div>
 
-                {/* 3. Employee ID */}
+                {/* Row 2, Col 1: Employee ID */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Employee ID <span className="text-red-500">*</span>
@@ -1270,26 +1275,27 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.employeeId && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.employeeId}</span>}
                 </div>
 
-                {/* 4. DOJ */}
+                {/* Row 2, Col 2: Email */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    DOJ <span className="text-red-500">*</span>
+                    Email <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="date"
-                    value={formData.joinDate || ''}
+                    type="email"
+                    value={formData.email || ''}
                     onChange={(e) => {
-                      setFormData({ ...formData, joinDate: e.target.value });
-                      if (formErrors.joinDate) setFormErrors((prev) => ({ ...prev, joinDate: '' }));
+                      setFormData({ ...formData, email: e.target.value });
+                      if (formErrors.email) setFormErrors((prev) => ({ ...prev, email: '' }));
                     }}
+                    placeholder="e.g. employee@company.aero"
                     className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
-                      formErrors.joinDate ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                      formErrors.email ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   />
-                  {formErrors.joinDate && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.joinDate}</span>}
+                  {formErrors.email && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.email}</span>}
                 </div>
 
-                {/* 5. Entity */}
+                {/* Row 3, Col 1: Entity */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Entity <span className="text-red-500">*</span>
@@ -1322,7 +1328,72 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.entity && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.entity}</span>}
                 </div>
 
-                {/* 6. Functional */}
+                {/* Row 3, Col 2: DOJ */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    DOJ <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.joinDate || ''}
+                    onChange={(e) => {
+                      setFormData({ ...formData, joinDate: e.target.value });
+                      if (formErrors.joinDate) setFormErrors((prev) => ({ ...prev, joinDate: '' }));
+                    }}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.joinDate ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  />
+                  {formErrors.joinDate && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.joinDate}</span>}
+                </div>
+
+                {/* Row 4, Col 1: Division */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Division <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.division}
+                    onChange={(e) => {
+                      setFormData({ ...formData, division: e.target.value });
+                      if (formErrors.division) setFormErrors((prev) => ({ ...prev, division: '' }));
+                    }}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.division ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="">Select Division</option>
+                    {availableDivisions.map((div) => (
+                      <option key={div} value={div}>{div}</option>
+                    ))}
+                  </select>
+                  {formErrors.division && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.division}</span>}
+                </div>
+
+                {/* Row 4, Col 2: Department */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Department <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.department}
+                    onChange={(e) => {
+                      setFormData({ ...formData, department: e.target.value });
+                      if (formErrors.department) setFormErrors((prev) => ({ ...prev, department: '' }));
+                    }}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                      formErrors.department ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="">Select Department</option>
+                    {currentEntityDepartments.map((dept) => (
+                      <option key={dept} value={dept}>{dept}</option>
+                    ))}
+                  </select>
+                  {formErrors.department && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.department}</span>}
+                </div>
+
+                {/* Row 5, Col 1: Functional */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Functional <span className="text-red-500">*</span>
@@ -1365,53 +1436,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.function && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.function}</span>}
                 </div>
 
-                {/* 7. Department */}
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    Department <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.department}
-                    onChange={(e) => {
-                      setFormData({ ...formData, department: e.target.value });
-                      if (formErrors.department) setFormErrors((prev) => ({ ...prev, department: '' }));
-                    }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
-                      formErrors.department ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
-                    }`}
-                  >
-                    <option value="">Select Department</option>
-                    {currentEntityDepartments.map((dept) => (
-                      <option key={dept} value={dept}>{dept}</option>
-                    ))}
-                  </select>
-                  {formErrors.department && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.department}</span>}
-                </div>
-
-                {/* 8. Division */}
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    Division <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.division}
-                    onChange={(e) => {
-                      setFormData({ ...formData, division: e.target.value });
-                      if (formErrors.division) setFormErrors((prev) => ({ ...prev, division: '' }));
-                    }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
-                      formErrors.division ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
-                    }`}
-                  >
-                    <option value="">Select Division</option>
-                    {availableDivisions.map((div) => (
-                      <option key={div} value={div}>{div}</option>
-                    ))}
-                  </select>
-                  {formErrors.division && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.division}</span>}
-                </div>
-
-                {/* 9. Grade */}
+                {/* Row 5, Col 2: Grade */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Grade <span className="text-red-500">*</span>
@@ -1431,7 +1456,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.grade && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.grade}</span>}
                 </div>
 
-                {/* 10. Manager */}
+                {/* Row 6, Col 1: Manager */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Manager <span className="text-red-500">*</span>
@@ -1454,8 +1479,8 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   {formErrors.reportingManager && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.reportingManager}</span>}
                 </div>
 
-                {/* 11. Location */}
-                <div className="sm:col-span-2">
+                {/* Row 6, Col 2: Location (regular 1-column div matching Manager) */}
+                <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Location <span className="text-red-500">*</span>
                   </label>

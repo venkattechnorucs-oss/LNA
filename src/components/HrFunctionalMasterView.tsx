@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Building2,
+  FolderTree,
   Network,
   X,
   CheckCircle2,
@@ -244,6 +245,7 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
 
   const handleEditRecord = (record: FunctionalRecord) => {
     setEditingRecordId(record.id);
+    setActiveEntity(record.entity);
     setSelectedDepartments([...record.departments]);
     setFunctionalInput(record.functional);
     setErrors({});
@@ -275,7 +277,7 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
       setRecords((prev) =>
         prev.map((r) =>
           r.id === editingRecordId
-            ? { ...r, departments: [...selectedDepartments], functional: trimmedFn }
+            ? { ...r, entity: activeEntity, departments: [...selectedDepartments], functional: trimmedFn }
             : r
         )
       );
@@ -324,38 +326,17 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-[#1a5075] text-white">
-            <Network className="w-5 h-5" />
-          </div>
-          <span>Functional Master</span>
-        </h1>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0d314a] rounded-xl p-5 text-white shadow-md border border-[#2b658f] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
+            <FolderTree className="w-6 h-6 text-sky-300" />
+            <span>Functional Master</span>
+          </h1>
+        </div>
       </div>
 
-      {/* Top option to select the entities: GANS, Eshara, YHA */}
-      <div className="flex border-b border-slate-200">
-        {(['GANS', 'Eshara', 'YHA'] as FunctionalEntity[]).map((entity) => (
-          <button
-            key={entity}
-            type="button"
-            onClick={() => {
-              setActiveEntity(entity);
-              resetForm();
-            }}
-            className={`px-6 py-3 font-bold text-sm cursor-pointer transition-colors border-b-2 -mb-px ${
-              activeEntity === entity
-                ? 'border-[#0275a8] text-[#0275a8]'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
-            }`}
-          >
-            {entity}
-          </button>
-        ))}
-      </div>
-
-      {/* Entry Form: Keep Department Left and Functional Right */}
+      {/* Entry Form: Entity -> Department -> Functional */}
       <div
         id="functional-entry-form"
         className="rounded-xl bg-white border border-slate-200 p-6 shadow-xs space-y-5"
@@ -375,9 +356,30 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
           )}
         </div>
 
-        {/* TWO BOXES: DEPARTMENT ON LEFT, FUNCTIONAL ON RIGHT */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
-          {/* LEFT BOX: DEPARTMENT (MULTISELECT DROPDOWN - CLEAN WITHOUT SEARCH, CLEAR, OR CUSTOM ADD) */}
+        {/* THREE COLUMNS IN ORDER: 1. ENTITY -> 2. DEPARTMENT -> 3. FUNCTIONAL */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+          {/* 1. ENTITY */}
+          <div id="box-entity" className="space-y-2">
+            <label className="block font-bold text-slate-800 text-xs">
+              Entity <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="select-entity"
+              value={activeEntity}
+              onChange={(e) => {
+                const newEnt = e.target.value as FunctionalEntity;
+                setActiveEntity(newEnt);
+                setSelectedDepartments([]);
+              }}
+              className="w-full min-h-[42px] px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] cursor-pointer"
+            >
+              <option value="GANS">GANS</option>
+              <option value="Eshara">Eshara</option>
+              <option value="YHA">YHA</option>
+            </select>
+          </div>
+
+          {/* 2. DEPARTMENT (MULTISELECT DROPDOWN LOADED FOR SELECTED ENTITY) */}
           <div id="box-department" className="space-y-2" ref={deptDropdownRef}>
             <div className="flex items-center justify-between">
               <label className="block font-bold text-slate-800 text-xs">
@@ -427,13 +429,13 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
                 />
               </div>
 
-              {/* Multiselect Popover: Clean checklist of departments only */}
+              {/* Multiselect Popover: Clean checklist of departments for the active entity */}
               {isDeptDropdownOpen && (
                 <div className="absolute z-30 left-0 top-12 w-full bg-white border border-slate-200 rounded-xl shadow-xl p-2 text-xs space-y-1 animate-in fade-in zoom-in-95 duration-100">
                   {/* Department Checkbox List */}
                   <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
                     {availableDepartments.length === 0 ? (
-                      <p className="text-slate-400 text-center py-3 text-[11px]">No departments available</p>
+                      <p className="text-slate-400 text-center py-3 text-[11px]">No departments available for {activeEntity}</p>
                     ) : (
                       availableDepartments.map((dept) => {
                         const isSelected = selectedDepartments.includes(dept);
@@ -470,7 +472,7 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
             )}
           </div>
 
-          {/* RIGHT BOX: FUNCTIONAL */}
+          {/* 3. FUNCTIONAL */}
           <div id="box-functional" className="space-y-2">
             <label className="block font-bold text-slate-800 text-xs">
               Functional <span className="text-red-500">*</span>
@@ -515,17 +517,24 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
 
       {/* Downside Table: Functional first and Department second */}
       <div className="rounded-xl bg-white border border-slate-200 shadow-xs overflow-hidden">
-        {/* Search */}
-        <div className="p-4 bg-slate-50 border-b border-slate-200">
+        {/* Search & Info */}
+        <div className="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative w-full max-w-sm">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
+              placeholder={`Search ${activeEntity} functionals or departments...`}
               className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
             />
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
+            <span>Entity:</span>
+            <span className="px-2.5 py-1 rounded-lg bg-sky-50 text-[#0275a8] border border-sky-200 font-extrabold text-[11px]">
+              {activeEntity} ({filteredRecords.length} records)
+            </span>
           </div>
         </div>
 

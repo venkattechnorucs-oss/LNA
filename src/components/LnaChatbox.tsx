@@ -242,11 +242,9 @@ export const LnaChatbox: React.FC<LnaChatboxProps> = ({
             disabled={isReadOnly}
             className="w-full text-xs p-3 border border-slate-300 rounded-xl bg-slate-50/70 text-slate-900 focus:outline-hidden focus:border-[#0275a8] focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 placeholder:text-slate-400 disabled:bg-slate-100 disabled:text-slate-400 shadow-inner resize-y leading-relaxed font-normal"
           />
-          {!isReadOnly && (
+          {!isReadOnly && initialRole === 'manager' && (
             <p className="text-[11px] text-slate-500">
-              {initialRole === 'manager'
-                ? 'Remarks entered here will be saved when you approve or return the assessment.'
-                : 'Enter your development thoughts above and submit the form below.'}
+              Remarks entered here will be saved when you approve or return the assessment.
             </p>
           )}
         </div>

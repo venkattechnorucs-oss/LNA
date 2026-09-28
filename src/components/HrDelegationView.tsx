@@ -13,12 +13,9 @@ import {
   ChevronsLeft,
   ChevronsRight,
   AlertCircle,
-  User,
-  Building2
+  User
 } from 'lucide-react';
 import { ManagerDelegation, EmployeeProfile } from '../types';
-
-export type DelegationEntity = 'GANS' | 'Eshara' | 'YHA';
 
 interface HrDelegationViewProps {
   delegations: ManagerDelegation[];
@@ -35,9 +32,6 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
   onUpdateDelegation,
   onDeleteDelegation
 }) => {
-  // Entity state for the popup modal
-  const [selectedEntity, setSelectedEntity] = useState<DelegationEntity>('GANS');
-
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -61,20 +55,16 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
   const [remarks, setRemarks] = useState('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Relevant employees for the modal based on selected entity
+  // Sorted employees list for the modal
   const modalEmployees = useMemo(() => {
-    const list = employees.filter((e) => (e.entity || 'GANS') === selectedEntity);
-    return list.length > 0 ? list : employees;
-  }, [employees, selectedEntity]);
+    return [...employees].sort((a, b) => a.name.localeCompare(b.name));
+  }, [employees]);
 
   // Reset or initialize form
   const handleOpenNewModal = () => {
     setEditingDelegation(null);
-    setSelectedEntity('GANS');
-    const pool = employees.filter((e) => (e.entity || 'GANS') === 'GANS');
-    const candidateList = pool.length >= 2 ? pool : employees;
-    setFromEmpId(candidateList[0]?.employeeId || '');
-    setToEmpId(candidateList[1]?.employeeId || '');
+    setFromEmpId(employees[0]?.employeeId || '');
+    setToEmpId(employees[1]?.employeeId || '');
     setStartDate(new Date().toISOString().split('T')[0]);
     setEndDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     setRemarks('');
@@ -84,8 +74,6 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
 
   const handleOpenEditModal = (del: ManagerDelegation) => {
     setEditingDelegation(del);
-    const delEntity = (del.entity as DelegationEntity) || 'GANS';
-    setSelectedEntity(delEntity);
     setFromEmpId(del.fromEmployeeId);
     setToEmpId(del.toEmployeeId);
     setStartDate(del.startDate);
@@ -153,7 +141,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
         startDate,
         endDate,
         remarks: remarks.trim() || undefined,
-        entity: selectedEntity
+        entity: editingDelegation.entity || fromProfile?.entity
       });
     } else {
       onAddDelegation({
@@ -170,7 +158,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
         status: 'Active',
         remarks: remarks.trim() || undefined,
         createdBy: 'HR Admin',
-        entity: selectedEntity
+        entity: fromProfile?.entity || toProfile?.entity || 'GANS'
       });
     }
 
@@ -228,32 +216,29 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
     <div className="space-y-5 animate-in fade-in duration-150">
       
       {/* =========================================================================
-          TOP ACTION BAR (Matches GANS Header styling)
+          TOP ACTION BAR (Matches GANS Blue Banner styling)
           ========================================================================= */}
-      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0d314a] rounded-xl p-5 text-white shadow-md border border-[#2b658f] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         
         {/* Title */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0275a8] flex items-center justify-center border border-sky-200 shadow-2xs">
+          <div className="w-10 h-10 rounded-xl bg-white/15 text-sky-300 flex items-center justify-center border border-white/20 shadow-2xs">
             <UserCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 Delegation
               </h1>
-              <span className="bg-sky-50 text-[#1a5075] text-xs font-black px-2.5 py-0.5 rounded-full border border-sky-200">
+              <span className="bg-white/20 text-sky-200 text-xs font-black px-2.5 py-0.5 rounded-full border border-white/20">
                 {delegations.length} Records
               </span>
             </div>
-            <p className="text-xs text-slate-500">
-              Assign manager review authority and line of reporting.
-            </p>
           </div>
         </div>
 
         {/* Right Controls: Search Box + Add Button */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
           {/* Search Box */}
           <div className="relative min-w-[200px] sm:w-64">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -265,12 +250,15 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                 setCurrentPage(1);
               }}
               placeholder="Search delegation..."
-              className="w-full pl-8 pr-7 py-2 text-xs bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all text-slate-800"
+              className="w-full pl-8 pr-7 py-2 text-xs bg-white text-slate-800 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all"
             />
             {searchQuery && (
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
+                onClick={() => {
+                  setSearchQuery('');
+                  setCurrentPage(1);
+                }}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
@@ -282,7 +270,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
           <button
             type="button"
             onClick={handleOpenNewModal}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-95 shrink-0"
+            className="px-4 py-2 bg-gradient-to-r from-[#0275a8] to-sky-600 hover:from-[#02628d] hover:to-sky-500 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-400/40"
           >
             <Plus className="w-4 h-4" />
             <span>Add Delegation</span>
@@ -531,30 +519,6 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
             {/* Modal Form Content */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
               
-              {/* Field 0: Entity * */}
-              <div className="space-y-1.5">
-                <label className="block font-bold text-slate-700 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
-                  <span>Entity</span> <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={selectedEntity}
-                  onChange={(e) => {
-                    const nextEnt = e.target.value as DelegationEntity;
-                    setSelectedEntity(nextEnt);
-                    const entEmps = employees.filter((emp) => (emp.entity || 'GANS') === nextEnt);
-                    const candidatePool = entEmps.length >= 2 ? entEmps : employees;
-                    setFromEmpId(candidatePool[0]?.employeeId || '');
-                    setToEmpId(candidatePool[1]?.employeeId || '');
-                  }}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all cursor-pointer"
-                >
-                  <option value="GANS">GANS</option>
-                  <option value="Eshara">Eshara</option>
-                  <option value="YHA">YHA</option>
-                </select>
-              </div>
-
               {/* Field 1: From * */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-slate-700 flex items-center gap-1.5">

@@ -176,9 +176,6 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
           <History className="w-6 h-6 text-sky-300" />
           <span>Release History</span>
         </h1>
-        <p className="text-xs text-sky-200 mt-1">
-          Historical log of release runs and deadlines. Click any run to inspect its detailed delivery manifest.
-        </p>
       </div>
 
       {/* 2. Search & Filter Bar */}

@@ -16,7 +16,12 @@ import {
   History,
   UserCheck,
   Building2,
-  FolderPlus
+  Landmark,
+  GitBranch,
+  FolderPlus,
+  FolderTree,
+  Network,
+  Award
 } from 'lucide-react';
 
 interface GansSidebarProps {
@@ -91,30 +96,7 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
               </div>
             </div>
 
-            {/* PDP Module (Self-Service) */}
-            <div>
-              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-slate-600 uppercase flex items-center gap-1.5 border-b border-slate-200/80 pb-1.5 mb-1.5">
-                <Compass className="w-3.5 h-3.5 text-slate-500" />
-                <span>PDP</span>
-              </div>
 
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  onClick={() => onSelectTab('pdp-dashboard')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
-                    currentTab === 'pdp-dashboard'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-600 hover:bg-white/80 hover:text-[#0275a8]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'pdp-dashboard' ? 'text-white' : 'text-slate-400'}`} />
-                    <span>My PDP</span>
-                  </div>
-                </button>
-              </div>
-            </div>
           </div>
         )}
 
@@ -148,30 +130,7 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
               </div>
             </div>
 
-            {/* PDP Module */}
-            <div>
-              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-slate-600 uppercase flex items-center gap-1.5 border-b border-slate-200/80 pb-1.5 mb-1.5">
-                <Compass className="w-3.5 h-3.5 text-slate-500" />
-                <span>PDP</span>
-              </div>
 
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  onClick={() => onSelectTab('pdp-dashboard')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
-                    currentTab === 'pdp-dashboard'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-600 hover:bg-white/80 hover:text-[#0275a8]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'pdp-dashboard' ? 'text-white' : 'text-slate-400'}`} />
-                    <span>My PDP</span>
-                  </div>
-                </button>
-              </div>
-            </div>
           </div>
         )}
 
@@ -219,6 +178,38 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   </div>
                 </button>
 
+                {/* Release History (under Employee Master) */}
+                <button
+                  type="button"
+                  onClick={() => onSelectTab('hr-assessment-history')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
+                    currentTab === 'hr-assessment-history'
+                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
+                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <History className={`w-4 h-4 ${currentTab === 'hr-assessment-history' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <span>Release History</span>
+                  </div>
+                </button>
+
+                {/* Org Master (Organization Master) */}
+                <button
+                  type="button"
+                  onClick={() => onSelectTab('hr-org-master')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
+                    currentTab === 'hr-org-master'
+                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
+                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Landmark className={`w-4 h-4 ${currentTab === 'hr-org-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <span>Org Master</span>
+                  </div>
+                </button>
+
                 {/* Department Master */}
                 <button
                   type="button"
@@ -235,19 +226,35 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   </div>
                 </button>
 
-                {/* Release History */}
+                {/* Division Master */}
                 <button
                   type="button"
-                  onClick={() => onSelectTab('hr-assessment-history')}
+                  onClick={() => onSelectTab('hr-division-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
-                    currentTab === 'hr-assessment-history'
+                    currentTab === 'hr-division-master'
                       ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
                       : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <History className={`w-4 h-4 ${currentTab === 'hr-assessment-history' ? 'text-white' : 'text-[#0275a8]'}`} />
-                    <span>Release History</span>
+                    <GitBranch className={`w-4 h-4 ${currentTab === 'hr-division-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <span>Division Master</span>
+                  </div>
+                </button>
+
+                {/* Grade Master */}
+                <button
+                  type="button"
+                  onClick={() => onSelectTab('hr-grade-master')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
+                    currentTab === 'hr-grade-master'
+                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
+                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Award className={`w-4 h-4 ${currentTab === 'hr-grade-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <span>Grade Master</span>
                   </div>
                 </button>
 
@@ -262,7 +269,7 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Layers className={`w-4 h-4 ${currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <FolderTree className={`w-4 h-4 ${currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department' ? 'text-white' : 'text-[#0275a8]'}`} />
                     <span>Functional Master</span>
                   </div>
                 </button>
@@ -342,30 +349,7 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
               </div>
             </div>
 
-            {/* 3.3 PDP */}
-            <div>
-              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#1a5075] uppercase flex items-center gap-1.5 border-b border-slate-200/80 pb-1.5 mb-1.5">
-                <Compass className="w-3.5 h-3.5 text-[#0275a8]" />
-                <span>PDP</span>
-              </div>
 
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  onClick={() => onSelectTab('hr-pdp-dashboard')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
-                    currentTab === 'hr-pdp-dashboard'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'hr-pdp-dashboard' ? 'text-white' : 'text-[#0275a8]'}`} />
-                    <span>My PDP</span>
-                  </div>
-                </button>
-              </div>
-            </div>
 
           </div>
         )}

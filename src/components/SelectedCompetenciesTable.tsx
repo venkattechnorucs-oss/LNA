@@ -73,8 +73,8 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                   <th className="py-3 px-3 text-center w-10 border-r border-slate-200/80">#</th>
                   <th className="py-3 px-4 w-1/5 border-r border-slate-200/80 text-center">Competency</th>
                   <th className="py-3 px-4 w-1/5 border-r border-slate-200/80 text-center">Selected Skill (1 Required)</th>
+                  <th className="py-3 px-4 w-1/4 border-r border-slate-200/80 text-center">Recommended Course</th>
                   <th className="py-3 px-3 w-32 text-center border-r border-slate-200/80">Ideal Proficiency</th>
-                  <th className="py-3 px-4 w-1/4 border-r border-slate-200/80 text-center">Mapped Course</th>
                   <th className="py-3 px-4 w-1/4 text-center">Course Alternative</th>
                 </tr>
               </thead>
@@ -169,7 +169,25 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                           </div>
                         </td>
 
-                        {/* Column 4: Ideal Proficiency (System-Determined, Read-Only) */}
+                        {/* Column 4: Recommended Training Course (System-Mapped, Read-Only) */}
+                        <td className="py-3.5 px-4 border-r border-slate-100 align-top pt-3">
+                          {mappedCourse ? (
+                            <div className="bg-gradient-to-br from-[#f0f7fb] to-[#e6f1f8] p-3 rounded-xl border border-[#cfe1ed] shadow-2xs">
+                              <span className="font-extrabold text-[#1a5075] text-xs leading-snug flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-md bg-[#0275a8]/15 flex items-center justify-center shrink-0">
+                                  <BookOpen className="w-3.5 h-3.5 text-[#0275a8]" />
+                                </div>
+                                {mappedCourse.title}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="py-3 text-center text-slate-400 text-[11px] italic">
+                              <span>Select a skill to view recommended training course</span>
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Column 5: Ideal Proficiency (System-Determined, Read-Only) */}
                         <td className="py-3.5 px-3 border-r border-slate-100 text-center align-top pt-4">
                           {idealProficiency ? (
                             <div className="inline-flex flex-col items-center">
@@ -185,24 +203,6 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                             <span className="text-[11px] text-slate-400 italic block">
                               Awaiting Skill Selection
                             </span>
-                          )}
-                        </td>
-
-                        {/* Column 5: Recommended Training Course (System-Mapped, Read-Only) */}
-                        <td className="py-3.5 px-4 border-r border-slate-100 align-top pt-3">
-                          {mappedCourse ? (
-                            <div className="bg-gradient-to-br from-[#f0f7fb] to-[#e6f1f8] p-3 rounded-xl border border-[#cfe1ed] shadow-2xs">
-                              <span className="font-extrabold text-[#1a5075] text-xs leading-snug flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-md bg-[#0275a8]/15 flex items-center justify-center shrink-0">
-                                  <BookOpen className="w-3.5 h-3.5 text-[#0275a8]" />
-                                </div>
-                                {mappedCourse.title}
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="py-3 text-center text-slate-400 text-[11px] italic">
-                              <span>Select a skill to view mapped training course</span>
-                            </div>
                           )}
                         </td>
 

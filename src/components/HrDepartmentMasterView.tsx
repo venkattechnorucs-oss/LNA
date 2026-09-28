@@ -49,8 +49,8 @@ interface HrDepartmentMasterViewProps {
 }
 
 export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () => {
-  // Three tabs at the top: GANS (synced from DB, read-only), Eshara, YHA
-  const [activeEntity, setActiveEntity] = useState<DepartmentEntity>('GANS');
+  // Entity filter on the right side (replacing the tab design)
+  const [entityFilter, setEntityFilter] = useState<'All' | DepartmentEntity>('All');
 
   // Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,51 +96,55 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
     }
   }, [yhaDepartments]);
 
-  // Modal State (Add / Edit) - only for Eshara & YHA
+  // Combined departments based on filter
+  const allDepartments = useMemo(() => {
+    return [...gansDepartments, ...esharaDepartments, ...yhaDepartments];
+  }, [gansDepartments, esharaDepartments, yhaDepartments]);
+
+  // Filtered departments
+  const filteredDepartments = useMemo(() => {
+    return allDepartments.filter((dept) => {
+      const matchesEntity = entityFilter === 'All' || dept.entity === entityFilter;
+      const matchesSearch =
+        !searchQuery.trim() ||
+        dept.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        dept.entity.toLowerCase().includes(searchQuery.toLowerCase().trim());
+
+      return matchesEntity && matchesSearch;
+    });
+  }, [allDepartments, entityFilter, searchQuery]);
+
+  // Modal State (Add / Edit) - GANS is read-only
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<'add' | 'edit'>('add');
   const [editingDeptId, setEditingDeptId] = useState<string | null>(null);
 
-  // Form Field: Department Name
+  // Form Fields
   const [formName, setFormName] = useState('');
+  const [formEntity, setFormEntity] = useState<'Eshara' | 'YHA'>('Eshara');
   const [formError, setFormError] = useState('');
 
   // Delete Confirmation State
   const [deleteConfirmDept, setDeleteConfirmDept] = useState<DepartmentRecord | null>(null);
 
-  // Current entity departments
-  const currentEntityDepartments = useMemo(() => {
-    if (activeEntity === 'GANS') return gansDepartments;
-    if (activeEntity === 'Eshara') return esharaDepartments;
-    return yhaDepartments;
-  }, [activeEntity, gansDepartments, esharaDepartments, yhaDepartments]);
-
-  // Filtered departments
-  const filteredDepartments = useMemo(() => {
-    return currentEntityDepartments.filter((dept) => {
-      if (!searchQuery.trim()) return true;
-      return dept.name.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-  }, [currentEntityDepartments, searchQuery]);
-
   // Open Add
   const handleOpenAdd = () => {
-    if (activeEntity === 'GANS') return;
-
     setFormMode('add');
     setEditingDeptId(null);
     setFormName('');
+    setFormEntity(entityFilter === 'YHA' ? 'YHA' : 'Eshara');
     setFormError('');
     setIsFormModalOpen(true);
   };
 
   // Open Edit
   const handleOpenEdit = (dept: DepartmentRecord) => {
-    if (activeEntity === 'GANS') return;
+    if (dept.entity === 'GANS') return; // GANS is not editable
 
     setFormMode('edit');
     setEditingDeptId(dept.id);
     setFormName(dept.name);
+    setFormEntity(dept.entity === 'YHA' ? 'YHA' : 'Eshara');
     setFormError('');
     setIsFormModalOpen(true);
   };
@@ -156,30 +160,42 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
 
     if (formMode === 'add') {
       const newDept: DepartmentRecord = {
-        id: `dept-${activeEntity.toLowerCase()}-${Date.now()}`,
+        id: `dept-${formEntity.toLowerCase()}-${Date.now()}`,
         name: formName.trim(),
-        entity: activeEntity
+        entity: formEntity
       };
 
-      if (activeEntity === 'Eshara') {
+      if (formEntity === 'Eshara') {
         setEsharaDepartments((prev) => [...prev, newDept]);
       } else {
         setYhaDepartments((prev) => [...prev, newDept]);
       }
 
-      setActionToast({ message: 'Department added successfully.', type: 'success' });
+      setActionToast({ message: `Department added successfully to ${formEntity}.`, type: 'success' });
     } else {
-      const updater = (prev: DepartmentRecord[]) =>
-        prev.map((d) =>
-          d.id === editingDeptId
-            ? { ...d, name: formName.trim() }
-            : d
-        );
-
-      if (activeEntity === 'Eshara') {
-        setEsharaDepartments(updater);
+      // Editing existing department
+      if (formEntity === 'Eshara') {
+        // If originally in YHA, move to Eshara
+        setYhaDepartments((prev) => prev.filter((d) => d.id !== editingDeptId));
+        setEsharaDepartments((prev) => {
+          const exists = prev.some((d) => d.id === editingDeptId);
+          if (exists) {
+            return prev.map((d) => (d.id === editingDeptId ? { ...d, name: formName.trim() } : d));
+          } else {
+            return [...prev, { id: editingDeptId!, name: formName.trim(), entity: 'Eshara' }];
+          }
+        });
       } else {
-        setYhaDepartments(updater);
+        // If originally in Eshara, move to YHA
+        setEsharaDepartments((prev) => prev.filter((d) => d.id !== editingDeptId));
+        setYhaDepartments((prev) => {
+          const exists = prev.some((d) => d.id === editingDeptId);
+          if (exists) {
+            return prev.map((d) => (d.id === editingDeptId ? { ...d, name: formName.trim() } : d));
+          } else {
+            return [...prev, { id: editingDeptId!, name: formName.trim(), entity: 'YHA' }];
+          }
+        });
       }
 
       setActionToast({ message: 'Department updated successfully.', type: 'success' });
@@ -191,12 +207,12 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
 
   // Confirm Delete
   const handleConfirmDelete = () => {
-    if (!deleteConfirmDept) return;
+    if (!deleteConfirmDept || deleteConfirmDept.entity === 'GANS') return;
     const deptToDelete = deleteConfirmDept;
 
-    if (activeEntity === 'Eshara') {
+    if (deptToDelete.entity === 'Eshara') {
       setEsharaDepartments((prev) => prev.filter((d) => d.id !== deptToDelete.id));
-    } else if (activeEntity === 'YHA') {
+    } else if (deptToDelete.entity === 'YHA') {
       setYhaDepartments((prev) => prev.filter((d) => d.id !== deptToDelete.id));
     }
 
@@ -206,59 +222,61 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
   };
 
   return (
-    <div id="department-master-container" className="space-y-6 pb-16">
+    <div id="department-master-container" className="space-y-6 pb-16 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {actionToast && (
-        <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg bg-[#1a5075] text-white text-xs font-bold">
+        <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg bg-[#1a5075] text-white text-xs font-bold animate-in fade-in">
           <CheckCircle2 className="w-4 h-4 text-sky-300" />
           <span>{actionToast.message}</span>
-          <button type="button" onClick={() => setActionToast(null)} className="ml-2 hover:bg-white/20 p-1 rounded cursor-pointer">
+          <button
+            type="button"
+            onClick={() => setActionToast(null)}
+            className="ml-2 hover:bg-white/20 p-1 rounded cursor-pointer"
+          >
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-[#1a5075] text-white">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <span>Department Master</span>
-        </h1>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0d314a] rounded-xl p-5 text-white shadow-md border border-[#2b658f] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
+            <Building2 className="w-6 h-6 text-sky-300" />
+            <span>Department Master</span>
+          </h1>
+        </div>
 
-        {/* Add Department button for Eshara and YHA */}
-        {activeEntity !== 'GANS' && (
+        {/* Right side controls: Entity Filter + Add Department Button */}
+        <div className="flex items-center gap-3 self-end sm:self-auto flex-wrap">
+          {/* Entity Filter Dropdown */}
+          <div className="flex items-center gap-2 bg-white/15 px-3 py-1.5 border border-white/20 rounded-xl shadow-2xs backdrop-blur-xs">
+            <span className="text-xs font-bold text-sky-200">Entity:</span>
+            <select
+              value={entityFilter}
+              onChange={(e) => setEntityFilter(e.target.value as any)}
+              className="text-xs font-extrabold text-white bg-transparent focus:outline-hidden cursor-pointer"
+            >
+              <option value="All" className="text-slate-800">All Entities</option>
+              <option value="GANS" className="text-slate-800">GANS</option>
+              <option value="Eshara" className="text-slate-800">Eshara</option>
+              <option value="YHA" className="text-slate-800">YHA</option>
+            </select>
+          </div>
+
+          {/* Add Department Button */}
           <button
             type="button"
             onClick={handleOpenAdd}
-            className="px-4 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2 cursor-pointer transition-all active:scale-95"
+            className="px-4 py-2 bg-gradient-to-r from-[#0275a8] to-sky-600 hover:from-[#02628d] hover:to-sky-500 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-400/40"
           >
             <Plus className="w-4 h-4" />
             <span>Add Department</span>
           </button>
-        )}
+        </div>
       </div>
 
-      {/* Three tabs at the top representing the three entities: GANS, Eshara, and YHA */}
-      <div className="flex border-b border-slate-200">
-        {(['GANS', 'Eshara', 'YHA'] as DepartmentEntity[]).map((entity) => (
-          <button
-            key={entity}
-            type="button"
-            onClick={() => setActiveEntity(entity)}
-            className={`px-6 py-3 font-bold text-sm cursor-pointer transition-colors border-b-2 -mb-px ${
-              activeEntity === entity
-                ? 'border-[#0275a8] text-[#0275a8]'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
-            }`}
-          >
-            {entity}
-          </button>
-        ))}
-      </div>
-
-      {/* Search */}
+      {/* Search Input */}
       <div className="flex items-center justify-between">
         <div className="relative w-full max-w-sm">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -266,64 +284,82 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search..."
+            placeholder="Search departments..."
             className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
           />
         </div>
       </div>
 
-      {/* Departments Table:
-          For GANS: Only the Department name should be shown (no other columns needed, synced from DB)
-          For others (Eshara and YHA): Only Department Name and Action (in that also just Edit and Delete) */}
+      {/* Departments Table: Department Name | Entity | Action */}
       <div className="rounded-xl bg-white border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50 text-slate-700 font-extrabold border-b border-slate-200 uppercase text-[11px]">
               <tr>
                 <th className="py-3 px-4">Department Name</th>
-                {activeEntity !== 'GANS' && (
-                  <th className="py-3 px-4 text-center w-28">Action</th>
-                )}
+                <th className="py-3 px-4 w-36">Entity</th>
+                <th className="py-3 px-4 text-center w-28">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {filteredDepartments.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={activeEntity === 'GANS' ? 1 : 2}
-                    className="py-12 text-center text-slate-400"
-                  >
+                  <td colSpan={3} className="py-12 text-center text-slate-400">
                     No departments found
                   </td>
                 </tr>
               ) : (
-                filteredDepartments.map((dept) => (
-                  <tr key={dept.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-4 font-bold text-slate-900">{dept.name}</td>
-                    {activeEntity !== 'GANS' && (
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenEdit(dept)}
-                            className="p-1.5 text-slate-500 hover:text-[#0275a8] hover:bg-sky-50 rounded-lg cursor-pointer"
-                            title="Edit"
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setDeleteConfirmDept(dept)}
-                            className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                filteredDepartments.map((dept) => {
+                  const isGans = dept.entity === 'GANS';
+
+                  return (
+                    <tr key={dept.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-3 px-4 font-bold text-slate-900">{dept.name}</td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block ${
+                            dept.entity === 'GANS'
+                              ? 'bg-sky-50 text-[#0275a8] border border-sky-200'
+                              : dept.entity === 'Eshara'
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                              : 'bg-amber-50 text-amber-800 border border-amber-200'
+                          }`}
+                        >
+                          {dept.entity}
+                        </span>
                       </td>
-                    )}
-                  </tr>
-                ))
+                      <td className="py-3 px-4 text-center">
+                        {isGans ? (
+                          <span
+                            className="text-slate-300 text-xs font-bold select-none cursor-default"
+                            title="GANS departments are system synced and not editable"
+                          >
+                            —
+                          </span>
+                        ) : (
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEdit(dept)}
+                              className="p-1.5 text-slate-500 hover:text-[#0275a8] hover:bg-sky-50 rounded-lg cursor-pointer"
+                              title="Edit"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeleteConfirmDept(dept)}
+                              className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -333,7 +369,7 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
       {/* Add / Edit Modal (for Eshara and YHA) */}
       {isFormModalOpen && (
         <div
-          className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 backdrop-blur-xs animate-in fade-in"
           onClick={() => setIsFormModalOpen(false)}
         >
           <div
@@ -354,6 +390,20 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             </div>
 
             <form onSubmit={handleSaveForm} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Entity <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={formEntity}
+                  onChange={(e) => setFormEntity(e.target.value as any)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                >
+                  <option value="Eshara">Eshara</option>
+                  <option value="YHA">YHA</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block font-bold text-slate-700 mb-1">
                   Department Name <span className="text-red-500">*</span>
@@ -395,7 +445,7 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
       {/* Delete Confirmation Modal */}
       {deleteConfirmDept && (
         <div
-          className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 backdrop-blur-xs"
           onClick={() => setDeleteConfirmDept(null)}
         >
           <div
@@ -405,7 +455,7 @@ export const HrDepartmentMasterView: React.FC<HrDepartmentMasterViewProps> = () 
             <div className="space-y-1">
               <h3 className="font-bold text-slate-900 text-sm">Remove Department</h3>
               <p className="text-xs text-slate-600">
-                Are you sure you want to remove <strong>{deleteConfirmDept.name}</strong>?
+                Are you sure you want to remove <strong>{deleteConfirmDept.name}</strong> ({deleteConfirmDept.entity})?
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 pt-2">

@@ -169,7 +169,7 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
         <div className="relative z-10">
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5 drop-shadow-xs">
             <FileSpreadsheet className="w-6 h-6 text-sky-300" />
-            <span>Reports &amp; Analytics Export</span>
+            <span>Reports</span>
           </h1>
         </div>
 
@@ -238,7 +238,7 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
             className="mt-6 w-full py-3 px-4 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 shadow-md shadow-sky-950/15 transition-all cursor-pointer active:scale-98"
           >
             <Download className="w-4 h-4 text-sky-200" />
-            <span>Export CSV Dataset</span>
+            <span>Export</span>
           </button>
         </div>
       </div>

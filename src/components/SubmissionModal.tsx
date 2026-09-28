@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { LNAAssessmentSubmission } from '../types';
-import { CheckCircle2, X, Sparkles } from 'lucide-react';
+import { CheckCircle2, X, Sparkles, Info } from 'lucide-react';
 
 interface SubmissionModalProps {
   submission: LNAAssessmentSubmission | null;
@@ -13,12 +13,12 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
   isOpen,
   onClose
 }) => {
-  // Auto-dismiss after 2.5 seconds
+  // Auto-dismiss after 4.5 seconds
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
         onClose();
-      }, 2500);
+      }, 4500);
       return () => clearTimeout(timer);
     }
   }, [isOpen, onClose]);
@@ -31,7 +31,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white/95 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200 p-6 text-center relative"
+        className="bg-white/95 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200 p-6 sm:p-7 text-center relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -59,6 +59,24 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
         <p className="text-xs text-slate-500 mt-1 font-medium">
           Your submission has been forwarded to your Manager for review.
         </p>
+
+        {/* Talent Management Notification Banner */}
+        <div className="mt-4 p-3.5 bg-sky-50/90 border border-sky-200/90 rounded-2xl text-[11px] sm:text-xs text-slate-700 leading-relaxed text-left flex items-start gap-2.5 shadow-2xs">
+          <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+          <p className="font-medium text-slate-800">
+            “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
+          </p>
+        </div>
+
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition-all active:scale-98"
+          >
+            Acknowledge &amp; Return to Dashboard
+          </button>
+        </div>
       </div>
     </div>
   );
