@@ -2,8 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   Landmark,
   Plus,
-  Pencil,
-  Trash2,
   Search,
   X,
   CheckCircle2
@@ -48,18 +46,13 @@ export const HrOrgMasterView: React.FC = () => {
     }
   }, [organizations]);
 
-  // Modal State (Add / Edit)
+  // Modal State (Add Org)
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [formMode, setFormMode] = useState<'add' | 'edit'>('add');
-  const [editingOrgId, setEditingOrgId] = useState<string | null>(null);
 
   // Form Fields: Org Name & Code
   const [formName, setFormName] = useState('');
   const [formCode, setFormCode] = useState('');
   const [formErrors, setFormErrors] = useState<{ name?: string; code?: string }>({});
-
-  // Delete Confirmation State
-  const [deleteConfirmOrg, setDeleteConfirmOrg] = useState<OrgRecord | null>(null);
 
   // Filtered organizations
   const filteredOrganizations = useMemo(() => {
@@ -72,25 +65,13 @@ export const HrOrgMasterView: React.FC = () => {
 
   // Open Add
   const handleOpenAdd = () => {
-    setFormMode('add');
-    setEditingOrgId(null);
     setFormName('');
     setFormCode('');
     setFormErrors({});
     setIsFormModalOpen(true);
   };
 
-  // Open Edit
-  const handleOpenEdit = (org: OrgRecord) => {
-    setFormMode('edit');
-    setEditingOrgId(org.id);
-    setFormName(org.name);
-    setFormCode(org.code);
-    setFormErrors({});
-    setIsFormModalOpen(true);
-  };
-
-  // Save Add / Edit
+  // Save Add
   const handleSaveForm = (e: React.FormEvent) => {
     e.preventDefault();
     const errors: { name?: string; code?: string } = {};
@@ -107,38 +88,18 @@ export const HrOrgMasterView: React.FC = () => {
       return;
     }
 
-    if (formMode === 'add') {
-      const newOrg: OrgRecord = {
-        id: `org-${Date.now()}`,
-        name: formName.trim(),
-        code: formCode.trim().toUpperCase(),
-        isDefault: false
-      };
+    const newOrg: OrgRecord = {
+      id: `org-${Date.now()}`,
+      name: formName.trim(),
+      code: formCode.trim().toUpperCase(),
+      isDefault: false
+    };
 
-      setOrganizations((prev) => [...prev, newOrg]);
-      setActionToast({ message: 'Organization added successfully.', type: 'success' });
-    } else {
-      setOrganizations((prev) =>
-        prev.map((o) =>
-          o.id === editingOrgId
-            ? { ...o, name: formName.trim(), code: formCode.trim().toUpperCase() }
-            : o
-        )
-      );
-      setActionToast({ message: 'Organization updated successfully.', type: 'success' });
-    }
+    setOrganizations((prev) => [...prev, newOrg]);
+    setActionToast({ message: 'Organization added successfully.', type: 'success' });
 
     setTimeout(() => setActionToast(null), 3000);
     setIsFormModalOpen(false);
-  };
-
-  // Confirm Delete
-  const handleConfirmDelete = () => {
-    if (!deleteConfirmOrg) return;
-    setOrganizations((prev) => prev.filter((o) => o.id !== deleteConfirmOrg.id));
-    setActionToast({ message: 'Organization removed successfully.', type: 'info' });
-    setTimeout(() => setActionToast(null), 3000);
-    setDeleteConfirmOrg(null);
   };
 
   return (
@@ -191,7 +152,7 @@ export const HrOrgMasterView: React.FC = () => {
         </div>
       </div>
 
-      {/* Org Table: Org Name | Code | Action */}
+      {/* Org Table: Org Name | Code (Action column removed) */}
       <div className="rounded-xl bg-white border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
@@ -199,13 +160,12 @@ export const HrOrgMasterView: React.FC = () => {
               <tr>
                 <th className="py-3 px-4">Org Name</th>
                 <th className="py-3 px-4 w-48">Code</th>
-                <th className="py-3 px-4 text-center w-28">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {filteredOrganizations.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="py-12 text-center text-slate-400">
+                  <td colSpan={2} className="py-12 text-center text-slate-400">
                     No organizations found
                   </td>
                 </tr>
@@ -214,26 +174,6 @@ export const HrOrgMasterView: React.FC = () => {
                   <tr key={org.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3 px-4 font-bold text-slate-900">{org.name}</td>
                     <td className="py-3 px-4 font-mono font-bold text-[#0275a8]">{org.code}</td>
-                    <td className="py-3 px-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEdit(org)}
-                          className="p-1.5 text-slate-500 hover:text-[#0275a8] hover:bg-sky-50 rounded-lg cursor-pointer"
-                          title="Edit"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDeleteConfirmOrg(org)}
-                          className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 ))
               )}
@@ -242,7 +182,7 @@ export const HrOrgMasterView: React.FC = () => {
         </div>
       </div>
 
-      {/* Add / Edit Modal */}
+      {/* Add Modal */}
       {isFormModalOpen && (
         <div
           className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 backdrop-blur-xs animate-in fade-in"
@@ -254,7 +194,7 @@ export const HrOrgMasterView: React.FC = () => {
           >
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <h3 className="font-black text-slate-900 text-base">
-                {formMode === 'add' ? 'Add Org' : 'Edit Org'}
+                Add Org
               </h3>
               <button
                 type="button"
@@ -313,46 +253,10 @@ export const HrOrgMasterView: React.FC = () => {
                   type="submit"
                   className="px-5 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white font-bold rounded-xl cursor-pointer"
                 >
-                  {formMode === 'add' ? 'Add Org' : 'Save'}
+                  Add Org
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmOrg && (
-        <div
-          className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 backdrop-blur-xs"
-          onClick={() => setDeleteConfirmOrg(null)}
-        >
-          <div
-            className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 space-y-4 text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="space-y-1">
-              <h3 className="font-bold text-slate-900 text-sm">Remove Organization</h3>
-              <p className="text-xs text-slate-600">
-                Are you sure you want to remove <strong>{deleteConfirmOrg.name} ({deleteConfirmOrg.code})</strong>?
-              </p>
-            </div>
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setDeleteConfirmOrg(null)}
-                className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl cursor-pointer"
-              >
-                Remove
-              </button>
-            </div>
           </div>
         </div>
       )}

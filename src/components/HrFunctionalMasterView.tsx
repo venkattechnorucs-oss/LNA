@@ -517,7 +517,7 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
 
       {/* Downside Table: Functional first and Department second */}
       <div className="rounded-xl bg-white border border-slate-200 shadow-xs overflow-hidden">
-        {/* Search & Info */}
+        {/* Search */}
         <div className="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative w-full max-w-sm">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -528,13 +528,6 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
               placeholder={`Search ${activeEntity} functionals or departments...`}
               className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
             />
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-            <span>Entity:</span>
-            <span className="px-2.5 py-1 rounded-lg bg-sky-50 text-[#0275a8] border border-sky-200 font-extrabold text-[11px]">
-              {activeEntity} ({filteredRecords.length} records)
-            </span>
           </div>
         </div>
 
