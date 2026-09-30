@@ -827,7 +827,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             className="px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white font-bold text-xs rounded-lg shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-300/30"
             title="Add a new employee record"
           >
-            <span>Add Employee</span>
+            <span>Add</span>
           </button>
         </div>
       </div>

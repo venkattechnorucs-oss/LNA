@@ -203,7 +203,7 @@ export const HrDivisionMasterView: React.FC = () => {
             className="px-4 py-2 bg-gradient-to-r from-[#0275a8] to-sky-600 hover:from-[#02628d] hover:to-sky-500 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-400/40"
           >
             <Plus className="w-4 h-4" />
-            <span>Add Division</span>
+            <span>Add</span>
           </button>
         </div>
       </div>
@@ -297,7 +297,7 @@ export const HrDivisionMasterView: React.FC = () => {
           >
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <h3 className="font-black text-slate-900 text-base">
-                {formMode === 'add' ? 'Add Division' : 'Edit Division'}
+                {formMode === 'add' ? 'Add' : 'Edit Division'}
               </h3>
               <button
                 type="button"
@@ -354,7 +354,7 @@ export const HrDivisionMasterView: React.FC = () => {
                   type="submit"
                   className="px-5 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white font-bold rounded-xl cursor-pointer"
                 >
-                  {formMode === 'add' ? 'Add Division' : 'Save'}
+                  {formMode === 'add' ? 'Add' : 'Save'}
                 </button>
               </div>
             </form>
