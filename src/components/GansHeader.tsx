@@ -65,9 +65,9 @@ export const GansHeader: React.FC<GansHeaderProps> = ({
   return (
     <header className="w-full select-none sticky top-0 z-40 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)]">
       {/* =========================================================================
-          TIER 1: MICROSOFT 365 SUITE BAR (Refined Sleek Bar)
+          TIER 1: MICROSOFT 365 SUITE BAR (Night Brand Background + Gold Accent)
           ========================================================================= */}
-      <div className="bg-[#0b1015]/95 backdrop-blur-md text-white px-3 sm:px-4 py-0 flex items-center justify-between min-h-[44px] border-b border-white/10">
+      <div className="bg-[#211E4E] text-white px-3 sm:px-4 py-0 flex items-center justify-between min-h-[44px] border-b border-[#C8A977]/25 shadow-xs">
         {/* Left: 3x3 Waffle Dots & White Microsoft Logo Box */}
         <div className="flex items-center h-full gap-0">
           {/* Waffle 3x3 Dots */}
@@ -317,7 +317,7 @@ export const GansHeader: React.FC<GansHeaderProps> = ({
 
           {/* TALENT MANAGEMENT Title */}
           <div className="flex items-center">
-            <h1 className="text-sm sm:text-base md:text-lg font-bold tracking-wider text-[#1a5075] uppercase select-none font-sans">
+            <h1 className="text-sm sm:text-base md:text-lg font-bold tracking-wider text-[#211E4E] uppercase select-none font-sans">
               TALENT MANAGEMENT
             </h1>
           </div>
@@ -332,7 +332,7 @@ export const GansHeader: React.FC<GansHeaderProps> = ({
               onClick={() => onSwitchRole('employee')}
               className={`px-3 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
                 activeRole === 'employee'
-                  ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_2px_8px_rgba(2,117,168,0.25)]'
+                  ? 'bg-[#211E4E] text-[#C8A977] shadow-[0_2px_8px_rgba(33,30,78,0.25)] border border-[#C8A977]/30'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -343,7 +343,7 @@ export const GansHeader: React.FC<GansHeaderProps> = ({
               onClick={() => onSwitchRole('manager')}
               className={`px-3 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
                 activeRole === 'manager'
-                  ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_2px_8px_rgba(2,117,168,0.25)]'
+                  ? 'bg-[#211E4E] text-[#C8A977] shadow-[0_2px_8px_rgba(33,30,78,0.25)] border border-[#C8A977]/30'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -354,7 +354,7 @@ export const GansHeader: React.FC<GansHeaderProps> = ({
               onClick={() => onSwitchRole('hr')}
               className={`px-3 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
                 activeRole === 'hr'
-                  ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_2px_8px_rgba(2,117,168,0.25)]'
+                  ? 'bg-[#211E4E] text-[#C8A977] shadow-[0_2px_8px_rgba(33,30,78,0.25)] border border-[#C8A977]/30'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >

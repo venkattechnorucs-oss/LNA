@@ -192,14 +192,14 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
       <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-200/80 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* ================= 1. MODAL HEADER ================= */}
-        <div className="p-5 bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white flex items-center justify-between gap-4 border-b border-white/10 shrink-0">
+        <div className="p-5 bg-[#211E4E] text-[#C8A977] flex items-center justify-between gap-4 border-b border-[#C8A977]/20 shrink-0">
           <div>
             <h2 className="text-lg font-black tracking-tight text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-sky-300" />
+              <Users className="w-5 h-5 text-[#C8A977]" />
               <span>Delivery Manifest & Audit Log</span>
             </h2>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-sky-100 mt-1">
-              <span className="font-mono font-bold bg-white/15 px-2 py-0.5 rounded text-white">{releaseRun.releaseId}</span>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-300 mt-1">
+              <span className="font-mono font-bold bg-white/10 px-2 py-0.5 rounded text-[#C8A977] border border-[#C8A977]/30">{releaseRun.releaseId}</span>
               <span>•</span>
               <span>Released: <strong className="text-white">{releaseRun.releaseDate}</strong></span>
               <span>•</span>
@@ -241,7 +241,7 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search released employees, managers..."
-              className="w-full pl-8 pr-7 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#0275a8] focus:ring-1 focus:ring-[#0275a8] transition-all"
+              className="w-full pl-8 pr-7 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#211E4E] focus:ring-1 focus:ring-[#C8A977]/40 transition-all"
             />
             {searchQuery && (
               <button
@@ -259,7 +259,7 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
         <div className="flex-1 overflow-y-auto overflow-x-auto min-h-[260px]">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="sticky top-0 z-10">
-              <tr className="bg-[#f0f7fb] text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px] shadow-2xs">
+              <tr className="bg-[#fcfaf7] text-[#211E4E] border-b border-[#C8A977]/25 font-extrabold uppercase tracking-wider text-[11px] shadow-2xs">
                 <th className="py-3 px-3 text-center w-12 border-r border-slate-200/80">#</th>
                 <th className="py-3 px-4 border-r border-slate-200/80 text-left min-w-[220px]">Employee</th>
                 <th className="py-3 px-4 border-r border-slate-200/80 text-center min-w-[160px]">Reporting Manager</th>
@@ -285,7 +285,7 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
                   return (
                     <tr
                       key={profile.employeeId}
-                      className={`hover:bg-sky-50/50 transition-colors ${
+                      className={`hover:bg-[#211E4E]/5 transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-slate-50/40'
                       }`}
                     >
@@ -297,7 +297,7 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
                       {/* Employee Name */}
                       <td className="py-3 px-4 border-r border-slate-100 font-bold text-slate-900">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 border bg-[#1a5075]/10 text-[#1a5075] border-[#1a5075]/20">
+                          <div className="w-7 h-7 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 border bg-[#211E4E]/10 text-[#211E4E] border-[#C8A977]/30">
                             {profile.name
                               .split(' ')
                               .map((n) => n[0])

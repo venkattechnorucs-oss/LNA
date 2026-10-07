@@ -457,17 +457,15 @@ const FUNCTIONAL_COMPETENCY_SUGGESTIONS = [
   'Logistics & Retail Operations'
 ];
 
-// Curated competencies for Behavioral
+// The 7 Curated Behavioral Competencies
 const BEHAVIORAL_COMPETENCY_SUGGESTIONS = [
-  'Leadership',
-  'Communication',
-  'Customer Focus',
-  'Problem Solving',
-  'Teamwork',
-  'Adaptability & Resilience',
-  'Strategic Thinking & Visioning',
-  'Stakeholder Engagement & Influence',
-  'Critical Decision Making & Integrity'
+  'Adaptability',
+  'Teamwork & Collaboration',
+  'Result Orientation',
+  'Customer Centricity',
+  'Effective Communication',
+  'Accountability',
+  'Learning Agility'
 ];
 
 // Exactly 7 curated skills for Functional
@@ -1230,9 +1228,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
     });
   }, [competencies, mergedCatalog]);
 
-  // Filtered rows for the single table
+  // Filtered rows for the single table (Behavioral first, Functional second)
   const filteredRows = useMemo(() => {
-    return tableRows.filter((row) => {
+    const list = tableRows.filter((row) => {
       if (selectedCategory !== 'ALL' && row.category !== selectedCategory) return false;
       if (selectedDeptFilter !== 'ALL' && !row.department.toLowerCase().includes(selectedDeptFilter.toLowerCase())) return false;
       if (
@@ -1251,6 +1249,11 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
         if (!matchComp && !matchFunc && !matchDept && !matchDiv) return false;
       }
       return true;
+    });
+
+    return [...list].sort((a, b) => {
+      if (a.category === b.category) return 0;
+      return a.category === 'Behavioral' ? -1 : 1;
     });
   }, [tableRows, selectedCategory, selectedDeptFilter, selectedDivFilter, searchQuery]);
 
@@ -1484,17 +1487,15 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
   return (
     <div className="space-y-6 animate-in fade-in duration-300 pb-12">
       {/* Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a5075] via-[#104060] to-[#0d2f47] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(26,80,117,0.35)] border border-white/20 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="absolute -right-8 -top-8 w-56 h-56 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-teal-400/15 rounded-full blur-2xl pointer-events-none" />
-
+      <div className="relative overflow-hidden rounded-2xl bg-[#211E4E] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(33,30,78,0.25)] border border-[#C8A977]/30 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="relative z-10">
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5 drop-shadow-xs">
-            <div className="p-2 rounded-xl bg-white/15 border border-white/20 shadow-inner">
-              <Layers className="w-5 h-5 text-sky-300" />
+            <div className="p-2 rounded-xl bg-white/10 border border-[#C8A977]/30 shadow-inner">
+              <Layers className="w-5 h-5 text-[#C8A977]" />
             </div>
             <span>Competency &amp; Skills Master</span>
           </h1>
+          <p className="text-xs text-slate-300 mt-1">Configure and manage competencies, functional divisions, departments, and mapped skills.</p>
         </div>
 
         <div className="flex items-center gap-2.5 relative z-10 shrink-0 flex-wrap sm:flex-nowrap">
@@ -1506,9 +1507,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               setStagedCompetencies(SAMPLE_IMPORT_BATCH);
               setShowImportModal(true);
             }}
-            className="px-3.5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-extrabold text-xs rounded-xl flex items-center gap-2 border border-white/20 transition-all cursor-pointer active:scale-95 shadow-2xs backdrop-blur-xs"
+            className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-[#C8A977] font-extrabold text-xs rounded-xl flex items-center gap-2 border border-[#C8A977]/30 transition-all cursor-pointer active:scale-95 shadow-2xs backdrop-blur-xs"
           >
-            <Upload className="w-4 h-4 text-sky-300" />
+            <Upload className="w-4 h-4 text-[#C8A977]" />
             <span>Import</span>
           </button>
 
@@ -1518,9 +1519,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               resetAddModalForm();
               setShowAddModal(true);
             }}
-            className="px-5 py-2.5 bg-gradient-to-r from-[#0275a8] to-sky-600 hover:from-[#02628d] hover:to-sky-500 text-white font-extrabold text-xs rounded-xl flex items-center gap-2 shadow-md shadow-sky-950/20 transition-all cursor-pointer active:scale-95"
+            className="px-5 py-2.5 bg-gradient-to-r from-[#C8A977] to-[#dfc08f] hover:from-[#ba9966] hover:to-[#C8A977] text-[#211E4E] font-extrabold text-xs rounded-xl flex items-center gap-2 shadow-md shadow-[#211E4E]/20 transition-all cursor-pointer active:scale-95"
           >
-            <PlusCircle className="w-4 h-4" />
+            <PlusCircle className="w-4 h-4 text-[#211E4E]" />
             <span>Add Competency &amp; Skill</span>
           </button>
         </div>
@@ -1558,16 +1559,16 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
           <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1 tracking-tight">{totalCompetenciesCount}</div>
         </div>
         <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-4.5 shadow-[0_8px_30px_rgb(26,80,117,0.05)] hover:shadow-md transition-all">
-          <span className="text-[10px] font-extrabold text-sky-700 uppercase tracking-tight block">
-            Functional Competencies
-          </span>
-          <div className="text-2xl sm:text-3xl font-black text-sky-700 mt-1 tracking-tight">{functionalCount}</div>
-        </div>
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-4.5 shadow-[0_8px_30px_rgb(26,80,117,0.05)] hover:shadow-md transition-all">
           <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-tight block">
             Behavioral Competencies
           </span>
           <div className="text-2xl sm:text-3xl font-black text-emerald-700 mt-1 tracking-tight">{behavioralCount}</div>
+        </div>
+        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-4.5 shadow-[0_8px_30px_rgb(26,80,117,0.05)] hover:shadow-md transition-all">
+          <span className="text-[10px] font-extrabold text-sky-700 uppercase tracking-tight block">
+            Functional Competencies
+          </span>
+          <div className="text-2xl sm:text-3xl font-black text-sky-700 mt-1 tracking-tight">{functionalCount}</div>
         </div>
       </div>
 
@@ -1582,7 +1583,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by competency, functional, department, division..."
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 shadow-inner focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 shadow-inner focus:outline-hidden focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E]"
             />
           </div>
 
@@ -1594,22 +1595,11 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 onClick={() => setSelectedCategory('ALL')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
                   selectedCategory === 'ALL'
-                    ? 'bg-[#1a5075] text-white shadow-xs'
+                    ? 'bg-[#211E4E] text-[#C8A977] border border-[#C8A977]/30 shadow-xs'
                     : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 All
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedCategory('Functional')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                  selectedCategory === 'Functional'
-                    ? 'bg-sky-700 text-white shadow-xs'
-                    : 'text-sky-800 hover:bg-sky-50'
-                }`}
-              >
-                Functional
               </button>
               <button
                 type="button"
@@ -1621,6 +1611,17 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 }`}
               >
                 Behavioral
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory('Functional')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                  selectedCategory === 'Functional'
+                    ? 'bg-[#211E4E] text-[#C8A977] border border-[#C8A977]/30 shadow-xs'
+                    : 'text-[#211E4E] hover:bg-[#211E4E]/5'
+                }`}
+              >
+                Functional
               </button>
             </div>
 
@@ -1637,7 +1638,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                   }
                 }
               }}
-              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 shadow-2xs cursor-pointer"
+              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E] shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Functionals / Divisions</option>
               {customFunctionalKeys.length > 0 && (
@@ -1669,7 +1670,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
             <select
               value={selectedDeptFilter}
               onChange={(e) => setSelectedDeptFilter(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 shadow-2xs cursor-pointer"
+              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-hidden focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E] shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Departments</option>
               {(selectedDivFilter !== 'ALL'
@@ -1688,7 +1689,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] text-[11px] font-extrabold uppercase tracking-wider">
+              <tr className="bg-[#fcfaf7] text-[#211E4E] border-b border-[#C8A977]/25 text-[11px] font-extrabold uppercase tracking-wider">
                 <th className="py-3.5 px-3 w-10 text-center border-r border-slate-200/80">#</th>
                 <th className="py-3.5 px-3 min-w-[160px] border-r border-slate-200/80">Functional</th>
                 <th className="py-3.5 px-3 min-w-[150px] border-r border-slate-200/80">Department</th>
@@ -1715,8 +1716,8 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                   return (
                     <tr
                       key={row.id}
-                      className={`hover:bg-sky-50/50 transition-colors group ${
-                        idx % 2 === 0 ? 'bg-white/70' : 'bg-[#f8fbfe]/60'
+                      className={`hover:bg-[#211E4E]/5 transition-colors group ${
+                        idx % 2 === 0 ? 'bg-white/70' : 'bg-[#fcfaf7]/60'
                       }`}
                     >
                       <td className="py-3 px-3 text-center font-bold text-slate-400 border-r border-slate-100">
@@ -1724,8 +1725,8 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       </td>
                       <td className="py-3 px-3 font-semibold text-slate-800 border-r border-slate-100">
                         <div className="flex items-center gap-1.5">
-                          <Network className="w-3.5 h-3.5 text-[#0275a8] shrink-0" />
-                          <span className="font-bold text-[#1a5075]">{row.functional}</span>
+                          <Network className="w-3.5 h-3.5 text-[#C8A977] shrink-0" />
+                          <span className="font-bold text-[#211E4E]">{row.functional}</span>
                         </div>
                       </td>
                       <td className="py-3 px-3 font-medium text-slate-700 border-r border-slate-100">
@@ -1794,10 +1795,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-white/80 w-full max-w-4xl max-h-[92vh] overflow-y-auto animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+            <div className="bg-[#211E4E] text-[#C8A977] px-6 py-4 flex items-center justify-between sticky top-0 z-10 border-b border-[#C8A977]/20">
               <div className="flex items-center gap-2.5">
-                <PlusCircle className="w-5 h-5 text-sky-300" />
-                <h3 className="font-extrabold text-sm sm:text-base tracking-tight">Add New Competency &amp; Skill</h3>
+                <PlusCircle className="w-5 h-5 text-[#C8A977]" />
+                <h3 className="font-extrabold text-sm sm:text-base tracking-tight text-white">Add New Competency &amp; Skill</h3>
               </div>
               <button
                 type="button"
@@ -1818,7 +1819,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 {/* 1. Entity (Dropdown) */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <Building2 className="w-3.5 h-3.5 text-[#C8A977]" />
                     <span>Entity</span> <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -1834,7 +1835,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                         setFormErrors((prev) => ({ ...prev, entity: '' }));
                       }
                     }}
-                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E]"
                   >
                     <option value="" disabled>
                       Select Entity...
@@ -1851,14 +1852,14 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 {/* 2. Functional (Dropdown with 2 sections: Functional & Non Functional, No Add New) */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <Network className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <Network className="w-3.5 h-3.5 text-[#C8A977]" />
                     <span>Functional</span> <span className="text-red-500">*</span>
                   </label>
                   <select
                     disabled={!selectedEntity}
                     value={selectedFunctional}
                     onChange={(e) => handleSelectFunctional(e.target.value)}
-                    className={`w-full min-h-[42px] px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] ${
+                    className={`w-full min-h-[42px] px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E] ${
                       !selectedEntity ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-50'
                     }`}
                   >
@@ -1895,7 +1896,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 {/* 3. Department (Auto-populated from Functional) */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <Building2 className="w-3.5 h-3.5 text-[#C8A977]" />
                     <span>Department</span> <span className="text-red-500">*</span>
                   </label>
 
@@ -1914,9 +1915,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       selectedDepartments.map((dept) => (
                         <span
                           key={dept}
-                          className="inline-flex items-center px-2 py-0.5 rounded-lg bg-white text-[#1a5075] border border-slate-200 text-[11px] font-bold shadow-2xs"
+                          className="inline-flex items-center px-2 py-0.5 rounded-lg bg-white text-[#211E4E] border border-slate-200 text-[11px] font-bold shadow-2xs"
                         >
-                          <Building2 className="w-3 h-3 text-[#0275a8] mr-1 shrink-0" />
+                          <Building2 className="w-3 h-3 text-[#C8A977] mr-1 shrink-0" />
                           <span>{dept}</span>
                         </span>
                       ))
@@ -1931,7 +1932,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 {/* 4. Category */}
                 <div>
                   <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <Tag className="w-3.5 h-3.5 text-[#C8A977]" />
                     <span>Category</span> <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -1943,13 +1944,13 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                         setFormErrors((prev) => ({ ...prev, category: '' }));
                       }
                     }}
-                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                    className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E]"
                   >
                     <option value="" disabled>
                       Select Category...
                     </option>
-                    <option value="Functional">Functional</option>
                     <option value="Behavioral">Behavioral</option>
+                    <option value="Functional">Functional</option>
                   </select>
                   {formErrors.category && (
                     <p className="text-[10px] text-red-600 mt-1">{formErrors.category}</p>
@@ -1960,7 +1961,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               {/* ROW 3: COMPETENCY (ALONE) */}
               <div>
                 <label className="block font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <Layers className="w-3.5 h-3.5 text-[#C8A977]" />
                   <span>Competency</span> <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -1975,7 +1976,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       setFormErrors((prev) => ({ ...prev, competency: '' }));
                     }
                   }}
-                  className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                  className="w-full min-h-[42px] px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E]"
                 >
                   <option value="" disabled>
                     Select Competency...
@@ -2023,7 +2024,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                         : 'text-slate-500 hover:text-slate-700 font-bold hover:bg-white/40'
                     }`}
                   >
-                    <Briefcase className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <Briefcase className="w-3.5 h-3.5 text-[#C8A977]" />
                     <span>Proficiency &amp; Roles</span>
                   </button>
 
@@ -2070,7 +2071,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                   <button
                     type="button"
                     onClick={handleAddSkill}
-                    className="px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 text-[#0275a8] hover:text-white bg-white hover:bg-[#0275a8] font-extrabold border border-dashed border-[#0275a8]/50 shadow-2xs hover:shadow-sm transition-all cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 text-[#211E4E] hover:text-[#C8A977] bg-white hover:bg-[#211E4E] font-extrabold border border-dashed border-[#C8A977]/50 shadow-2xs hover:shadow-sm transition-all cursor-pointer"
                     title={`Add Skill ${skillsList.length + 1}`}
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -2101,7 +2102,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                             : rIdx === 1
                             ? 'bg-amber-50 text-amber-800 border-amber-300'
                             : rIdx === 2
-                            ? 'bg-sky-50 text-sky-800 border-sky-300 font-bold'
+                            ? 'bg-[#211E4E]/10 text-[#211E4E] border-[#C8A977]/30 font-bold'
                             : 'bg-purple-50 text-purple-800 border-purple-300 font-bold';
 
                           const isEditing = editingProficiencyIndex === rIdx;
@@ -2122,7 +2123,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                                         setEditingProficiencyIndex(null);
                                       }
                                     }}
-                                    className={`text-[11px] px-2.5 py-1 w-full rounded-lg border font-bold focus:bg-white focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] outline-hidden shadow-2xs transition-all ${badgeStyle}`}
+                                    className={`text-[11px] px-2.5 py-1 w-full rounded-lg border font-bold focus:bg-white focus:ring-2 focus:ring-[#C8A977]/30 focus:border-[#211E4E] outline-hidden shadow-2xs transition-all ${badgeStyle}`}
                                     placeholder={`Level ${rIdx + 1} Name`}
                                   />
                                 ) : (
@@ -2143,9 +2144,9 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                                   onClick={() => setOpenRoleRowIndex(openRoleRowIndex === rIdx ? null : rIdx)}
                                   className={`w-full flex items-center justify-between px-3 py-2 border rounded-xl text-xs font-bold cursor-pointer text-left shadow-2xs transition-all ${
                                     openRoleRowIndex === rIdx
-                                      ? 'bg-white border-[#0275a8] ring-2 ring-[#0275a8]/20 text-slate-900'
+                                      ? 'bg-white border-[#211E4E] ring-2 ring-[#C8A977]/20 text-slate-900'
                                       : mrow.roles.length > 0
-                                      ? 'bg-sky-50/70 border-sky-200 text-sky-900'
+                                      ? 'bg-[#211E4E]/5 border-[#C8A977]/30 text-[#211E4E]'
                                       : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-white'
                                   }`}
                                 >
@@ -2170,14 +2171,14 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                                           <label
                                             key={r}
                                             className={`flex items-center gap-2 p-1.5 rounded-lg cursor-pointer text-[11px] transition-colors ${
-                                              isSelected ? 'bg-sky-50 text-[#0275a8] font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
+                                              isSelected ? 'bg-[#211E4E]/10 text-[#211E4E] font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
                                             }`}
                                           >
                                             <input
                                               type="checkbox"
                                               checked={isSelected}
                                               onChange={() => handleToggleRole(rIdx, r)}
-                                              className="rounded border-slate-300 text-[#0275a8] focus:ring-[#0275a8]"
+                                              className="rounded border-slate-300 text-[#211E4E] focus:ring-[#C8A977]"
                                             />
                                             <span>{r}</span>
                                           </label>
@@ -2188,7 +2189,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                                       <button
                                         type="button"
                                         onClick={() => setOpenRoleRowIndex(null)}
-                                        className="px-3 py-1 bg-[#1a5075] hover:bg-[#0275a8] text-white rounded-lg text-[10px] font-bold cursor-pointer"
+                                        className="px-3 py-1 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 rounded-lg text-[10px] font-bold cursor-pointer"
                                       >
                                         Done
                                       </button>
@@ -2235,7 +2236,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                       value={activeSkill.name}
                       onChange={(e) => handleUpdateSkillName(activeSkill.id, e.target.value)}
                       placeholder={`Enter skill ${activeSkillIndex + 1} name (e.g., Radar Surveillance Protocol, Conflict Resolution, Airspace Sector Separation)...`}
-                      className="w-full min-h-[42px] px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                      className="w-full min-h-[42px] px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E]"
                     />
                     {formErrors.skill && activeSkillIndex === 0 && !activeSkill.name.trim() && (
                       <p className="text-[10px] text-red-600 mt-1">{formErrors.skill}</p>
@@ -2263,7 +2264,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                             : mrowIdx === 1
                             ? 'bg-amber-50 text-amber-800 border-amber-300'
                             : mrowIdx === 2
-                            ? 'bg-sky-50 text-sky-800 border-sky-300 font-bold'
+                            ? 'bg-[#211E4E]/10 text-[#211E4E] border-[#C8A977]/30 font-bold'
                             : 'bg-purple-50 text-purple-800 border-purple-300 font-bold';
 
                           const isEditing = editingProficiencyIndex === mrowIdx;
@@ -2284,7 +2285,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                                         setEditingProficiencyIndex(null);
                                       }
                                     }}
-                                    className={`text-[11px] px-2.5 py-1 w-full rounded-lg border font-bold focus:bg-white focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] outline-hidden shadow-2xs transition-all ${badgeStyle}`}
+                                    className={`text-[11px] px-2.5 py-1 w-full rounded-lg border font-bold focus:bg-white focus:ring-2 focus:ring-[#C8A977]/30 focus:border-[#211E4E] outline-hidden shadow-2xs transition-all ${badgeStyle}`}
                                     placeholder={`Level ${mrowIdx + 1} Name`}
                                   />
                                 ) : (
@@ -2307,7 +2308,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                                     handleUpdateSkillCourse(activeSkill.id, level, e.target.value)
                                   }
                                   placeholder={`Enter recommended course for ${level || `Level ${mrowIdx + 1}`}...`}
-                                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 shadow-inner focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E]"
                                 />
                               </td>
                             </tr>
@@ -2341,7 +2342,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     }
                   }}
                   placeholder="Describe operational benchmarks, indicators, or scope..."
-                  className={`w-full px-3 py-2 text-xs bg-slate-50 border rounded-xl shadow-inner focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] ${
+                  className={`w-full px-3 py-2 text-xs bg-slate-50 border rounded-xl shadow-inner focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#211E4E] ${
                     formErrors.description ? 'border-red-400 bg-red-50/20 ring-1 ring-red-400' : 'border-slate-200'
                   }`}
                 />
@@ -2364,7 +2365,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white text-xs font-extrabold rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+                  className="px-6 py-2.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 text-xs font-extrabold rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
                 >
                   Save
                 </button>
@@ -2379,14 +2380,14 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden animate-in zoom-in-95 duration-200 my-8">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white px-5 py-4 flex items-center justify-between shadow-xs">
+            <div className="bg-[#211E4E] text-[#C8A977] px-5 py-4 flex items-center justify-between border-b border-[#C8A977]/20 shadow-xs">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-white/15 border border-white/20">
-                  <Upload className="w-5 h-5 text-sky-300" />
+                <div className="p-1.5 rounded-lg bg-white/10 border border-[#C8A977]/30">
+                  <Upload className="w-5 h-5 text-[#C8A977]" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm sm:text-base tracking-tight">Bulk Import Competency &amp; Skills</h3>
-                  <p className="text-[11px] text-sky-100/90">Upload or stage structured competency mappings and courses</p>
+                  <h3 className="font-extrabold text-sm sm:text-base tracking-tight text-white">Bulk Import Competency &amp; Skills</h3>
+                  <p className="text-[11px] text-slate-300">Upload or stage structured competency mappings and courses</p>
                 </div>
               </div>
               <button
@@ -2404,10 +2405,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
 
             <div className="p-5 sm:p-6 space-y-4 text-xs">
               {/* Instructions & Download Template */}
-              <div className="bg-gradient-to-r from-sky-50 to-[#f0f6fa] border border-sky-200/70 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+              <div className="bg-[#211E4E]/5 border border-[#C8A977]/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
                 <div>
-                  <h4 className="font-extrabold text-[#1a5075] text-xs flex items-center gap-1.5">
-                    <FileSpreadsheet className="w-4 h-4 text-[#0275a8]" />
+                  <h4 className="font-extrabold text-[#211E4E] text-xs flex items-center gap-1.5">
+                    <FileSpreadsheet className="w-4 h-4 text-[#C8A977]" />
                     <span>Standard CSV / Excel Import Format</span>
                   </h4>
                   <p className="text-[11px] text-slate-600 mt-0.5">
@@ -2417,21 +2418,21 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                 <button
                   type="button"
                   onClick={handleDownloadSampleTemplate}
-                  className="px-3.5 py-2 bg-white border border-[#1a5075] text-[#1a5075] hover:bg-sky-50 font-extrabold rounded-xl text-[11px] flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer shadow-2xs active:scale-95"
+                  className="px-3.5 py-2 bg-white border border-[#211E4E] text-[#211E4E] hover:bg-[#211E4E]/5 font-extrabold rounded-xl text-[11px] flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer shadow-2xs active:scale-95"
                 >
-                  <Download className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <Download className="w-3.5 h-3.5 text-[#C8A977]" />
                   <span>Download Template CSV</span>
                 </button>
               </div>
 
               {/* Upload Dropzone */}
-              <div className="border-2 border-dashed border-sky-200 hover:border-[#0275a8] bg-sky-50/30 rounded-2xl p-5 sm:p-6 text-center transition-colors relative">
-                <FileSpreadsheet className="w-10 h-10 text-[#0275a8] mx-auto mb-2 opacity-85" />
+              <div className="border-2 border-dashed border-[#C8A977]/40 hover:border-[#211E4E] bg-[#211E4E]/5 rounded-2xl p-5 sm:p-6 text-center transition-colors relative">
+                <FileSpreadsheet className="w-10 h-10 text-[#C8A977] mx-auto mb-2 opacity-85" />
                 <p className="font-extrabold text-slate-800 text-xs">Select or Drop CSV File</p>
                 <p className="text-[11px] text-slate-500 mt-0.5">Supports UTF-8 CSV with comma delimiters</p>
 
                 <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2.5">
-                  <label className="px-4 py-2 bg-[#0275a8] hover:bg-[#02628d] text-white font-extrabold rounded-xl text-xs cursor-pointer inline-flex items-center gap-1.5 shadow-sm transition-all active:scale-95">
+                  <label className="px-4 py-2 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 font-extrabold rounded-xl text-xs cursor-pointer inline-flex items-center gap-1.5 shadow-sm transition-all active:scale-95">
                     <Upload className="w-3.5 h-3.5" />
                     <span>Browse CSV File</span>
                     <input
@@ -2460,10 +2461,10 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h5 className="font-extrabold text-slate-700 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-[#0275a8]" />
+                    <Layers className="w-3.5 h-3.5 text-[#C8A977]" />
                     <span>Staging Preview ({stagedCompetencies.length} Competencies / {stagedCompetencies.reduce((a, c) => a + c.skills.length, 0)} Skills):</span>
                   </h5>
-                  <span className="text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
+                  <span className="text-[11px] font-bold text-[#211E4E] bg-[#211E4E]/10 px-2 py-0.5 rounded-md border border-[#C8A977]/30">
                     Ready to Merge
                   </span>
                 </div>
@@ -2483,11 +2484,11 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                     <tbody className="divide-y divide-slate-200 bg-white">
                       {stagedCompetencies.map((comp) => (
                         <tr key={comp.id} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="p-2.5 font-mono font-bold text-[#1a5075] text-[10px]">{comp.code || comp.id}</td>
+                          <td className="p-2.5 font-mono font-bold text-[#211E4E] text-[10px]">{comp.code || comp.id}</td>
                           <td className="p-2.5">
                             <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-extrabold ${
                               comp.category === 'Functional'
-                                ? 'bg-sky-50 text-sky-800 border border-sky-200'
+                                ? 'bg-[#211E4E]/10 text-[#211E4E] border border-[#C8A977]/30'
                                 : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                             }`}>
                               {comp.category}
@@ -2501,7 +2502,7 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
                             <div className="font-bold text-slate-700">{comp.department}</div>
                             <div className="text-slate-500 truncate max-w-[160px]">{comp.division}</div>
                           </td>
-                          <td className="p-2.5 text-center font-extrabold text-[#1a5075]">
+                          <td className="p-2.5 text-center font-extrabold text-[#211E4E]">
                             {comp.grade || '—'}
                           </td>
                           <td className="p-2.5 text-center">

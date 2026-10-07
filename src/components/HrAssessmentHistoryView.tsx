@@ -171,15 +171,18 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
     <div className="space-y-5 animate-in fade-in duration-300">
 
       {/* 1. Header Banner */}
-      <div className="bg-gradient-to-r from-[#1a5075] to-[#154668] rounded-xl p-5 text-white shadow-md border border-[#2b658f]">
+      <div className="bg-[#211E4E] rounded-2xl p-5 sm:p-6 text-[#C8A977] shadow-[0_8px_30px_rgb(33,30,78,0.08)] border border-[#C8A977]/30">
         <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
-          <History className="w-6 h-6 text-sky-300" />
+          <History className="w-6 h-6 text-[#C8A977]" />
           <span>Release History</span>
         </h1>
+        <p className="text-xs text-[#C8A977]/80 mt-1 font-medium">
+          Comprehensive log of all LNA assessment release runs, deadlines, and delivery statuses.
+        </p>
       </div>
 
       {/* 2. Search & Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+      <div className="bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)]">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           
           {/* Search Box */}
@@ -190,7 +193,7 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by Release ID, Cohort Scope, or remarks..."
-              className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#0275a8] focus:bg-white focus:ring-1 focus:ring-[#0275a8]"
+              className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#211E4E] focus:bg-white focus:ring-1 focus:ring-[#211E4E]"
             />
             {searchQuery && (
               <button
@@ -210,7 +213,7 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 focus:outline-hidden focus:border-[#0275a8] cursor-pointer"
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:border-[#211E4E] cursor-pointer"
             >
               <option value="ALL">All Runs</option>
               <option value="In Progress">Status: In Progress</option>
@@ -224,7 +227,7 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 focus:outline-hidden focus:border-[#0275a8] cursor-pointer"
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:border-[#211E4E] cursor-pointer"
             >
               <option value="newest">Sort: Release ID (Newest)</option>
               <option value="oldest">Sort: Release ID (Oldest)</option>
@@ -242,7 +245,7 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
                   setSearchQuery('');
                   setStatusFilter('ALL');
                 }}
-                className="px-3 py-2 text-xs text-[#0275a8] hover:bg-sky-50 rounded-lg font-bold transition-colors cursor-pointer border border-transparent hover:border-sky-200"
+                className="px-3 py-2 text-xs text-[#211E4E] hover:bg-slate-100 rounded-xl font-bold transition-colors cursor-pointer border border-transparent hover:border-slate-200"
               >
                 Reset
               </button>
@@ -253,11 +256,11 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
       </div>
 
       {/* 3. Assessment Release Runs Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
             <thead>
-              <tr className="bg-[#1a5075] text-white font-bold border-b border-[#144262]">
+              <tr className="bg-[#211E4E] text-[#C8A977] font-extrabold uppercase tracking-wider text-[11px] border-b border-[#C8A977]/30">
                 <th className="py-3 px-4 min-w-[130px] text-center">Release ID</th>
                 <th className="py-3 px-4 min-w-[120px] text-center">Release Date</th>
                 <th className="py-3 px-4 min-w-[110px] text-center">Deadline</th>
@@ -265,7 +268,7 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
                 <th className="py-3 px-4 min-w-[110px] text-center">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-100">
               {filteredRuns.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-slate-500">
@@ -288,12 +291,12 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
                     <tr
                       key={run.releaseId}
                       onClick={() => setSelectedReleaseRun(run)}
-                      className="hover:bg-sky-50/70 transition-colors cursor-pointer group"
+                      className="hover:bg-[#211E4E]/5 transition-colors cursor-pointer group"
                     >
                       {/* Release ID */}
                       <td className="py-3.5 px-4 text-center">
                         <span
-                          className="font-mono font-extrabold text-[#0275a8] group-hover:text-[#014d70] group-hover:underline text-xs transition-colors inline-flex items-center gap-1"
+                          className="font-mono font-extrabold text-[#211E4E] group-hover:underline text-xs transition-colors inline-flex items-center gap-1"
                           title="Click to view details for this run"
                         >
                           <span>{run.releaseId}</span>

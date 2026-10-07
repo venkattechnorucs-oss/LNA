@@ -49,6 +49,10 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
   const [searchType, setSearchType] = useState<'employee' | 'manager'>('employee');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  // Selected Record Modal State for HR View
+  const [selectedDetailRecord, setSelectedDetailRecord] = useState<OrgAssessmentRecord | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
   // Active Slice Highlight States for Graphs
   const [activeStatusIndex, setActiveStatusIndex] = useState<number | null>(null);
   const [activeCategoryIndex, setActiveCategoryIndex] = useState<number | null>(null);
@@ -224,7 +228,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
   const statusDonutData = useMemo(() => {
     return [
       { name: 'APPROVED', value: metrics.managerApproved, color: '#047857', bg: 'bg-emerald-600', statusKey: 'MANAGER APPROVED' },
-      { name: 'PENDING APPROVAL', value: metrics.submittedToManager, color: '#1a5075', bg: 'bg-[#1a5075]', statusKey: 'SUBMITTED FOR MANAGER REVIEW' },
+      { name: 'PENDING APPROVAL', value: metrics.submittedToManager, color: '#211E4E', bg: 'bg-[#211E4E]', statusKey: 'SUBMITTED FOR MANAGER REVIEW' },
       { name: 'RETURNED', value: metrics.sentBack, color: '#f59e0b', bg: 'bg-amber-500', statusKey: 'SENT BACK TO EMPLOYEE' },
     ];
   }, [metrics]);
@@ -233,8 +237,8 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
     const totalFunc = competencyAnalytics.functionalList.reduce((acc, c) => acc + c.count, 0);
     const totalBeh = competencyAnalytics.behavioralList.reduce((acc, c) => acc + c.count, 0);
     return [
-      { name: 'Functional Competencies', value: totalFunc, color: '#0275a8', bg: 'bg-[#0275a8]' },
-      { name: 'Behavioral Competencies', value: totalBeh, color: '#10b981', bg: 'bg-emerald-500' }
+      { name: 'Behavioral Competencies', value: totalBeh, color: '#C8A977', bg: 'bg-[#C8A977]' },
+      { name: 'Functional Competencies', value: totalFunc, color: '#211E4E', bg: 'bg-[#211E4E]' }
     ];
   }, [competencyAnalytics]);
 
@@ -243,7 +247,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
     filteredRecords.forEach((r) => {
       counts[r.employee.division] = (counts[r.employee.division] || 0) + 1;
     });
-    const palette = ['#1a5075', '#0275a8', '#0d9488', '#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899'];
+    const palette = ['#211E4E', '#C8A977', '#0d9488', '#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899'];
     return Object.entries(counts)
       .map(([name, value], idx) => ({
         name,
@@ -276,36 +280,39 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
     <div className="space-y-6 animate-in fade-in duration-300">
       
       {/* 1. DASHBOARD HEADER & YEAR FILTER ACTION (GLASSMORPHIC BANNER) */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a5075] via-[#104060] to-[#0d2f47] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(26,80,117,0.35)] border border-white/20 backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-2xl bg-[#211E4E] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(33,30,78,0.25)] border border-[#C8A977]/30 backdrop-blur-xl">
         {/* Ambient background light orbs */}
-        <div className="absolute -right-8 -top-8 w-56 h-56 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-teal-400/15 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -right-8 -top-8 w-56 h-56 bg-[#C8A977]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-[#C8A977]/5 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white drop-shadow-xs">
               Learning Needs Analysis (LNA) – HR Dashboard
             </h1>
+            <p className="text-xs text-[#C8A977]/80 mt-0.5 font-medium">
+              High-level organizational competency readiness, submission cycles, and skills tracking
+            </p>
           </div>
 
           {/* Year Filter Option */}
-          <div className="flex items-center gap-2.5 bg-white/15 hover:bg-white/20 transition-colors backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.15)] shrink-0">
-            <Calendar className="w-4 h-4 text-sky-300 shrink-0" />
-            <label htmlFor="hr-header-year-select" className="text-xs font-bold text-sky-100 whitespace-nowrap">
+          <div className="flex items-center gap-2.5 bg-white/10 hover:bg-white/15 transition-colors backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20 shadow-[0_4px_16px_rgba(0,0,0,0.15)] shrink-0">
+            <Calendar className="w-4 h-4 text-[#C8A977] shrink-0" />
+            <label htmlFor="hr-header-year-select" className="text-xs font-bold text-white whitespace-nowrap">
               Year:
             </label>
             <select
               id="hr-header-year-select"
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="bg-[#0b3350] text-white font-bold text-xs rounded-lg px-3 py-1.5 border border-white/30 focus:outline-hidden focus:ring-2 focus:ring-sky-400 cursor-pointer transition-all shadow-inner"
+              className="bg-[#211E4E] text-[#C8A977] font-bold text-xs rounded-xl px-3 py-1.5 border border-[#C8A977]/40 focus:outline-hidden focus:ring-2 focus:ring-[#C8A977] cursor-pointer transition-all shadow-inner"
             >
               {filterOptions.years.map((yr) => (
-                <option key={yr} value={yr} className="bg-[#104060] text-white font-medium">
+                <option key={yr} value={yr} className="bg-[#211E4E] text-white font-medium">
                   {yr} {yr === '2026' ? '(Active)' : ''}
                 </option>
               ))}
-              <option value="ALL" className="bg-[#104060] text-white font-medium">All Years</option>
+              <option value="ALL" className="bg-[#211E4E] text-white font-medium">All Years</option>
             </select>
           </div>
         </div>
@@ -315,47 +322,46 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         
         {/* Card 1: TOTAL EMPLOYEES */}
-        <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-white/95 via-white/80 to-white/65 backdrop-blur-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(26,80,117,0.06),inset_0_1px_1px_rgba(255,255,255,1)] hover:shadow-[0_16px_36px_rgba(26,80,117,0.14)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1a5075] via-[#0275a8] to-sky-400" />
-          <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-sky-500/10 rounded-full blur-xl pointer-events-none group-hover:bg-sky-500/20 transition-all duration-300" />
+        <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-white/95 via-white/80 to-white/65 backdrop-blur-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(33,30,78,0.06),inset_0_1px_1px_rgba(255,255,255,1)] hover:shadow-[0_16px_36px_rgba(33,30,78,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#211E4E]" />
           
           <div className="flex items-center justify-between relative z-10">
             <span className="text-[10px] sm:text-[11px] font-extrabold text-slate-500 uppercase tracking-tight">
               TOTAL EMPLOYEES
             </span>
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#1a5075]/15 to-[#0275a8]/20 text-[#1a5075] flex items-center justify-center border border-[#1a5075]/20 shadow-[0_2px_8px_rgba(26,80,117,0.12)] group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center border border-[#C8A977]/30 shadow-2xs group-hover:scale-105 transition-transform">
               <Users className="w-4 h-4" />
             </div>
           </div>
           
           <div className="mt-3.5 relative z-10">
-            <div className="text-2xl sm:text-3xl font-black text-[#1a5075] tracking-tight leading-none">
+            <div className="text-2xl sm:text-3xl font-black text-[#211E4E] tracking-tight leading-none">
               {metrics.total}
             </div>
           </div>
         </div>
-        {/* Card 3: PENDING APPROVAL */}
-        <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-white/95 via-white/80 to-white/65 backdrop-blur-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(26,80,117,0.08),inset_0_1px_1px_rgba(255,255,255,1)] hover:shadow-[0_16px_36px_rgba(26,80,117,0.16)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1a5075] via-indigo-500 to-sky-400" />
-          <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-indigo-500/10 rounded-full blur-xl pointer-events-none group-hover:bg-indigo-500/20 transition-all duration-300" />
+
+        {/* Card 2: PENDING APPROVAL */}
+        <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-white/95 via-white/80 to-white/65 backdrop-blur-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(33,30,78,0.08),inset_0_1px_1px_rgba(255,255,255,1)] hover:shadow-[0_16px_36px_rgba(33,30,78,0.16)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#C8A977]" />
           
           <div className="flex items-center justify-between relative z-10">
-            <span className="text-[10px] sm:text-[11px] font-extrabold text-[#1a5075] uppercase tracking-tight">
+            <span className="text-[10px] sm:text-[11px] font-extrabold text-[#211E4E] uppercase tracking-tight">
               PENDING APPROVAL
             </span>
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#1a5075]/20 to-indigo-500/20 text-[#1a5075] flex items-center justify-center border border-[#1a5075]/25 shadow-[0_2px_8px_rgba(26,80,117,0.15)] group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center border border-[#C8A977]/30 shadow-2xs group-hover:scale-105 transition-transform">
               <Clock className="w-4 h-4" />
             </div>
           </div>
           
           <div className="mt-3.5 relative z-10">
-            <div className="text-2xl sm:text-3xl font-black text-[#1a5075] tracking-tight leading-none">
+            <div className="text-2xl sm:text-3xl font-black text-[#211E4E] tracking-tight leading-none">
               {metrics.pendingManagerReview}
             </div>
           </div>
         </div>
 
-        {/* Card 4: RETURNED */}
+        {/* Card 3: RETURNED */}
         <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-white/95 via-white/80 to-white/65 backdrop-blur-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(245,158,11,0.08),inset_0_1px_1px_rgba(255,255,255,1)] hover:shadow-[0_16px_36px_rgba(245,158,11,0.16)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-400 to-yellow-300" />
           <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-amber-500/10 rounded-full blur-xl pointer-events-none group-hover:bg-amber-500/20 transition-all duration-300" />
@@ -376,7 +382,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
           </div>
         </div>
 
-        {/* Card 5: APPROVED */}
+        {/* Card 4: APPROVED */}
         <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-white/95 via-white/80 to-white/65 backdrop-blur-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(4,120,87,0.08),inset_0_1px_1px_rgba(255,255,255,1)] hover:shadow-[0_16px_36px_rgba(4,120,87,0.16)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-green-500 to-teal-400" />
           <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-emerald-600/10 rounded-full blur-xl pointer-events-none group-hover:bg-emerald-600/20 transition-all duration-300" />
@@ -476,7 +482,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                   Completion
                 </span>
-                <span className="text-xl font-black text-[#1a5075] font-mono leading-none my-0.5">
+                <span className="text-xl font-black text-[#211E4E] font-mono leading-none my-0.5">
                   {metrics.completionRate}%
                 </span>
                 <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/50">
@@ -495,7 +501,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                     onMouseEnter={() => setActiveStatusIndex(idx)}
                     onMouseLeave={() => setActiveStatusIndex(null)}
                     className={`flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer ${
-                      activeStatusIndex === idx ? 'bg-sky-50/80 text-[#0275a8]' : 'hover:bg-slate-100/60'
+                      activeStatusIndex === idx ? 'bg-[#211E4E]/10 text-[#211E4E]' : 'hover:bg-slate-100/60'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -517,10 +523,10 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
           </div>
 
           {/* VISUAL 2: COMPETENCY CATEGORY SPLIT */}
-          <div className="rounded-xl bg-gradient-to-b from-slate-50/70 to-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-sky-300 transition-all">
+          <div className="rounded-xl bg-gradient-to-b from-slate-50/70 to-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-[#C8A977]/50 transition-all">
             <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-sm bg-[#0275a8]" />
+                <div className="w-2.5 h-2.5 rounded-sm bg-[#211E4E]" />
                 <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide">
                   Competency Selections Split
                 </h3>
@@ -549,7 +555,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                             </div>
                             <div className="flex items-center justify-between gap-4 pt-1 border-t border-slate-700/60 font-mono">
                               <span className="text-slate-400 text-[10px]">Selections:</span>
-                              <span className="font-bold text-sky-300 text-xs">
+                              <span className="font-bold text-[#C8A977] text-xs">
                                 {d.value} ({percent}%)
                               </span>
                             </div>
@@ -589,10 +595,10 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                   Selections
                 </span>
-                <span className="text-xl font-black text-[#1a5075] font-mono leading-none my-0.5">
+                <span className="text-xl font-black text-[#211E4E] font-mono leading-none my-0.5">
                   {(categoryPieData[0]?.value || 0) + (categoryPieData[1]?.value || 0)}
                 </span>
-                <span className="text-[9px] font-bold text-[#0275a8] bg-sky-50 px-1.5 py-0.2 rounded border border-sky-200/50">
+                <span className="text-[9px] font-bold text-[#211E4E] bg-[#211E4E]/10 px-1.5 py-0.2 rounded border border-[#C8A977]/30">
                   Total Logged
                 </span>
               </div>
@@ -610,7 +616,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                     onMouseEnter={() => setActiveCategoryIndex(idx)}
                     onMouseLeave={() => setActiveCategoryIndex(null)}
                     className={`flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer ${
-                      activeCategoryIndex === idx ? 'bg-sky-50/80 text-[#0275a8]' : 'hover:bg-slate-100/60'
+                      activeCategoryIndex === idx ? 'bg-[#211E4E]/10 text-[#211E4E]' : 'hover:bg-slate-100/60'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -632,10 +638,10 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
           </div>
 
           {/* VISUAL 3: DIVISION PARTICIPATION */}
-          <div className="rounded-xl bg-gradient-to-b from-slate-50/70 to-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-sky-300 transition-all">
+          <div className="rounded-xl bg-gradient-to-b from-slate-50/70 to-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-[#C8A977]/50 transition-all">
             <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-sm bg-sky-600" />
+                <div className="w-2.5 h-2.5 rounded-sm bg-[#C8A977]" />
                 <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide">
                   Division Participation
                 </h3>
@@ -663,7 +669,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                             </div>
                             <div className="flex items-center justify-between gap-4 pt-1 border-t border-slate-700/60 font-mono">
                               <span className="text-slate-400 text-[10px]">Employees:</span>
-                              <span className="font-bold text-sky-300 text-xs">
+                              <span className="font-bold text-[#C8A977] text-xs">
                                 {d.value} ({percent}%)
                               </span>
                             </div>
@@ -703,7 +709,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                   Employees
                 </span>
-                <span className="text-xl font-black text-[#1a5075] font-mono leading-none my-0.5">
+                <span className="text-xl font-black text-[#211E4E] font-mono leading-none my-0.5">
                   {metrics.total}
                 </span>
                 <span className="text-[9px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
@@ -722,7 +728,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                     onMouseEnter={() => setActiveDivisionIndex(idx)}
                     onMouseLeave={() => setActiveDivisionIndex(null)}
                     className={`flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer ${
-                      activeDivisionIndex === idx ? 'bg-sky-50/80 text-[#0275a8]' : 'hover:bg-slate-100/60'
+                      activeDivisionIndex === idx ? 'bg-[#211E4E]/10 text-[#211E4E]' : 'hover:bg-slate-100/60'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -747,14 +753,14 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
       </div>
 
       {/* 3. ORGANIZATIONAL MONITORING FILTERS (GLASSMORPHIC CONSOLE) */}
-      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] p-5">
+      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] p-5">
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100/80">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#0275a8]/10 text-[#0275a8] flex items-center justify-center border border-[#0275a8]/15">
+            <div className="w-7 h-7 rounded-lg bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center border border-[#C8A977]/30">
               <Filter className="w-3.5 h-3.5" />
             </div>
             <div>
-              <h3 className="text-xs sm:text-sm font-extrabold text-[#1a5075] uppercase tracking-wide">
+              <h3 className="text-xs sm:text-sm font-extrabold text-[#211E4E] uppercase tracking-wide">
                 Organizational Monitoring &amp; Analytical Filters
               </h3>
             </div>
@@ -763,7 +769,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             <button
               type="button"
               onClick={handleResetFilters}
-              className="text-xs text-[#0275a8] hover:text-[#096f9c] font-bold flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100/80 border border-sky-200/70 transition-all cursor-pointer shadow-2xs"
+              className="text-xs text-[#211E4E] hover:text-[#2c2865] font-bold flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all cursor-pointer shadow-2xs"
             >
               <RefreshCw className="w-3 h-3" />
               <span>Reset Filters</span>
@@ -779,7 +785,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             <select
               value={selectedDivision}
               onChange={(e) => setSelectedDivision(e.target.value)}
-              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] transition-all"
+              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#211E4E]/20 focus:border-[#211E4E] transition-all"
             >
               <option value="ALL">All Divisions</option>
               {filterOptions.divisions.map((div) => (
@@ -796,7 +802,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             <select
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
-              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] transition-all"
+              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#211E4E]/20 focus:border-[#211E4E] transition-all"
             >
               <option value="ALL">All Departments</option>
               {filterOptions.departments.map((dept) => (
@@ -813,7 +819,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             <select
               value={selectedPosition}
               onChange={(e) => setSelectedPosition(e.target.value)}
-              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] transition-all"
+              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#211E4E]/20 focus:border-[#211E4E] transition-all"
             >
               <option value="ALL">All Positions</option>
               {filterOptions.positions.map((pos) => (
@@ -830,7 +836,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] transition-all"
+              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#211E4E]/20 focus:border-[#211E4E] transition-all"
             >
               <option value="ALL">All Statuses</option>
               <option value="MANAGER APPROVED">Approved</option>
@@ -845,7 +851,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             <select
               value={searchType}
               onChange={(e) => setSearchType(e.target.value as 'employee' | 'manager')}
-              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] transition-all"
+              className="w-full border border-slate-200/80 rounded-xl p-2 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#211E4E]/20 focus:border-[#211E4E] transition-all"
             >
               <option value="employee">Employee</option>
               <option value="manager">Manager</option>
@@ -863,7 +869,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                 placeholder={searchType === 'employee' ? 'Search Employee...' : 'Search Manager...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full border border-slate-200/80 rounded-xl p-2 pl-8 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/30 focus:border-[#0275a8] transition-all"
+                className="w-full border border-slate-200/80 rounded-xl p-2 pl-8 text-xs bg-white/90 text-slate-800 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#211E4E]/20 focus:border-[#211E4E] transition-all"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
             </div>
@@ -876,19 +882,19 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
         
         {/* 4.1 FUNCTIONAL COMPETENCIES */}
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] p-5 sm:p-6 flex flex-col lg:h-[460px]">
+        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] p-5 sm:p-6 flex flex-col lg:h-[460px]">
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100/80 shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#0275a8]/10 text-[#0275a8] flex items-center justify-center border border-[#0275a8]/15 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center border border-[#C8A977]/30 shadow-2xs">
                 <Award className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-extrabold text-[#1a5075] uppercase tracking-wide">
+                <h3 className="text-xs sm:text-sm font-extrabold text-[#211E4E] uppercase tracking-wide">
                   FUNCTIONAL COMPETENCIES
                 </h3>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-[#0275a8] bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200/50">
+            <span className="text-[10px] font-bold text-[#211E4E] bg-[#211E4E]/10 px-2 py-0.5 rounded-md border border-[#C8A977]/30">
               Selections
             </span>
           </div>
@@ -897,16 +903,16 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             {competencyAnalytics.functionalList.map((comp) => (
               <div key={comp.code} className="text-xs group">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-slate-800 font-medium group-hover:text-[#0275a8] transition-colors">
+                  <span className="text-slate-800 font-medium group-hover:text-[#211E4E] transition-colors">
                     {comp.name}
                   </span>
-                  <span className="font-bold text-[#0275a8] font-mono bg-sky-50 px-2 py-0.5 rounded border border-sky-200/50">
+                  <span className="font-bold text-[#211E4E] font-mono bg-[#211E4E]/10 px-2 py-0.5 rounded border border-[#C8A977]/30">
                     {comp.count}
                   </span>
                 </div>
                 <div className="w-full bg-slate-100/80 rounded-full h-2 overflow-hidden shadow-inner border border-slate-200/40">
                   <div
-                    className="bg-gradient-to-r from-[#0275a8] to-sky-400 h-2 rounded-full transition-all duration-500 shadow-xs"
+                    className="bg-[#211E4E] h-2 rounded-full transition-all duration-500 shadow-xs"
                     style={{
                       width: `${(comp.count / competencyAnalytics.maxCount) * 100}%`
                     }}
@@ -918,7 +924,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
         </div>
 
         {/* 4.2 BEHAVIORAL COMPETENCIES */}
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] p-5 sm:p-6 flex flex-col lg:h-[460px]">
+        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] p-5 sm:p-6 flex flex-col lg:h-[460px]">
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100/80 shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center border border-emerald-500/15 shadow-2xs">
@@ -960,14 +966,14 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
         </div>
 
         {/* 4.3 SKILL ANALYTICS */}
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] p-5 sm:p-6 flex flex-col lg:h-[460px]">
+        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] p-5 sm:p-6 flex flex-col lg:h-[460px]">
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100/80 shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#0275a8]/10 text-[#0275a8] flex items-center justify-center border border-[#0275a8]/15 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center border border-[#C8A977]/30 shadow-2xs">
                 <TrendingUp className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-extrabold text-[#1a5075] uppercase tracking-wide">
+                <h3 className="text-xs sm:text-sm font-extrabold text-[#211E4E] uppercase tracking-wide">
                   Overall Skills Selected
                 </h3>
               </div>
@@ -979,14 +985,14 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
               skillAnalytics.map((skill, idx) => (
                 <div
                   key={skill.id}
-                  className="p-3 rounded-xl bg-white/70 hover:bg-white border border-slate-200/70 hover:border-sky-300 flex items-center justify-between gap-3 shadow-2xs hover:shadow-sm transition-all group"
+                  className="p-3 rounded-xl bg-white/70 hover:bg-white border border-slate-200/70 hover:border-[#C8A977]/50 flex items-center justify-between gap-3 shadow-2xs hover:shadow-sm transition-all group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700 flex items-center justify-center font-black text-[10px] shrink-0 font-mono border border-slate-300/60 shadow-2xs group-hover:from-[#1a5075] group-hover:to-[#0275a8] group-hover:text-white transition-all">
+                    <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700 flex items-center justify-center font-black text-[10px] shrink-0 font-mono border border-slate-300/60 shadow-2xs group-hover:bg-[#211E4E] group-hover:text-[#C8A977] transition-all">
                       {idx + 1}
                     </span>
                     <div className="min-w-0">
-                      <div className="font-bold text-slate-800 truncate group-hover:text-[#1a5075] transition-colors">
+                      <div className="font-bold text-slate-800 truncate group-hover:text-[#211E4E] transition-colors">
                         {skill.name}
                       </div>
                       <div className="text-[10px] text-slate-400 flex items-center gap-1.5 mt-0.5">
@@ -999,13 +1005,13 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                     <span
                       className={`text-[9px] font-bold px-2 py-0.5 rounded-md ${
                         skill.category === 'Functional'
-                          ? 'bg-sky-50 text-[#0275a8] border border-sky-200/70'
+                          ? 'bg-[#211E4E]/10 text-[#211E4E] border border-[#C8A977]/30'
                           : 'bg-emerald-50 text-emerald-800 border border-emerald-200/70'
                       }`}
                     >
                       {skill.category}
                     </span>
-                    <span className="bg-gradient-to-br from-[#1a5075] to-[#0275a8] text-white px-2.5 py-1 rounded-lg font-mono font-bold text-xs min-w-[32px] text-center shadow-xs">
+                    <span className="bg-[#211E4E] text-[#C8A977] border border-[#C8A977]/30 px-2.5 py-1 rounded-lg font-mono font-bold text-xs min-w-[32px] text-center shadow-xs">
                       {skill.count}
                     </span>
                   </div>
@@ -1023,19 +1029,19 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
       </div>
 
       {/* 5. EMPLOYEE LNA STATUS DETAILS TABLE (GLASSMORPHIC TABLE) */}
-      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
-        <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] overflow-hidden">
+        <div className="bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/20 px-5 py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-white/15 text-white flex items-center justify-center border border-white/20 shadow-2xs">
-              <Users className="w-4 h-4 text-sky-200" />
+            <div className="w-8 h-8 rounded-xl bg-[#C8A977]/20 text-[#C8A977] flex items-center justify-center border border-[#C8A977]/30 shadow-2xs">
+              <Users className="w-4 h-4 text-[#C8A977]" />
             </div>
             <div>
-              <h3 className="text-xs sm:text-sm font-extrabold tracking-wide uppercase">
+              <h3 className="text-xs sm:text-sm font-extrabold tracking-wide uppercase text-white">
                 Employee LNA Status Details
               </h3>
             </div>
           </div>
-          <span className="text-[11px] bg-white/15 border border-white/20 px-3 py-1 rounded-full text-white font-mono shadow-2xs">
+          <span className="text-[11px] bg-white/10 border border-[#C8A977]/30 px-3 py-1 rounded-full text-[#C8A977] font-mono shadow-2xs">
             Year: 2026
           </span>
         </div>
@@ -1043,18 +1049,18 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
         {/* Table View */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-[#f0f7fb]/80 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
+            <thead className="bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/30 font-extrabold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="p-3 w-12 text-center border-r border-slate-200/80">#</th>
-                <th className="p-3 border-r border-slate-200/80">Employee Name</th>
-                <th className="p-3 border-r border-slate-200/80">Employee ID</th>
-                <th className="p-3 border-r border-slate-200/80">Division</th>
-                <th className="p-3 border-r border-slate-200/80">Department</th>
-                <th className="p-3 border-r border-slate-200/80 text-center w-16">Grade</th>
-                <th className="p-3 border-r border-slate-200/80">Position</th>
-                <th className="p-3 border-r border-slate-200/80">LNA Status</th>
-                <th className="p-3 border-r border-slate-200/80 whitespace-nowrap">Date</th>
-                <th className="p-3 border-r border-slate-200/80">Manager</th>
+                <th className="p-3 w-12 text-center border-r border-white/10">#</th>
+                <th className="p-3 border-r border-white/10">Employee Name</th>
+                <th className="p-3 border-r border-white/10">Employee ID</th>
+                <th className="p-3 border-r border-white/10">Division</th>
+                <th className="p-3 border-r border-white/10">Department</th>
+                <th className="p-3 border-r border-white/10 text-center w-16">Grade</th>
+                <th className="p-3 border-r border-white/10">Position</th>
+                <th className="p-3 border-r border-white/10">LNA Status</th>
+                <th className="p-3 border-r border-white/10 whitespace-nowrap">Date</th>
+                <th className="p-3 border-r border-white/10">Manager</th>
                 <th className="p-3 text-center w-24">Action</th>
               </tr>
             </thead>
@@ -1065,12 +1071,12 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                   return (
                     <tr
                       key={record.employee.employeeId}
-                      className="bg-white/60 hover:bg-sky-50/60 transition-colors"
+                      className="bg-white/60 hover:bg-[#211E4E]/5 transition-colors"
                     >
                       <td className="p-3 text-center font-mono text-slate-400 border-r border-slate-100">
                         {index + 1}
                       </td>
-                      <td className="p-3 font-bold text-[#1a5075] border-r border-slate-100">
+                      <td className="p-3 font-bold text-[#211E4E] border-r border-slate-100">
                         {record.employee.name}
                       </td>
                       <td className="p-3 font-mono text-slate-600 border-r border-slate-100">
@@ -1097,8 +1103,8 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                             APPROVED
                           </span>
                         ) : record.status === 'SUBMITTED FOR MANAGER REVIEW' ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-100/80 text-[#0275a8] font-bold text-[10px] border border-sky-300/70 shadow-2xs">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#0275a8] animate-pulse" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#211E4E]/10 text-[#211E4E] font-bold text-[10px] border border-[#C8A977]/40 shadow-2xs">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#211E4E] animate-pulse" />
                             PENDING APPROVAL
                           </span>
                         ) : record.status === 'SENT BACK TO EMPLOYEE' ? (
@@ -1123,11 +1129,13 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                         <button
                           type="button"
                           onClick={() => {
+                            setSelectedDetailRecord(record);
+                            setIsDetailModalOpen(true);
                             if (onViewEmployeeDetail) {
                               onViewEmployeeDetail(record.employee.employeeId);
                             }
                           }}
-                          className="px-3 py-1.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#133d59] hover:to-[#096f9c] text-white font-bold rounded-lg text-[11px] transition-all cursor-pointer flex items-center gap-1 mx-auto shadow-2xs hover:shadow-xs active:scale-95"
+                          className="px-3 py-1.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 font-bold rounded-lg text-[11px] transition-all cursor-pointer flex items-center gap-1 mx-auto shadow-2xs hover:shadow-xs active:scale-95"
                           title="View Employee LNA Detail"
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -1145,7 +1153,7 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
                     <button
                       type="button"
                       onClick={handleResetFilters}
-                      className="mt-2 text-xs text-[#0275a8] underline font-bold"
+                      className="mt-2 text-xs text-[#211E4E] underline font-bold"
                     >
                       Clear Filters
                     </button>
@@ -1163,6 +1171,16 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
           </span>
         </div>
       </div>
+
+      {/* Employee Detail Modal for HR Monitoring */}
+      <HrEmployeeDetailModal
+        record={selectedDetailRecord}
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedDetailRecord(null);
+        }}
+      />
 
     </div>
   );

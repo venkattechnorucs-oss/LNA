@@ -125,72 +125,72 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
     <div className="space-y-5 animate-in fade-in duration-300">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0d314a] rounded-xl p-5 text-white shadow-md border border-[#2b658f] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[#211E4E] rounded-2xl p-5 sm:p-6 text-[#C8A977] shadow-[0_8px_30px_rgb(33,30,78,0.08)] border border-[#C8A977]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="bg-white/20 text-white text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs">
+            <span className="bg-[#C8A977]/20 text-[#C8A977] text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border border-[#C8A977]/30">
               Performance &amp; Talent Growth
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
-            <Compass className="w-6 h-6 text-sky-300" />
+            <Compass className="w-6 h-6 text-[#C8A977]" />
             <span>Personal Development Plan (PDP) – HR Assessment</span>
           </h1>
-          <p className="text-xs text-sky-100/90 mt-0.5 font-light">
+          <p className="text-xs text-[#C8A977]/80 mt-0.5 font-light">
             Monitor organizational development milestones, competency progression, and goal fulfillment
           </p>
         </div>
 
         {/* Year Filter */}
-        <div className="flex items-center gap-2.5 bg-white/15 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/25 shadow-xs shrink-0">
-          <Calendar className="w-4 h-4 text-sky-300 shrink-0" />
-          <label htmlFor="pdp-year-select" className="text-xs font-bold text-sky-100 whitespace-nowrap">
+        <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20 shadow-xs shrink-0">
+          <Calendar className="w-4 h-4 text-[#C8A977] shrink-0" />
+          <label htmlFor="pdp-year-select" className="text-xs font-bold text-white whitespace-nowrap">
             Cycle Year:
           </label>
           <select
             id="pdp-year-select"
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="bg-[#0b3350] text-white font-bold text-xs rounded-lg px-3 py-1.5 border border-white/30 focus:outline-hidden focus:ring-2 focus:ring-sky-400 cursor-pointer transition-all shadow-inner"
+            className="bg-[#211E4E] text-[#C8A977] font-bold text-xs rounded-xl px-3 py-1.5 border border-[#C8A977]/40 focus:outline-hidden focus:ring-2 focus:ring-[#C8A977] cursor-pointer transition-all shadow-inner"
           >
             {years.map((yr) => (
-              <option key={yr} value={yr} className="bg-[#104060] text-white font-medium">
+              <option key={yr} value={yr} className="bg-[#211E4E] text-white font-medium">
                 {yr} {yr === '2026' ? '(Active)' : ''}
               </option>
             ))}
-            <option value="ALL" className="bg-[#104060] text-white font-medium">All Years</option>
+            <option value="ALL" className="bg-[#211E4E] text-white font-medium">All Years</option>
           </select>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-        <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs">
+        <div className="bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)]">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Active PDPs</span>
-          <div className="text-2xl font-black text-[#1a5075] mt-1">{totalPdps}</div>
+          <div className="text-2xl font-black text-[#211E4E] mt-1">{totalPdps}</div>
           <span className="text-[10px] text-slate-400 mt-0.5 block">Development objectives</span>
         </div>
-        <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs">
+        <div className="bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)]">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">In Progress Goals</span>
-          <div className="text-2xl font-black text-[#0275a8] mt-1">{inProgressPdps}</div>
+          <div className="text-2xl font-black text-[#C8A977] mt-1">{inProgressPdps}</div>
           <span className="text-[10px] text-slate-400 mt-0.5 block">Under active training</span>
         </div>
-        <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs">
+        <div className="bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)]">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Completed Goals</span>
           <div className="text-2xl font-black text-emerald-700 mt-1">{completedPdps}</div>
           <span className="text-[10px] text-slate-400 mt-0.5 block">Milestones fulfilled</span>
         </div>
-        <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs">
+        <div className="bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)]">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Avg Organization Completion</span>
           <div className="text-2xl font-black text-slate-800 mt-1">{avgCompletion}%</div>
           <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-            <div className="bg-[#0275a8] h-full rounded-full" style={{ width: `${avgCompletion}%` }} />
+            <div className="bg-[#211E4E] h-full rounded-full" style={{ width: `${avgCompletion}%` }} />
           </div>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs flex flex-col md:flex-row items-stretch md:items-center gap-3">
+      <div className="bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] flex flex-col md:flex-row items-stretch md:items-center gap-3">
         <div className="flex-1 relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -198,7 +198,7 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search PDPs by employee name, ID, position..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#0275a8] focus:bg-white transition-all shadow-2xs"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#211E4E] focus:bg-white transition-all shadow-2xs"
           />
         </div>
 
@@ -208,7 +208,7 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
           <select
             value={selectedDivision}
             onChange={(e) => setSelectedDivision(e.target.value)}
-            className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#0275a8]"
+            className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#211E4E]"
           >
             <option value="ALL">All Divisions</option>
             {divisions.map((d) => (
@@ -223,7 +223,7 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#0275a8]"
+            className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#211E4E]"
           >
             <option value="ALL">All Statuses</option>
             <option value="Completed">Completed</option>
@@ -235,21 +235,21 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
       </div>
 
       {/* PDP Action Plans Table */}
-      <div className="bg-white rounded-lg border border-[#c8d8e5] shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#1a5075] text-white font-bold border-b border-[#144262]">
-                <th className="py-2.5 px-3.5 w-12 text-center">#</th>
-                <th className="py-2.5 px-4 w-52">Employee Details</th>
-                <th className="py-2.5 px-4 w-52">Target Competency &amp; Skill</th>
-                <th className="py-2.5 px-4">Prescribed Training Course</th>
-                <th className="py-2.5 px-3 text-center w-28">Target Quarter</th>
-                <th className="py-2.5 px-4 w-40">Progress</th>
-                <th className="py-2.5 px-3 text-center w-28">Status</th>
+              <tr className="bg-[#211E4E] text-[#C8A977] font-extrabold uppercase tracking-wider text-[11px] border-b border-[#C8A977]/30">
+                <th className="py-3 px-3.5 w-12 text-center">#</th>
+                <th className="py-3 px-4 w-52">Employee Details</th>
+                <th className="py-3 px-4 w-52">Target Competency &amp; Skill</th>
+                <th className="py-3 px-4">Prescribed Training Course</th>
+                <th className="py-3 px-3 text-center w-28">Target Quarter</th>
+                <th className="py-3 px-4 w-40">Progress</th>
+                <th className="py-3 px-3 text-center w-28">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-100">
               {pdpItems.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-10 text-center text-slate-500">
@@ -259,7 +259,7 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
                 </tr>
               ) : (
                 pdpItems.map((item, idx) => (
-                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={item.id} className="hover:bg-[#211E4E]/5 transition-colors">
                     <td className="py-3 px-3.5 text-center text-slate-400 font-mono text-[11px]">
                       {idx + 1}
                     </td>
@@ -273,13 +273,13 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
                       <span className="text-[11px] text-slate-500 block truncate">{item.skillName}</span>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="bg-[#f0f6fa] p-2 rounded border border-[#c8d8e5]">
-                        <span className="font-mono text-[10px] font-bold text-[#0275a8] block">{item.courseCode}</span>
+                      <div className="bg-[#211E4E]/5 p-2 rounded-xl border border-[#C8A977]/20">
+                        <span className="font-mono text-[10px] font-bold text-[#211E4E] block">{item.courseCode}</span>
                         <span className="font-medium text-slate-800 text-[11px] block line-clamp-1">{item.courseTitle}</span>
                       </div>
                     </td>
                     <td className="py-3 px-3 text-center">
-                      <span className="inline-block font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded text-[11px] border border-slate-200">
+                      <span className="inline-block font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-lg text-[11px] border border-slate-200">
                         {item.targetQuarter}
                       </span>
                     </td>
@@ -291,7 +291,7 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
                               item.progress === 100
                                 ? 'bg-emerald-600'
                                 : item.progress > 40
-                                ? 'bg-[#0275a8]'
+                                ? 'bg-[#211E4E]'
                                 : 'bg-amber-500'
                             }`}
                             style={{ width: `${item.progress}%` }}
@@ -304,11 +304,11 @@ export const HrPdpDashboardView: React.FC<HrPdpDashboardViewProps> = ({ records 
                     </td>
                     <td className="py-3 px-3 text-center">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
+                        className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-extrabold ${
                           item.status === 'Completed'
                             ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                             : item.status === 'In Progress'
-                            ? 'bg-sky-100 text-[#0275a8] border border-sky-200'
+                            ? 'bg-[#211E4E]/10 text-[#211E4E] border border-[#C8A977]/30'
                             : item.status === 'Scheduled'
                             ? 'bg-purple-100 text-purple-800 border border-purple-200'
                             : 'bg-amber-100 text-amber-800 border border-amber-200'

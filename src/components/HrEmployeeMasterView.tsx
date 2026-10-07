@@ -733,10 +733,10 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
     <div className="space-y-5 animate-in fade-in duration-300">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0d314a] rounded-xl p-5 text-white shadow-md border border-[#2b658f] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[#211E4E] rounded-xl p-5 text-white shadow-md border border-[#C8A977]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
-            <Users className="w-6 h-6 text-sky-300" />
+            <Users className="w-6 h-6 text-[#C8A977]" />
             <span>Employee Master</span>
           </h1>
         </div>
@@ -768,9 +768,9 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       setShowReleaseDropdown(false);
                       handleDirectRelease('Release All');
                     }}
-                    className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-[#0275a8] flex items-center gap-2 transition-colors cursor-pointer"
+                    className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E] flex items-center gap-2 transition-colors cursor-pointer"
                   >
-                    <Users className="w-4 h-4 text-[#0275a8]" />
+                    <Users className="w-4 h-4 text-[#C8A977]" />
                     <span>Release All ({employees.length})</span>
                   </button>
 
@@ -784,7 +784,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                         handleStartSelectionMode();
                       }
                     }}
-                    className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-[#0275a8] flex items-center justify-between transition-colors cursor-pointer border-t border-slate-100"
+                    className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E] flex items-center justify-between transition-colors cursor-pointer border-t border-slate-100"
                   >
                     <div className="flex items-center gap-2">
                       <CheckSquare className="w-4 h-4 text-emerald-600" />
@@ -812,10 +812,10 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
               if (importFileInputRef.current) importFileInputRef.current.value = '';
               setIsImportModalOpen(true);
             }}
-            className="px-4 py-2 bg-white/15 hover:bg-white/25 text-white font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95 border border-white/20 backdrop-blur-xs"
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95 border border-[#C8A977]/30 backdrop-blur-xs"
             title="Import employee records from CSV file"
           >
-            <Upload className="w-3.5 h-3.5 text-sky-300" />
+            <Upload className="w-3.5 h-3.5 text-[#C8A977]" />
             <span>Import</span>
           </button>
 
@@ -824,7 +824,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             id="btn-add-employee"
             type="button"
             onClick={handleOpenAddModal}
-            className="px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white font-bold text-xs rounded-lg shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-300/30"
+            className="px-4 py-2 bg-[#C8A977] hover:bg-[#b89763] text-[#211E4E] font-extrabold text-xs rounded-lg shadow-sm transition-all cursor-pointer active:scale-95"
             title="Add a new employee record"
           >
             <span>Add</span>
@@ -885,15 +885,15 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
 
       {/* Selection Mode Interactive Action Bar */}
       {isSelectionMode && (
-        <div className="bg-gradient-to-r from-sky-50 via-blue-50 to-indigo-50 border-2 border-[#0275a8]/50 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs animate-in slide-in-from-top-2">
+        <div className="bg-[#211E4E]/5 border-2 border-[#C8A977]/50 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs animate-in slide-in-from-top-2">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#0275a8] text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
+            <div className="w-8 h-8 rounded-lg bg-[#211E4E] text-[#C8A977] flex items-center justify-center font-bold shrink-0 shadow-2xs border border-[#C8A977]/30">
               <CheckSquare className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-extrabold text-[#1a5075] text-xs flex items-center gap-2 flex-wrap">
+              <div className="font-extrabold text-[#211E4E] text-xs flex items-center gap-2 flex-wrap">
                 <span>Employee Selection Mode Active</span>
-                <span className="bg-[#1a5075] text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                <span className="bg-[#211E4E] text-[#C8A977] text-[10px] font-black px-2 py-0.5 rounded-full border border-[#C8A977]/30">
                   {selectedEmpIds.length} Selected
                 </span>
               </div>
@@ -949,15 +949,15 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs">
+        <div className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Employees</span>
-          <div className="text-2xl font-black text-[#1a5075] mt-1">{employees.length}</div>
+          <div className="text-2xl font-black text-[#211E4E] mt-1">{employees.length}</div>
         </div>
-        <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs">
+        <div className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Divisions</span>
-          <div className="text-2xl font-black text-[#0275a8] mt-1">{divisions.length}</div>
+          <div className="text-2xl font-black text-[#C8A977] mt-1">{divisions.length}</div>
         </div>
-        <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs">
+        <div className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Departments</span>
           <div className="text-2xl font-black text-slate-800 mt-1">
             {Array.from(new Set(employees.map(e => e.department))).length}
@@ -966,7 +966,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-white p-3.5 rounded-lg border border-[#c8d8e5] shadow-2xs space-y-3">
+      <div className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs space-y-3">
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
           {/* Search Input */}
           <div className="flex-1 relative">
@@ -976,7 +976,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by Employee Name, ID, Email, Position, Manager..."
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#0275a8] focus:bg-white transition-all shadow-2xs"
+              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#C8A977] focus:ring-2 focus:ring-[#C8A977]/20 focus:bg-white transition-all shadow-2xs"
             />
           </div>
 
@@ -989,7 +989,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 setSelectedDivision(e.target.value);
                 setSelectedDepartment('ALL');
               }}
-              className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#0275a8]"
+              className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#C8A977] focus:ring-2 focus:ring-[#C8A977]/20"
             >
               <option value="ALL">All Divisions</option>
               {divisions.map((div) => (
@@ -1004,7 +1004,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             <select
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
-              className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#0275a8]"
+              className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#C8A977] focus:ring-2 focus:ring-[#C8A977]/20"
             >
               <option value="ALL">All Departments</option>
               {departments.map((dept) => (
@@ -1019,7 +1019,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             <select
               value={selectedGrade}
               onChange={(e) => setSelectedGrade(e.target.value)}
-              className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#0275a8]"
+              className="bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-hidden focus:border-[#C8A977] focus:ring-2 focus:ring-[#C8A977]/20"
             >
               <option value="ALL">All Grades</option>
               {grades.map((gr) => (
@@ -1037,7 +1037,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 setSelectedDepartment('ALL');
                 setSelectedGrade('ALL');
               }}
-              className="text-xs text-[#0275a8] hover:underline font-bold px-2 py-1 cursor-pointer"
+              className="text-xs text-[#211E4E] hover:text-[#C8A977] hover:underline font-bold px-2 py-1 cursor-pointer transition-colors"
             >
               Reset
             </button>
@@ -1046,11 +1046,11 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
       </div>
 
       {/* Employee Master Table */}
-      <div className="bg-white rounded-lg border border-[#c8d8e5] shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#1a5075] text-white font-bold border-b border-[#144262]">
+              <tr className="bg-[#211E4E] text-[#C8A977] font-bold border-b border-[#C8A977]/30">
                 {isSelectionMode && (
                   <th className="py-2.5 px-3 w-10 text-center">
                     <input
@@ -1058,7 +1058,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       aria-label="Select all employees"
                       checked={isAllFilteredSelected}
                       onChange={handleToggleSelectAll}
-                      className="w-3.5 h-3.5 text-[#0275a8] bg-white border-slate-300 rounded focus:ring-0 cursor-pointer"
+                      className="w-3.5 h-3.5 text-[#211E4E] bg-white border-slate-300 rounded focus:ring-0 cursor-pointer"
                     />
                   </th>
                 )}
@@ -1110,7 +1110,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                             aria-label={`Select ${emp.name}`}
                             checked={isSelected}
                             onChange={() => handleToggleSelectEmp(emp.employeeId)}
-                            className="w-3.5 h-3.5 text-[#0275a8] border-slate-300 rounded focus:ring-0 cursor-pointer"
+                            className="w-3.5 h-3.5 text-[#211E4E] border-slate-300 rounded focus:ring-0 cursor-pointer"
                           />
                         </td>
                       )}
@@ -1119,7 +1119,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-[#e6f2f9] border border-[#bcd7e8] flex items-center justify-center text-[#1a5075] font-bold text-[11px] shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-[#211E4E]/10 border border-[#211E4E]/20 flex items-center justify-center text-[#211E4E] font-bold text-[11px] shrink-0">
                             {initials}
                           </div>
                           <div>
@@ -1143,7 +1143,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                         <span className="text-slate-600 block">{emp.division}</span>
                       </td>
                       <td className="py-3 px-3 text-center">
-                        <span className="inline-block bg-[#e5eff6] text-[#1a5075] font-bold px-2 py-0.5 rounded text-[11px] border border-[#bcd7e8]">
+                        <span className="inline-block bg-[#211E4E]/10 text-[#211E4E] font-bold px-2 py-0.5 rounded text-[11px] border border-[#211E4E]/20">
                           {emp.grade}
                         </span>
                       </td>
@@ -1159,7 +1159,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                             type="button"
                             title="Edit Employee"
                             onClick={() => handleOpenEditModal(emp)}
-                            className="p-1 text-slate-500 hover:text-[#0275a8] hover:bg-sky-50 rounded transition-colors cursor-pointer"
+                            className="p-1 text-slate-500 hover:text-[#211E4E] hover:bg-[#C8A977]/15 rounded transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
@@ -1191,14 +1191,14 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="bg-[#1a5075] text-white px-5 py-3.5 flex items-center justify-between">
+            <div className="bg-[#211E4E] text-[#C8A977] px-5 py-3.5 flex items-center justify-between border-b border-[#C8A977]/30">
               <div className="flex items-center gap-2">
                 {modalMode === 'add' ? (
-                  <UserPlus className="w-5 h-5 text-sky-300" />
+                  <UserPlus className="w-5 h-5 text-[#C8A977]" />
                 ) : (
-                  <Edit2 className="w-5 h-5 text-sky-300" />
+                  <Edit2 className="w-5 h-5 text-[#C8A977]" />
                 )}
-                <h3 className="font-bold text-sm sm:text-base">
+                <h3 className="font-bold text-sm sm:text-base text-white">
                   {modalMode === 'add' ? 'Add New Employee' : 'Edit Employee Profile'}
                 </h3>
               </div>
@@ -1228,7 +1228,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       if (formErrors.name) setFormErrors((prev) => ({ ...prev, name: '' }));
                     }}
                     placeholder="e.g. Fatima Al Hosani"
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.name ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   />
@@ -1248,7 +1248,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       if (formErrors.position) setFormErrors((prev) => ({ ...prev, position: '' }));
                     }}
                     placeholder="e.g. Senior Air Traffic Controller"
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.position ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   />
@@ -1268,7 +1268,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       if (formErrors.employeeId) setFormErrors((prev) => ({ ...prev, employeeId: '' }));
                     }}
                     placeholder="e.g. EMP00590"
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 font-mono focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 font-mono focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.employeeId ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   />
@@ -1288,7 +1288,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       if (formErrors.email) setFormErrors((prev) => ({ ...prev, email: '' }));
                     }}
                     placeholder="e.g. employee@company.aero"
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.email ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   />
@@ -1317,7 +1317,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       });
                       if (formErrors.entity) setFormErrors((prev) => ({ ...prev, entity: '' }));
                     }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 font-bold focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 font-bold focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.entity ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
@@ -1340,7 +1340,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       setFormData({ ...formData, joinDate: e.target.value });
                       if (formErrors.joinDate) setFormErrors((prev) => ({ ...prev, joinDate: '' }));
                     }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.joinDate ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   />
@@ -1358,7 +1358,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       setFormData({ ...formData, division: e.target.value });
                       if (formErrors.division) setFormErrors((prev) => ({ ...prev, division: '' }));
                     }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.division ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
@@ -1381,7 +1381,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       setFormData({ ...formData, department: e.target.value });
                       if (formErrors.department) setFormErrors((prev) => ({ ...prev, department: '' }));
                     }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.department ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
@@ -1413,7 +1413,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       });
                       if (formErrors.function) setFormErrors((prev) => ({ ...prev, function: '' }));
                     }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.function ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
@@ -1447,7 +1447,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       setFormData({ ...formData, grade: parseInt(e.target.value, 10) });
                       if (formErrors.grade) setFormErrors((prev) => ({ ...prev, grade: '' }));
                     }}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((g) => (
                       <option key={g} value={g}>Grade {g}</option>
@@ -1467,7 +1467,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       setFormData({ ...formData, reportingManager: e.target.value });
                       if (formErrors.reportingManager) setFormErrors((prev) => ({ ...prev, reportingManager: '' }));
                     }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.reportingManager ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
@@ -1490,7 +1490,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       setFormData({ ...formData, location: e.target.value });
                       if (formErrors.location) setFormErrors((prev) => ({ ...prev, location: '' }));
                     }}
-                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#0275a8] ${
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-md text-xs text-slate-800 focus:bg-white focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 ${
                       formErrors.location ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
@@ -1513,7 +1513,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white font-bold text-xs rounded-lg shadow-sm transition-all cursor-pointer active:scale-95 flex items-center justify-center"
+                  className="px-5 py-2 bg-[#211E4E] hover:bg-[#2a2663] text-white font-bold text-xs rounded-lg shadow-sm transition-all cursor-pointer active:scale-95 flex items-center justify-center"
                 >
                   <span>{modalMode === 'add' ? 'Add Employee' : 'Save Changes'}</span>
                 </button>
@@ -1570,7 +1570,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
             <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
               {/* Modal Header */}
-              <div className="bg-gradient-to-r from-[#1a5075] to-[#154668] text-white px-5 py-4 flex items-center justify-between">
+              <div className="bg-[#211E4E] text-[#C8A977] px-5 py-4 flex items-center justify-between border-b border-[#C8A977]/20">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-amber-400/20 text-amber-300 flex items-center justify-center border border-amber-400/30">
                     <AlertTriangle className="w-4 h-4 text-amber-400" />
@@ -1619,7 +1619,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 {/* History Notice Box with Navigation Link */}
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2 text-slate-600">
-                    <History className="w-4 h-4 text-[#0275a8] shrink-0" />
+                    <History className="w-4 h-4 text-[#C8A977] shrink-0" />
                     <span className="text-[11px] text-slate-600">
                       See full details in <strong className="text-slate-800">Release History</strong>.
                     </span>
@@ -1631,7 +1631,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                         setAlreadyReleasedPrompt(null);
                         onNavigateToHistory();
                       }}
-                      className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-[#0275a8] hover:text-[#02628d] hover:underline cursor-pointer"
+                      className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-[#211E4E] hover:text-[#C8A977] hover:underline cursor-pointer"
                     >
                       <span>Release History</span>
                       <ArrowRight className="w-3 h-3" />
@@ -1653,7 +1653,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 <button
                   type="button"
                   onClick={() => executeRelease(alreadyReleasedPrompt.mode, alreadyReleasedPrompt.allTargetIds)}
-                  className="px-5 py-2 text-xs font-bold text-white bg-[#0275a8] hover:bg-[#02628d] rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-5 py-2 text-xs font-bold text-white bg-[#211E4E] hover:bg-[#2a2663] rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Release</span>
@@ -1672,16 +1672,16 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
           <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
             
             {/* Modal Header */}
-            <div className="p-5 bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white flex items-center justify-between gap-4 border-b border-white/10 shrink-0">
+            <div className="p-5 bg-[#211E4E] text-[#C8A977] flex items-center justify-between gap-4 border-b border-[#C8A977]/20 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center text-white backdrop-blur-xs border border-white/20">
-                  <Upload className="w-5 h-5 text-sky-200" />
+                <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center text-white backdrop-blur-xs border border-[#C8A977]/30">
+                  <Upload className="w-5 h-5 text-[#C8A977]" />
                 </div>
                 <div>
                   <h2 className="text-base font-black tracking-tight text-white">
                     Bulk Import Employees
                   </h2>
-                  <p className="text-[11px] text-sky-100">
+                  <p className="text-[11px] text-[#C8A977]/80">
                     Upload a CSV file to batch onboard employee records
                   </p>
                 </div>
@@ -1693,7 +1693,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                   setImportParsedList([]);
                   setImportError(null);
                 }}
-                className="p-1.5 rounded-xl hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl hover:bg-white/20 text-[#C8A977] hover:text-white transition-colors cursor-pointer"
                 title="Close"
               >
                 <X className="w-4 h-4" />
@@ -1704,10 +1704,10 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
             <div className="p-6 space-y-4 overflow-y-auto text-xs">
               
               {/* Template Download Section */}
-              <div className="p-4 bg-sky-50/70 border border-sky-200/80 rounded-2xl flex items-center justify-between gap-3">
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-sky-100 text-[#0275a8] flex items-center justify-center shrink-0">
-                    <FileSpreadsheet className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-lg bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center shrink-0">
+                    <FileSpreadsheet className="w-4 h-4 text-[#C8A977]" />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-xs">Download CSV Template</h4>
@@ -1719,7 +1719,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 <button
                   type="button"
                   onClick={handleDownloadSampleEmployeeCsv}
-                  className="px-3.5 py-1.5 bg-white hover:bg-sky-50 text-[#0275a8] hover:text-[#1a5075] font-bold text-xs rounded-xl border border-sky-300 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                  className="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-[#211E4E] hover:text-[#C8A977] font-bold text-xs rounded-xl border border-slate-200 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Sample</span>
@@ -1741,11 +1741,11 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
                   importParsedList.length > 0
                     ? 'border-emerald-300 bg-emerald-50/40 hover:bg-emerald-50/60'
-                    : 'border-slate-300 hover:border-[#0275a8] bg-slate-50 hover:bg-white'
+                    : 'border-slate-300 hover:border-[#C8A977] bg-slate-50 hover:bg-white'
                 }`}
               >
-                <div className="w-12 h-12 rounded-2xl bg-white shadow-xs border border-slate-200 flex items-center justify-center mx-auto mb-2 text-[#0275a8]">
-                  <Upload className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-2xl bg-white shadow-xs border border-slate-200 flex items-center justify-center mx-auto mb-2 text-[#211E4E]">
+                  <Upload className="w-6 h-6 text-[#C8A977]" />
                 </div>
                 {importFileName ? (
                   <div>
@@ -1839,7 +1839,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                 type="button"
                 disabled={importParsedList.length === 0}
                 onClick={handleConfirmImport}
-                className="px-5 py-2 text-xs font-bold text-white bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] disabled:opacity-50 disabled:pointer-events-none rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                className="px-5 py-2 text-xs font-bold text-white bg-[#211E4E] hover:bg-[#2a2663] disabled:opacity-50 disabled:pointer-events-none rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Import {importParsedList.length > 0 ? `${importParsedList.length} Employees` : 'Employees'}</span>

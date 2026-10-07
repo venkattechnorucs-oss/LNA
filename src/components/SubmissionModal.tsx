@@ -61,8 +61,8 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
         </p>
 
         {/* Talent Management Notification Banner */}
-        <div className="mt-4 p-3.5 bg-sky-50/90 border border-sky-200/90 rounded-2xl text-[11px] sm:text-xs text-slate-700 leading-relaxed text-left flex items-start gap-2.5 shadow-2xs">
-          <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+        <div className="mt-4 p-3.5 bg-[#211E4E]/5 border border-[#C8A977]/30 rounded-2xl text-[11px] sm:text-xs text-slate-700 leading-relaxed text-left flex items-start gap-2.5 shadow-2xs">
+          <Info className="w-4 h-4 text-[#211E4E] shrink-0 mt-0.5" />
           <p className="font-medium text-slate-800">
             “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
           </p>
@@ -72,7 +72,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-full py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition-all active:scale-98"
+            className="w-full py-2.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/40 text-xs font-bold rounded-xl shadow-md cursor-pointer transition-all active:scale-98"
           >
             Acknowledge &amp; Return to Dashboard
           </button>

@@ -38,7 +38,7 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
   pendingApprovalsCount = 0
 }) => {
   return (
-    <aside className="w-60 bg-white/70 backdrop-blur-xl border-r border-slate-200/80 flex shrink-0 min-h-[calc(100vh-100px)] shadow-[2px_0_12px_rgba(0,0,0,0.02)]">
+    <aside className="w-60 bg-white/85 backdrop-blur-xl border-r border-[#C8A977]/20 flex shrink-0 min-h-[calc(100vh-100px)] shadow-[2px_0_12px_rgba(33,30,78,0.03)]">
       {/* Structured Navigation Menu */}
       <div className="flex-1 flex flex-col py-4 px-3 text-xs space-y-4">
         
@@ -47,9 +47,9 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
           <div className="space-y-4">
             {/* LNA Module (Self-Service & Team Approvals) */}
             <div>
-              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#1a5075] uppercase flex items-center justify-between border-b border-slate-200/80 pb-1.5 mb-1.5">
+              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#211E4E] uppercase flex items-center justify-between border-b border-[#C8A977]/25 pb-1.5 mb-1.5">
                 <span className="flex items-center gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <GraduationCap className="w-3.5 h-3.5 text-[#C8A977]" />
                   LNA
                 </span>
               </div>
@@ -61,12 +61,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('dashboard')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'dashboard' || currentTab === 'my-lna'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'dashboard' || currentTab === 'my-lna' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'dashboard' || currentTab === 'my-lna' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>My LNA</span>
                   </div>
                 </button>
@@ -77,17 +77,17 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('approvals')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'approvals'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <CheckSquare className={`w-4 h-4 ${currentTab === 'approvals' ? 'text-white' : 'text-emerald-600'}`} />
+                    <CheckSquare className={`w-4 h-4 ${currentTab === 'approvals' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>My Approvals</span>
                   </div>
                   {pendingApprovalsCount > 0 && (
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs ${
-                      currentTab === 'approvals' ? 'bg-white text-[#1a5075]' : 'bg-red-500 text-white'
+                      currentTab === 'approvals' ? 'bg-[#C8A977] text-[#211E4E]' : 'bg-red-500 text-white'
                     }`}>
                       {pendingApprovalsCount}
                     </span>
@@ -105,9 +105,9 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
           <div className="space-y-4">
             {/* LNA Module */}
             <div>
-              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#1a5075] uppercase flex items-center justify-between border-b border-slate-200/80 pb-1.5 mb-1.5">
+              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#211E4E] uppercase flex items-center justify-between border-b border-[#C8A977]/25 pb-1.5 mb-1.5">
                 <span className="flex items-center gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <GraduationCap className="w-3.5 h-3.5 text-[#C8A977]" />
                   LNA
                 </span>
               </div>
@@ -118,12 +118,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('dashboard')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'dashboard'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'dashboard' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'dashboard' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>My LNA</span>
                   </div>
                 </button>
@@ -140,8 +140,8 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
             
             {/* 3.1 HR Dashboard (Contains Dashboard, Masters & Reports) */}
             <div>
-              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#1a5075] uppercase flex items-center gap-1.5 border-b border-slate-200/80 pb-1.5 mb-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#0275a8]" />
+              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#211E4E] uppercase flex items-center gap-1.5 border-b border-[#C8A977]/25 pb-1.5 mb-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#C8A977]" />
                 <span>HR Dashboard</span>
               </div>
 
@@ -152,12 +152,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-dashboard')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-dashboard'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'hr-dashboard' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'hr-dashboard' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>LNA Dashboard</span>
                   </div>
                 </button>
@@ -168,12 +168,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-employee-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-employee-master'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Users className={`w-4 h-4 ${currentTab === 'hr-employee-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <Users className={`w-4 h-4 ${currentTab === 'hr-employee-master' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Employee Master</span>
                   </div>
                 </button>
@@ -184,12 +184,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-assessment-history')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-assessment-history'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <History className={`w-4 h-4 ${currentTab === 'hr-assessment-history' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <History className={`w-4 h-4 ${currentTab === 'hr-assessment-history' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Release History</span>
                   </div>
                 </button>
@@ -200,12 +200,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-org-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-org-master'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Landmark className={`w-4 h-4 ${currentTab === 'hr-org-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <Landmark className={`w-4 h-4 ${currentTab === 'hr-org-master' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Org Master</span>
                   </div>
                 </button>
@@ -216,12 +216,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-department-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-department-master'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Building2 className={`w-4 h-4 ${currentTab === 'hr-department-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <Building2 className={`w-4 h-4 ${currentTab === 'hr-department-master' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Department Master</span>
                   </div>
                 </button>
@@ -232,12 +232,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-division-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-division-master'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <GitBranch className={`w-4 h-4 ${currentTab === 'hr-division-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <GitBranch className={`w-4 h-4 ${currentTab === 'hr-division-master' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Division Master</span>
                   </div>
                 </button>
@@ -248,12 +248,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-grade-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-grade-master'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Award className={`w-4 h-4 ${currentTab === 'hr-grade-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <Award className={`w-4 h-4 ${currentTab === 'hr-grade-master' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Grade Master</span>
                   </div>
                 </button>
@@ -264,12 +264,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-functional-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <FolderTree className={`w-4 h-4 ${currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <FolderTree className={`w-4 h-4 ${currentTab === 'hr-functional-master' || currentTab === 'hr-add-functional-department' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Functional Master</span>
                   </div>
                 </button>
@@ -280,12 +280,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-competency-skills-master')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-competency-skills-master' || currentTab === 'hr-competency-master' || currentTab === 'hr-skills-master'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Layers className={`w-4 h-4 ${currentTab === 'hr-competency-skills-master' || currentTab === 'hr-competency-master' || currentTab === 'hr-skills-master' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <Layers className={`w-4 h-4 ${currentTab === 'hr-competency-skills-master' || currentTab === 'hr-competency-master' || currentTab === 'hr-skills-master' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Competency &amp; Skills Master</span>
                   </div>
                 </button>
@@ -296,12 +296,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-delegation')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-delegation'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <UserCheck className={`w-4 h-4 ${currentTab === 'hr-delegation' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <UserCheck className={`w-4 h-4 ${currentTab === 'hr-delegation' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Delegation</span>
                   </div>
                 </button>
@@ -312,12 +312,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-reports')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-reports'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <FileText className={`w-4 h-4 ${currentTab === 'hr-reports' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <FileText className={`w-4 h-4 ${currentTab === 'hr-reports' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>Reports</span>
                   </div>
                 </button>
@@ -326,8 +326,8 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
 
             {/* 3.2 LNA */}
             <div>
-              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#1a5075] uppercase flex items-center gap-1.5 border-b border-slate-200/80 pb-1.5 mb-1.5">
-                <GraduationCap className="w-3.5 h-3.5 text-[#0275a8]" />
+              <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-[#211E4E] uppercase flex items-center gap-1.5 border-b border-[#C8A977]/25 pb-1.5 mb-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-[#C8A977]" />
                 <span>LNA</span>
               </div>
 
@@ -337,12 +337,12 @@ export const GansSidebar: React.FC<GansSidebarProps> = ({
                   onClick={() => onSelectTab('hr-lna-dashboard')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-left transition-all cursor-pointer ${
                     currentTab === 'hr-lna-dashboard'
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-[0_4px_12px_rgba(2,117,168,0.25)] font-bold'
-                      : 'text-slate-700 hover:bg-white/80 hover:text-[#0275a8]'
+                      ? 'bg-[#211E4E] text-[#FFFFFF] shadow-[0_4px_12px_rgba(33,30,78,0.22)] font-bold border-l-4 border-[#C8A977]'
+                      : 'text-slate-700 hover:bg-[#211E4E]/5 hover:text-[#211E4E]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'hr-lna-dashboard' ? 'text-white' : 'text-[#0275a8]'}`} />
+                    <LayoutDashboard className={`w-4 h-4 ${currentTab === 'hr-lna-dashboard' ? 'text-[#C8A977]' : 'text-[#211E4E]/60'}`} />
                     <span>My LNA</span>
                   </div>
                 </button>

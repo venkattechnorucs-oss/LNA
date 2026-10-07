@@ -256,21 +256,21 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
       
       {/* Toast Notification Banner */}
       {reminderToast && (
-        <div className="fixed bottom-5 right-5 z-50 bg-[#1a5075]/95 backdrop-blur-xl text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-sky-400/30 animate-in slide-in-from-bottom-3 duration-200">
+        <div className="fixed bottom-5 right-5 z-50 bg-[#211E4E]/95 backdrop-blur-xl text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-[#C8A977]/30 animate-in slide-in-from-bottom-3 duration-200">
           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
           <span className="text-xs font-semibold">{reminderToast}</span>
         </div>
       )}
 
       {/* ================= 1. HEADER ================= */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a5075] via-[#104060] to-[#0d2f47] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(26,80,117,0.35)] border border-white/20 backdrop-blur-xl">
-        <div className="absolute -right-8 -top-8 w-56 h-56 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-teal-400/15 rounded-full blur-2xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-[#211E4E] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(33,30,78,0.35)] border border-[#C8A977]/30 backdrop-blur-xl">
+        <div className="absolute -right-8 -top-8 w-56 h-56 bg-[#C8A977]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-[#C8A977]/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex items-center justify-between">
           <div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5 drop-shadow-xs">
-              <Send className="w-6 h-6 text-sky-300" />
+              <Send className="w-6 h-6 text-[#C8A977]" />
               <span>Release Assessment</span>
             </h1>
           </div>
@@ -278,7 +278,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
       </div>
 
       {/* ================= 2. RELEASE CONFIGURATION FORM CARD ================= */}
-      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
+      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] overflow-hidden">
         <div className="p-5 sm:p-6 space-y-6">
           
           {/* Row 1: Assessment Type & Release Type */}
@@ -297,7 +297,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                     value="LNA"
                     checked={declarationType === 'LNA'}
                     onChange={() => setDeclarationType('LNA')}
-                    className="w-4 h-4 text-[#0275a8] focus:ring-[#0275a8] cursor-pointer"
+                    className="w-4 h-4 text-[#211E4E] focus:ring-[#C8A977] cursor-pointer"
                   />
                   <span>LNA</span>
                 </label>
@@ -308,7 +308,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                     value="PDP"
                     checked={declarationType === 'PDP'}
                     onChange={() => setDeclarationType('PDP')}
-                    className="w-4 h-4 text-[#0275a8] focus:ring-[#0275a8] cursor-pointer"
+                    className="w-4 h-4 text-[#211E4E] focus:ring-[#C8A977] cursor-pointer"
                   />
                   <span>PDP</span>
                 </label>
@@ -328,7 +328,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                     value="Release All"
                     checked={releaseType === 'Release All'}
                     onChange={() => setReleaseType('Release All')}
-                    className="w-4 h-4 text-[#0275a8] focus:ring-[#0275a8] cursor-pointer"
+                    className="w-4 h-4 text-[#211E4E] focus:ring-[#C8A977] cursor-pointer"
                   />
                   <span>Release All</span>
                 </label>
@@ -341,7 +341,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                     onChange={() => {
                       setReleaseType('Release Selected');
                     }}
-                    className="w-4 h-4 text-[#0275a8] focus:ring-[#0275a8] cursor-pointer"
+                    className="w-4 h-4 text-[#211E4E] focus:ring-[#C8A977] cursor-pointer"
                   />
                   <span>Release Selected</span>
                 </label>
@@ -360,13 +360,13 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <Calendar className="w-4 h-4 text-[#0275a8]" />
+                  <Calendar className="w-4 h-4 text-[#C8A977]" />
                 </div>
                 <input
                   type="date"
                   value={deadlineDate}
                   onChange={(e) => setDeadlineDate(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 text-xs font-bold bg-white border border-slate-200 rounded-xl text-slate-800 shadow-inner focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] transition-all cursor-pointer"
+                  className="w-full pl-10 pr-4 py-2.5 text-xs font-bold bg-white border border-slate-200 rounded-xl text-slate-800 shadow-inner focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#C8A977] transition-all cursor-pointer"
                 />
               </div>
             </div>
@@ -381,7 +381,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                 value={notificationNote}
                 onChange={(e) => setNotificationNote(e.target.value)}
                 placeholder="Enter remarks..."
-                className="w-full px-3.5 py-2.5 text-xs font-normal bg-white border border-slate-200 rounded-xl text-slate-800 shadow-inner focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] transition-all placeholder:text-slate-400"
+                className="w-full px-3.5 py-2.5 text-xs font-normal bg-white border border-slate-200 rounded-xl text-slate-800 shadow-inner focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#C8A977] transition-all placeholder:text-slate-400"
               />
             </div>
 
@@ -392,7 +392,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
             <button
               type="button"
               onClick={handleRelease}
-              className="w-full sm:w-auto min-w-[200px] px-8 py-3 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white font-extrabold text-xs rounded-xl shadow-md shadow-sky-950/15 transition-all flex items-center justify-center cursor-pointer active:scale-95"
+              className="w-full sm:w-auto min-w-[200px] px-8 py-3 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] font-extrabold text-xs rounded-xl shadow-md border border-[#C8A977]/40 transition-all flex items-center justify-center cursor-pointer active:scale-95"
             >
               <span>Release</span>
             </button>
@@ -408,13 +408,13 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
       </div>
 
       {/* ================= 3. EMPLOYEE LIST TABLE ================= */}
-      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
+      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] overflow-hidden">
         
         {/* Table Top Controls Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/60">
           
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#0275a8]" />
+            <Users className="w-4 h-4 text-[#211E4E]" />
             <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
               Employee List
             </h3>
@@ -430,7 +430,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search employees..."
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl shadow-inner focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8] transition-all"
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl shadow-inner focus:ring-2 focus:ring-[#C8A977]/20 focus:border-[#C8A977] transition-all"
               />
             </div>
 
@@ -438,7 +438,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
             <select
               value={selectedDeptFilter}
               onChange={(e) => setSelectedDeptFilter(e.target.value)}
-              className="text-xs font-bold bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-slate-700 focus:ring-2 focus:ring-[#0275a8]/20 cursor-pointer shadow-2xs"
+              className="text-xs font-bold bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-slate-700 focus:ring-2 focus:ring-[#C8A977]/20 cursor-pointer shadow-2xs"
             >
               <option value="ALL">All Departments</option>
               {departments.map((d) => (
@@ -454,7 +454,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
               onClick={handleExportCSV}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
             >
-              <Download className="w-3.5 h-3.5 text-[#0275a8]" />
+              <Download className="w-3.5 h-3.5 text-[#C8A977]" />
               <span>Export</span>
             </button>
           </div>
@@ -463,16 +463,16 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
 
         {/* Selection summary bar when in 'Release Selected' mode */}
         {releaseType === 'Release Selected' && (
-          <div className="bg-sky-50/90 px-5 py-2.5 border-b border-sky-200/80 flex items-center justify-between text-xs">
+          <div className="bg-[#211E4E]/5 px-5 py-2.5 border-b border-[#C8A977]/30 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-[#0275a8]">
+              <span className="font-extrabold text-[#211E4E]">
                 {selectedEmpIds.length} of {filteredEmployees.length} employees selected
               </span>
               <span className="text-slate-400">|</span>
               <button
                 type="button"
                 onClick={handleSelectAllVisible}
-                className="text-[#004e8c] font-bold hover:underline cursor-pointer"
+                className="text-[#211E4E] font-bold hover:underline cursor-pointer"
               >
                 {filteredEmployees.every((e) => selectedEmpIds.includes(e.employeeId))
                   ? 'Deselect All'
@@ -495,29 +495,29 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
+              <tr className="bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/30 font-extrabold uppercase tracking-wider text-[11px]">
                 {releaseType === 'Release Selected' && (
                   <th className="p-3 w-10 text-center">
                     <button
                       type="button"
                       onClick={handleSelectAllVisible}
-                      className="cursor-pointer text-[#1a5075] hover:text-[#0275a8]"
+                      className="cursor-pointer text-[#C8A977] hover:text-white"
                     >
                       {filteredEmployees.length > 0 &&
                       filteredEmployees.every((e) => selectedEmpIds.includes(e.employeeId)) ? (
-                        <CheckSquare className="w-4 h-4 text-[#0275a8]" />
+                        <CheckSquare className="w-4 h-4 text-[#C8A977]" />
                       ) : (
                         <Square className="w-4 h-4" />
                       )}
                     </button>
                   </th>
                 )}
-                <th className="py-3.5 px-4 border-r border-slate-200/80">Employee ID</th>
-                <th className="py-3.5 px-4 border-r border-slate-200/80">Employee Name</th>
-                <th className="py-3.5 px-4 border-r border-slate-200/80">Department</th>
-                <th className="py-3.5 px-4 border-r border-slate-200/80">Location</th>
-                <th className="py-3.5 px-4 border-r border-slate-200/80">Position</th>
-                <th className="py-3.5 px-4 border-r border-slate-200/80">Assessment Status</th>
+                <th className="py-3.5 px-4 border-r border-white/10">Employee ID</th>
+                <th className="py-3.5 px-4 border-r border-white/10">Employee Name</th>
+                <th className="py-3.5 px-4 border-r border-white/10">Department</th>
+                <th className="py-3.5 px-4 border-r border-white/10">Location</th>
+                <th className="py-3.5 px-4 border-r border-white/10">Position</th>
+                <th className="py-3.5 px-4 border-r border-white/10">Assessment Status</th>
                 <th className="py-3.5 px-4 text-center">Action</th>
               </tr>
             </thead>
@@ -541,9 +541,9 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                           handleToggleSelectEmployee(emp.employeeId);
                         }
                       }}
-                      className={`hover:bg-sky-50/50 transition-colors ${
-                        index % 2 === 0 ? 'bg-white/70' : 'bg-[#f8fbfe]/60'
-                      } ${isSelected ? '!bg-sky-100/70' : ''} ${
+                      className={`hover:bg-[#211E4E]/5 transition-colors ${
+                        index % 2 === 0 ? 'bg-white/70' : 'bg-[#fcfbfa]/60'
+                      } ${isSelected ? '!bg-[#211E4E]/10' : ''} ${
                         releaseType === 'Release Selected' ? 'cursor-pointer' : ''
                       }`}
                     >
@@ -553,7 +553,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => handleToggleSelectEmployee(emp.employeeId)}
-                            className="w-4 h-4 text-[#0275a8] rounded border-slate-300 focus:ring-[#0275a8] cursor-pointer"
+                            className="w-4 h-4 text-[#211E4E] rounded border-slate-300 focus:ring-[#211E4E] cursor-pointer"
                           />
                         </td>
                       )}
@@ -562,7 +562,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                       </td>
                       <td className="py-3.5 px-4 border-r border-slate-100">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-[#1a5075]/10 text-[#1a5075] font-extrabold text-[10px] flex items-center justify-center shrink-0 border border-[#1a5075]/20">
+                          <div className="w-7 h-7 rounded-full bg-[#211E4E]/10 text-[#211E4E] font-extrabold text-[10px] flex items-center justify-center shrink-0 border border-[#C8A977]/30">
                             {emp.name
                               .split(' ')
                               .map((n) => n[0])
@@ -612,7 +612,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                                 deadline: deadlineDate
                               });
                             }}
-                            className="px-3.5 py-1.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white rounded-xl text-[11px] font-extrabold shadow-xs transition-all cursor-pointer active:scale-95"
+                            className="px-3.5 py-1.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 rounded-xl text-[11px] font-extrabold shadow-xs transition-all cursor-pointer active:scale-95"
                           >
                             Release
                           </button>
@@ -623,7 +623,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                             title="Send Reminder"
                             className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-xl text-[11px] font-bold transition-all cursor-pointer inline-flex items-center gap-1 shadow-2xs"
                           >
-                            <Bell className="w-3 h-3 text-[#0275a8]" />
+                            <Bell className="w-3 h-3 text-[#211E4E]" />
                             <span>Remind</span>
                           </button>
                         )}
@@ -651,10 +651,10 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
             <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
               {/* Modal Header */}
-              <div className="bg-gradient-to-r from-[#1a5075] to-[#154668] text-white px-5 py-4 flex items-center justify-between">
+              <div className="bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/20 px-5 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-amber-400/20 text-amber-300 flex items-center justify-center border border-amber-400/30">
-                    <AlertTriangle className="w-4 h-4 text-amber-400" />
+                  <div className="w-8 h-8 rounded-lg bg-[#C8A977]/20 text-[#C8A977] flex items-center justify-center border border-[#C8A977]/30">
+                    <AlertTriangle className="w-4 h-4 text-[#C8A977]" />
                   </div>
                   <div>
                     <h3 className="font-bold text-sm sm:text-base text-white">
@@ -689,9 +689,9 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                     <span className="text-lg font-bold text-slate-800">{alreadyReleasedPrompt.targetIds.length}</span>
                     <span className="text-[11px] font-semibold text-slate-600 mt-0.5">Total</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-sky-50/70 border border-sky-200 flex flex-col items-center justify-center text-center">
-                    <span className="text-lg font-bold text-sky-900">{releasedCount}</span>
-                    <span className="text-[11px] font-semibold text-sky-800 mt-0.5">Already released</span>
+                  <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 flex flex-col items-center justify-center text-center">
+                    <span className="text-lg font-bold text-amber-900">{releasedCount}</span>
+                    <span className="text-[11px] font-semibold text-amber-800 mt-0.5">Already released</span>
                   </div>
                   <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 flex flex-col items-center justify-center text-center">
                     <span className="text-lg font-bold text-emerald-900">{alreadyReleasedPrompt.pendingIds.length}</span>
@@ -702,7 +702,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                 {/* History Notice Box with Navigation Link */}
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2 text-slate-600">
-                    <History className="w-4 h-4 text-[#0275a8] shrink-0" />
+                    <History className="w-4 h-4 text-[#211E4E] shrink-0" />
                     <span className="text-[11px] text-slate-600">
                       See full details in <strong className="text-slate-800">Release History</strong>.
                     </span>
@@ -714,10 +714,10 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                         setAlreadyReleasedPrompt(null);
                         onNavigateToHistory();
                       }}
-                      className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-[#0275a8] hover:text-[#02628d] hover:underline cursor-pointer"
+                      className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-[#211E4E] hover:text-[#2c2865] hover:underline cursor-pointer"
                     >
                       <span>Release History</span>
-                      <ArrowRight className="w-3 h-3" />
+                      <ArrowRight className="w-3 h-3 text-[#C8A977]" />
                     </button>
                   )}
                 </div>
@@ -736,7 +736,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                 <button
                   type="button"
                   onClick={() => executeFinalRelease(alreadyReleasedPrompt.targetIds)}
-                  className="px-5 py-2 text-xs font-bold text-white bg-[#0275a8] hover:bg-[#02628d] rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-5 py-2 text-xs font-bold text-[#C8A977] bg-[#211E4E] hover:bg-[#2c2865] border border-[#C8A977]/30 rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Release</span>
@@ -783,7 +783,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                     setShowSuccessModal(null);
                     onNavigateToHistory();
                   }}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white font-extrabold text-xs rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+                  className="flex-1 py-2.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 font-extrabold text-xs rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
                 >
                   View in History
                 </button>
@@ -792,7 +792,7 @@ export const HrReleaseAssessmentView: React.FC<HrReleaseAssessmentViewProps> = (
                 type="button"
                 onClick={() => setShowSuccessModal(null)}
                 className={`py-2.5 px-5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl shadow-2xs transition-all cursor-pointer active:scale-95 ${
-                  onNavigateToHistory ? '' : 'w-full bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white'
+                  onNavigateToHistory ? '' : 'w-full bg-[#211E4E] text-[#C8A977] border border-[#C8A977]/30'
                 }`}
               >
                 Done

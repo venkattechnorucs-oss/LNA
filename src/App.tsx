@@ -109,8 +109,8 @@ export default function App() {
   });
 
   const [hrCompetencies, setHrCompetencies] = useState<Competency[]>([
-    ...FUNCTIONAL_COMPETENCIES,
-    ...BEHAVIORAL_COMPETENCIES
+    ...BEHAVIORAL_COMPETENCIES,
+    ...FUNCTIONAL_COMPETENCIES
   ]);
 
   // HR Employee Master Handlers
@@ -1347,7 +1347,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#edf2f7] flex flex-col font-sans text-slate-800 antialiased selection:bg-[#0275a8] selection:text-white">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans text-slate-800 antialiased selection:bg-[#211E4E] selection:text-[#C8A977]">
       {/* 1. GANS Top Header */}
       <GansHeader
         employee={employee}
@@ -1470,14 +1470,9 @@ export default function App() {
               <HrDashboardView
                 records={orgRecords}
                 onSwitchRole={setActiveRole}
-                onViewEmployeeDetail={(empId) => {
-                  setManagerSelectedEmployeeId(empId);
-                  setCurrentTab('approvals');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
               />
             )
-          ) : (activeRole === 'manager' || activeRole === 'hr') && currentTab === 'approvals' ? (
+          ) : activeRole === 'manager' && currentTab === 'approvals' ? (
             <ManagerReviewView
               submission={submission}
               employee={employee}
@@ -1508,11 +1503,11 @@ export default function App() {
             <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-6 sm:p-7 shadow-[0_8px_30px_rgb(26,80,117,0.05)]">
               <div className="flex items-center justify-between border-b border-slate-200/80 pb-4 mb-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center border border-sky-200 shadow-2xs">
-                    <LayoutDashboard className="w-5 h-5 text-[#1a5075]" />
+                  <div className="w-10 h-10 bg-[#211E4E]/10 rounded-xl flex items-center justify-center border border-[#C8A977]/30 shadow-2xs">
+                    <LayoutDashboard className="w-5 h-5 text-[#211E4E]" />
                   </div>
                   <div>
-                    <h2 className="text-base sm:text-lg font-black text-[#1a5075] tracking-tight">
+                    <h2 className="text-base sm:text-lg font-black text-[#211E4E] tracking-tight">
                       Personal Development Plan (PDP) – Assessment
                     </h2>
                     <p className="text-xs text-slate-500 mt-0.5">
@@ -1530,8 +1525,8 @@ export default function App() {
                 </button>
               </div>
 
-              <div className="bg-gradient-to-r from-sky-50/80 to-[#f0f6fa] border border-sky-200/80 p-5 rounded-2xl text-xs text-slate-700 space-y-3 shadow-2xs">
-                <div className="font-extrabold text-[#1a5075] text-sm">
+              <div className="bg-gradient-to-r from-[#211E4E]/5 to-[#C8A977]/10 border border-[#C8A977]/30 p-5 rounded-2xl text-xs text-slate-700 space-y-3 shadow-2xs">
+                <div className="font-extrabold text-[#211E4E] text-sm">
                   Personal Development Plan (PDP)
                 </div>
                 <p className="leading-relaxed">
@@ -1541,7 +1536,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setCurrentTab('my-lna')}
-                    className="px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white text-xs font-extrabold rounded-xl cursor-pointer shadow-md shadow-sky-900/15 transition-all active:scale-95"
+                    className="px-4 py-2 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] font-extrabold rounded-xl text-xs cursor-pointer shadow-md transition-all active:scale-95 border border-[#C8A977]/30"
                   >
                     Go to My LNA Assessment
                   </button>
@@ -1630,10 +1625,10 @@ export default function App() {
 
               {/* Non-LNA Tab Fallback Views */}
               {currentTab === 'lna-history' ? (
-                <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-6 sm:p-7 shadow-[0_8px_30px_rgb(26,80,117,0.05)]">
+                <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-6 sm:p-7 shadow-[0_8px_30px_rgb(33,30,78,0.05)]">
                   <div className="flex items-center justify-between border-b border-slate-200/80 pb-3 mb-4">
-                    <h2 className="text-base font-black text-[#1a5075] flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-[#0275a8]" />
+                    <h2 className="text-base font-black text-[#211E4E] flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-[#C8A977]" />
                       LNA Assessment History
                     </h2>
                     <button
@@ -1645,9 +1640,9 @@ export default function App() {
                       <span>Back to Dashboard</span>
                     </button>
                   </div>
-                  <div className="border border-slate-200/80 rounded-xl overflow-hidden shadow-2xs">
+                  <div className="border border-[#C8A977]/30 rounded-xl overflow-hidden shadow-2xs">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
+                      <thead className="bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/30 font-extrabold uppercase tracking-wider text-[11px]">
                         <tr>
                           <th className="p-3 text-center">Year</th>
                           <th className="p-3 text-center">Assessment Title</th>
@@ -1657,13 +1652,13 @@ export default function App() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 bg-white/80">
-                        <tr className="hover:bg-sky-50/50 transition-colors">
-                          <td className="p-3 font-bold text-[#1a5075] text-center">2026</td>
+                        <tr className="hover:bg-[#211E4E]/5 transition-colors">
+                          <td className="p-3 font-bold text-[#211E4E] text-center">2026</td>
                           <td className="p-3 text-center">
                             <button
                               type="button"
                               onClick={() => setCurrentTab('lna-assessment')}
-                              className="text-[#0275a8] hover:underline font-extrabold text-center cursor-pointer"
+                              className="text-[#211E4E] hover:text-[#C8A977] hover:underline font-extrabold text-center cursor-pointer transition-colors"
                             >
                               2026 Annual LNA Assessment
                             </button>
@@ -1682,7 +1677,7 @@ export default function App() {
                                   : submission?.status === 'SENT BACK TO EMPLOYEE'
                                   ? 'bg-amber-100 text-amber-800 border-amber-200'
                                   : submission?.status === 'SUBMITTED FOR MANAGER REVIEW'
-                                  ? 'bg-sky-100 text-sky-800 border-sky-200'
+                                  ? 'bg-[#211E4E]/10 text-[#211E4E] border-[#211E4E]/20'
                                   : 'bg-slate-100 text-slate-700 border-slate-200'
                               }`}
                             >
@@ -1697,7 +1692,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setCurrentTab('my-lna')}
-                      className="px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white text-xs font-extrabold rounded-xl cursor-pointer shadow-md shadow-sky-900/15 transition-all"
+                      className="px-4 py-2 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] font-extrabold rounded-xl text-xs cursor-pointer shadow-md transition-all border border-[#C8A977]/30"
                     >
                       Go to My LNA Assessment
                     </button>
@@ -1728,7 +1723,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setCurrentTab('my-lna')}
-                      className="px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white text-xs font-extrabold rounded-xl cursor-pointer shadow-md transition-all"
+                      className="px-4 py-2 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 text-xs font-extrabold rounded-xl cursor-pointer shadow-md transition-all active:scale-95"
                     >
                       Go to My LNA Assessment
                     </button>
@@ -1737,7 +1732,7 @@ export default function App() {
               ) : (
                 <>
                   {/* PAGE TITLE & HEADER BAR */}
-                  <div className="mb-5 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-5 sm:p-6 shadow-[0_8px_30px_rgb(26,80,117,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="mb-5 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-5 sm:p-6 shadow-[0_8px_30px_rgb(33,30,78,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <button
@@ -1746,7 +1741,7 @@ export default function App() {
                             setCurrentTab('dashboard');
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
-                          className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0275a8] hover:text-[#1a5075] hover:underline cursor-pointer"
+                          className="inline-flex items-center gap-1 text-[11px] font-bold text-[#211E4E] hover:text-[#C8A977] hover:underline cursor-pointer transition-colors"
                         >
                           <ArrowLeft className="w-3.5 h-3.5" />
                           <span>Back to Dashboard</span>
@@ -1754,7 +1749,7 @@ export default function App() {
                         <span className="text-slate-300">•</span>
                         <span className="text-[11px] font-bold text-slate-500">2026 Cycle</span>
                       </div>
-                      <h1 className="text-lg sm:text-xl font-black text-[#1a5075] tracking-tight">
+                      <h1 className="text-lg sm:text-xl font-black text-[#211E4E] tracking-tight">
                         Learning Needs Analysis (LNA)
                       </h1>
                       <p className="text-xs text-slate-600 mt-0.5">
@@ -1764,7 +1759,7 @@ export default function App() {
 
                     {/* Right Status Banner */}
                     <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto shrink-0 text-xs">
-                      <div className="bg-white/90 border border-slate-200/80 px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-2xs">
+                      <div className="bg-white/90 border border-[#C8A977]/30 px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-2xs">
                         <span className="text-slate-500 font-semibold text-[11px]">LNA Status:</span>
                         {submission ? (
                           submission.status === 'MANAGER APPROVED' ? (
@@ -1778,14 +1773,14 @@ export default function App() {
                               SENT BACK TO EMPLOYEE
                             </span>
                           ) : (
-                            <span className="bg-sky-100 text-[#0275a8] border border-sky-300 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1">
-                              <Clock className="w-3 h-3 text-[#0275a8]" />
+                            <span className="bg-[#211E4E]/10 text-[#211E4E] border border-[#211E4E]/20 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-[#211E4E]" />
                               SUBMITTED FOR REVIEW
                             </span>
                           )
                         ) : (
-                          <span className="bg-amber-50 text-amber-900 border border-amber-200 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          <span className="bg-[#C8A977]/15 text-[#211E4E] border border-[#C8A977]/30 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#C8A977] animate-pulse" />
                             In Progress
                           </span>
                         )}
@@ -1803,9 +1798,9 @@ export default function App() {
                   <div className="space-y-6">
                     
                     {/* Talent Management Course Incorporation Notice (Beginning of Form) */}
-                    <div className="bg-sky-50/90 border border-sky-200/80 rounded-2xl p-4 sm:p-4.5 text-xs text-slate-700 flex items-start gap-3.5 shadow-2xs">
-                      <div className="w-8 h-8 rounded-xl bg-sky-100/90 text-[#0275a8] flex items-center justify-center border border-sky-200 shrink-0 mt-0.5">
-                        <Info className="w-4 h-4 text-[#0275a8]" />
+                    <div className="bg-[#211E4E]/5 border border-[#C8A977]/30 rounded-2xl p-4 sm:p-4.5 text-xs text-slate-700 flex items-start gap-3.5 shadow-2xs">
+                      <div className="w-8 h-8 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center border border-[#C8A977]/30 shrink-0 mt-0.5">
+                        <Info className="w-4 h-4 text-[#C8A977]" />
                       </div>
                       <div className="leading-relaxed">
                         <p className="font-semibold text-slate-800">
@@ -1819,8 +1814,8 @@ export default function App() {
 
                     {/* SECTION 2 – COMPETENCY SELECTION */}
                     <CompetencySelectionSection
-                      functionalCompetencies={functionalList}
                       behavioralCompetencies={behavioralList}
+                      functionalCompetencies={functionalList}
                       selectedCompetencies={selectedCompetencies}
                       onToggleCompetency={handleToggleCompetency}
                     />
@@ -1849,9 +1844,9 @@ export default function App() {
                       isReadOnly={submission?.status === 'MANAGER APPROVED'}
                     />
                     {/* SUBMISSION ACTION BAR */}
-                    <div className="rounded-2xl bg-white/95 backdrop-blur-xl border border-white/90 p-4 sm:p-5 shadow-[0_-4px_24px_rgba(26,80,117,0.08)] flex flex-col md:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
+                    <div className="rounded-2xl bg-white/95 backdrop-blur-xl border border-[#C8A977]/30 p-4 sm:p-5 shadow-[0_-4px_24px_rgba(33,30,78,0.08)] flex flex-col md:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
                       <div className="flex items-start gap-2.5 text-xs text-slate-600 max-w-2xl">
-                        <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+                        <Info className="w-4 h-4 text-[#C8A977] shrink-0 mt-0.5" />
                         <p className="text-[11px] sm:text-xs leading-relaxed text-slate-700 font-medium">
                           “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
                         </p>
@@ -1874,9 +1869,9 @@ export default function App() {
                           <button
                             type="button"
                             onClick={handleSubmit}
-                            className="px-6 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#02628d] text-white font-extrabold rounded-xl text-xs transition-all shadow-md shadow-sky-900/20 flex items-center gap-2 cursor-pointer active:scale-95"
+                            className="px-6 py-2.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] font-extrabold rounded-xl text-xs transition-all shadow-md border border-[#C8A977]/40 flex items-center gap-2 cursor-pointer active:scale-95"
                           >
-                            <Send className="w-3.5 h-3.5 text-white" />
+                            <Send className="w-3.5 h-3.5 text-[#C8A977]" />
                             <span>
                               {submission?.status === 'SENT BACK TO EMPLOYEE'
                                 ? 'Resubmit'

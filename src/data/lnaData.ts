@@ -227,117 +227,118 @@ export const FUNCTIONAL_COMPETENCIES: Competency[] = [
 ];
 
 // Sample Behavioral Competency Catalog
+// Sample Behavioral Competency Catalog (The 7 Curated Behavioral Competencies)
 export const BEHAVIORAL_COMPETENCIES: Competency[] = [
   {
     id: 'comp_beh_1',
     code: 'BC-01',
-    name: 'Leadership',
+    name: 'Adaptability',
     category: 'Behavioral',
-    description: 'Inspiring and guiding team members, driving vision, holding accountability, and fostering a high-performance culture.',
+    description: 'Thriving amid rapid organizational change, shifting priorities, ambiguity, and adopting emerging technologies with resilience.',
     skills: [
-      { id: 'sk_beh_1_1', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-LDR-101', name: 'Team Leadership & Direction', description: 'Providing clear vision, purpose, and unified direction to diverse teams.' },
-      { id: 'sk_beh_1_2', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-LDR-102', name: 'Executive & Peer Coaching', description: 'Guiding individuals to unlock their potential through reflective inquiry.' },
-      { id: 'sk_beh_1_3', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-LDR-103', name: 'Effective Delegation & Empowerment', description: 'Assigning responsibility with appropriate autonomy and authority.' },
-      { id: 'sk_beh_1_4', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-LDR-104', name: 'High-Impact Decision Making', description: 'Making timely, sound decisions in complex or ambiguous situations.' },
-      { id: 'sk_beh_1_5', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-LDR-105', name: 'Conflict Management & Mediation', description: 'De-escalating tensions and resolving interpersonal frictions constructively.' },
-      { id: 'sk_beh_1_6', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-LDR-106', name: 'Team Inspiration & Engagement Motivation', description: 'Energizing and boosting morale during demanding operational phases.' }
+      { id: 'sk_beh_1_1', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-AD-101', name: 'Change Resilience & Transition Agility', description: 'Embracing organizational restructuring and tech transformation swiftly with composure.' },
+      { id: 'sk_beh_1_2', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-AD-102', name: 'Stress Tolerance & Composure Under Pressure', description: 'Maintaining calm focus and high-quality output during critical operational peaks.' },
+      { id: 'sk_beh_1_3', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-AD-103', name: 'Rapid Systems & Digital Workflow Adoption', description: 'Mastering new enterprise digital platforms and automated tools with speed.' },
+      { id: 'sk_beh_1_4', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-AD-104', name: 'Ambiguity Navigation & Self-Direction', description: 'Operating effectively without explicit day-to-day supervision or full initial data.' },
+      { id: 'sk_beh_1_5', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-AD-105', name: 'Crisis Response & Operational Flexibility', description: 'Re-prioritizing tasks dynamically when unexpected operational disruptions occur.' },
+      { id: 'sk_beh_1_6', competencyId: 'comp_beh_1', category: 'Behavioral', code: 'SK-AD-106', name: 'Continuous Workplace Evolution & Agility', description: 'Proactively identifying procedural bottlenecks and adapting personal work habits.' }
     ]
   },
   {
     id: 'comp_beh_2',
     code: 'BC-02',
-    name: 'Communication',
+    name: 'Teamwork & Collaboration',
     category: 'Behavioral',
-    description: 'Expressing ideas with clarity, actively listening, and tailoring messages across organizational levels and cultures.',
+    description: 'Fostering collective synergy, active cross-functional partnerships, mutual trust, and shared accountability to achieve organizational goals.',
     skills: [
-      { id: 'sk_beh_2_1', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-COM-201', name: 'Executive & Management Presentations', description: 'Delivering compelling, succinct briefings to senior executive boards.' },
-      { id: 'sk_beh_2_2', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-COM-202', name: 'Cross-Functional Stakeholder Engagement', description: 'Bridging technical, commercial, and operational communication gaps.' },
-      { id: 'sk_beh_2_3', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-COM-203', name: 'Active Listening & Empathic Dialogue', description: 'Understanding spoken and non-verbal cues to build authentic rapport.' },
-      { id: 'sk_beh_2_4', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-COM-204', name: 'Crisis Communication & Broadcast Briefings', description: 'Communicating urgent instructions with composure and clarity during crises.' },
-      { id: 'sk_beh_2_5', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-COM-205', name: 'Professional Written Documentation & Reports', description: 'Writing precise, structured business cases and operational memos.' },
-      { id: 'sk_beh_2_6', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-COM-206', name: 'Negotiation & Persuasive Alignment', description: 'Securing buy-in and agreement from reluctant internal and external parties.' }
+      { id: 'sk_beh_2_1', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-TW-201', name: 'Cross-Departmental Collaboration & Synergy', description: 'Partnering seamlessly across siloed divisions (Ops, Finance, HR, Commercial).' },
+      { id: 'sk_beh_2_2', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-TW-202', name: 'Inclusive & Culturally Diverse Teamwork', description: 'Leveraging multicultural perspectives within a global aviation and service workforce.' },
+      { id: 'sk_beh_2_3', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-TW-203', name: 'Peer Mentorship & Knowledge Sharing', description: 'Sharing practical domain experience and supporting newer team members.' },
+      { id: 'sk_beh_2_4', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-TW-204', name: 'Consensus Building & Joint Problem Solving', description: 'Unifying divergent points of view toward harmonious collective solutions.' },
+      { id: 'sk_beh_2_5', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-TW-205', name: 'Remote & Distributed Team Coordination', description: 'Maintaining engagement, transparency, and alignment across dispersed stations.' },
+      { id: 'sk_beh_2_6', competencyId: 'comp_beh_2', category: 'Behavioral', code: 'SK-TW-206', name: 'Collective Accountability & Team Morale', description: 'Instilling shared responsibility for collective wins and rallying team spirits.' }
     ]
   },
   {
     id: 'comp_beh_3',
     code: 'BC-03',
-    name: 'Customer Focus',
+    name: 'Result Orientation',
     category: 'Behavioral',
-    description: 'Prioritizing customer satisfaction, championing user needs, and embedding a service-first mindset in daily operations.',
+    description: 'Driving high-impact performance, setting ambitious targets, overcoming obstacles, and ensuring timely milestone execution.',
     skills: [
-      { id: 'sk_beh_3_1', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-CF-301', name: 'Customer Experience (CX) Strategy & Excellence', description: 'Designing frictionless end-to-end user journeys and service touchpoints.' },
-      { id: 'sk_beh_3_2', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-CF-302', name: 'Voice of Customer (VoC) Insights Synthesis', description: 'Transforming customer feedback and NPS data into actionable service fixes.' },
-      { id: 'sk_beh_3_3', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-CF-303', name: 'Advanced Service Recovery & Retention', description: 'Turning dissatisfied customers into long-term organizational advocates.' },
-      { id: 'sk_beh_3_4', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-CF-304', name: 'Strategic Client Relationship Building', description: 'Cultivating trusted partnerships with institutional and VIP accounts.' },
-      { id: 'sk_beh_3_5', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-CF-305', name: 'Customer-Centric Culture Championing', description: 'Instilling customer empathy across internal support departments.' },
-      { id: 'sk_beh_3_6', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-CF-306', name: 'Proactive Need Anticipation & Personalization', description: 'Anticipating client requirements before explicit requests are made.' }
+      { id: 'sk_beh_3_1', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-RO-301', name: 'Target Attainment & KPI Execution', description: 'Consistently meeting and exceeding strategic operational targets and KPIs.' },
+      { id: 'sk_beh_3_2', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-RO-302', name: 'High-Impact Prioritization & Time Management', description: 'Focusing energy on high-leverage activities and managing competing demands.' },
+      { id: 'sk_beh_3_3', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-RO-303', name: 'Obstacle Resolution & Perseverance', description: 'Persisting through operational setbacks with proactive alternative tactics.' },
+      { id: 'sk_beh_3_4', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-RO-304', name: 'Continuous Operational Improvement (Kaizen)', description: 'Refining day-to-day procedures to boost delivery velocity and cut waste.' },
+      { id: 'sk_beh_3_5', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-RO-305', name: 'Performance Metric Monitoring & Velocity', description: 'Tracking throughput, turnaround times, and service metrics rigorously.' },
+      { id: 'sk_beh_3_6', competencyId: 'comp_beh_3', category: 'Behavioral', code: 'SK-RO-306', name: 'Resource Optimization & Delivery Focus', description: 'Maximizing output from available team, equipment, and budget assets.' }
     ]
   },
   {
     id: 'comp_beh_4',
     code: 'BC-04',
-    name: 'Problem Solving',
+    name: 'Customer Centricity',
     category: 'Behavioral',
-    description: 'Applying analytical rigor, identifying root causes, and implementing sustainable, innovative solutions.',
+    description: 'Prioritizing internal and external customer satisfaction, anticipating stakeholder needs, and embedding a service-first mindset.',
     skills: [
-      { id: 'sk_beh_4_1', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-PS-401', name: 'Root Cause Analysis (5-Whys / Fishbone)', description: 'Diagnosing underlying system breakdowns rather than treating surface symptoms.' },
-      { id: 'sk_beh_4_2', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-PS-402', name: 'Structured Troubleshooting & Logic Modeling', description: 'Applying methodical decision trees to resolve operational anomalies.' },
-      { id: 'sk_beh_4_3', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-PS-403', name: 'Strategic Thinking & Scenario Planning', description: 'Evaluating long-term implications and alternative future scenarios.' },
-      { id: 'sk_beh_4_4', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-PS-404', name: 'Creative & Out-of-the-Box Solutioning', description: 'Generating non-conventional methods to overcome systemic barriers.' },
-      { id: 'sk_beh_4_5', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-PS-405', name: 'Incident Post-Mortem & Preventative Design', description: 'Conducting blame-free post-incident reviews to fortify operations.' },
-      { id: 'sk_beh_4_6', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-PS-406', name: 'Operational Risk Mitigation & Contingency', description: 'Formulating backup protocols for high-consequence failure modes.' }
+      { id: 'sk_beh_4_1', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-CC-401', name: 'Stakeholder Need Anticipation & Empathy', description: 'Anticipating traveler and corporate client expectations before complaints arise.' },
+      { id: 'sk_beh_4_2', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-CC-402', name: 'Service Excellence & Frictionless Journeys', description: 'Designing and delivering smooth service touchpoints across all stations.' },
+      { id: 'sk_beh_4_3', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-CC-403', name: 'Voice of Customer (VoC) Analysis & Action', description: 'Synthesizing customer survey feedback into actionable workflow improvements.' },
+      { id: 'sk_beh_4_4', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-CC-404', name: 'Service Recovery & Complaint Resolution', description: 'Transforming dissatisfied stakeholders into long-term organizational advocates.' },
+      { id: 'sk_beh_4_5', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-CC-405', name: 'Strategic Client Relationship Building', description: 'Cultivating trusted, durable partnerships with institutional and VIP clients.' },
+      { id: 'sk_beh_4_6', competencyId: 'comp_beh_4', category: 'Behavioral', code: 'SK-CC-406', name: 'Customer Experience Championing & Advocacy', description: 'Inspiring peers to maintain customer empathy across internal functions.' }
     ]
   },
   {
     id: 'comp_beh_5',
     code: 'BC-05',
-    name: 'Teamwork',
+    name: 'Effective Communication',
     category: 'Behavioral',
-    description: 'Collaborating respectfully, leveraging diverse perspectives, and supporting team goals above individual agendas.',
+    description: 'Articulating messages with clarity, practicing active listening, and tailoring messaging persuasively across diverse channels.',
     skills: [
-      { id: 'sk_beh_5_1', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-TW-501', name: 'Collaborative Team Synergy & Alignment', description: 'Fostering collective ownership and high psychological safety.' },
-      { id: 'sk_beh_5_2', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-TW-502', name: 'Cross-Departmental Collaboration', description: 'Partnering effectively across siloed functions (HR, Finance, Ops, IT).' },
-      { id: 'sk_beh_5_3', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-TW-503', name: 'Inclusive & Culturally Diverse Teamwork', description: 'Leveraging multicultural strengths within a global aviation/retail workforce.' },
-      { id: 'sk_beh_5_4', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-TW-504', name: 'Peer Mentorship & Knowledge Transfer', description: 'Sharing tacit expertise to elevate junior colleagues.' },
-      { id: 'sk_beh_5_5', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-TW-505', name: 'Consensus Building & Joint Problem Solving', description: 'Navigating differing viewpoints to achieve unified agreement.' },
-      { id: 'sk_beh_5_6', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-TW-506', name: 'Remote & Distributed Team Synergy', description: 'Maintaining team cohesion across dispersed branch networks.' }
+      { id: 'sk_beh_5_1', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-EC-501', name: 'Executive Briefings & High-Impact Presentations', description: 'Delivering concise, compelling briefings to senior boards and executive leads.' },
+      { id: 'sk_beh_5_2', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-EC-502', name: 'Active Listening & Empathetic Inquiry', description: 'Capturing explicit requirements and emotional nuances to foster deep trust.' },
+      { id: 'sk_beh_5_3', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-EC-503', name: 'Cross-Functional Message Alignment', description: 'Translating technical requirements into clear business and operational directives.' },
+      { id: 'sk_beh_5_4', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-EC-504', name: 'Constructive Feedback & Difficult Conversations', description: 'Addressing sensitive performance topics diplomatically with clear action points.' },
+      { id: 'sk_beh_5_5', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-EC-505', name: 'Clear Technical & Operational Documentation', description: 'Drafting unambiguous SOP updates, incident logs, and business cases.' },
+      { id: 'sk_beh_5_6', competencyId: 'comp_beh_5', category: 'Behavioral', code: 'SK-EC-506', name: 'Negotiation & Persuasive Alignment', description: 'Securing buy-in and consensus from diverse stakeholders on critical initiatives.' }
     ]
   },
   {
     id: 'comp_beh_6',
     code: 'BC-06',
-    name: 'Adaptability',
+    name: 'Accountability',
     category: 'Behavioral',
-    description: 'Thriving amid rapid organizational change, shifting priorities, and emerging technologies.',
+    description: 'Taking full ownership of outcomes, adhering to ethical standards, fulfilling commitments, and demonstrating transparent responsibility.',
     skills: [
-      { id: 'sk_beh_6_1', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AD-601', name: 'Change Management & Transition Agility', description: 'Embracing organizational restructuring and tech transformation swiftly.' },
-      { id: 'sk_beh_6_2', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AD-602', name: 'Resilience Under Pressure & High Stress', description: 'Maintaining composure and peak performance during high-stakes rushes.' },
-      { id: 'sk_beh_6_3', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AD-603', name: 'Rapid Workflow & System Adoption', description: 'Mastering new enterprise digital tools and protocols with speed.' },
-      { id: 'sk_beh_6_4', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AD-604', name: 'Ambiguity Navigation & Self-Direction', description: 'Operating effectively without explicit day-to-day supervision.' },
-      { id: 'sk_beh_6_5', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AD-605', name: 'Continuous Growth Mindset & Self-Learning', description: 'Proactively acquiring new competencies to future-proof one\'s career.' },
-      { id: 'sk_beh_6_6', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AD-606', name: 'Crisis Response Flexibility', description: 'Re-prioritizing tasks dynamically when unexpected emergencies arise.' }
+      { id: 'sk_beh_6_1', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AC-601', name: 'Personal Ownership & Follow-Through', description: 'Delivering on promises without deflection and following up until closed.' },
+      { id: 'sk_beh_6_2', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AC-602', name: 'Ethical Governance & Compliance Integrity', description: 'Upholding uncompromising integrity in aviation safety and corporate standards.' },
+      { id: 'sk_beh_6_3', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AC-603', name: 'Transparent Reporting & Risk Disclosure', description: 'Highlighting operational roadblocks and performance gaps early and transparently.' },
+      { id: 'sk_beh_6_4', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AC-604', name: 'Reliability in High-Stakes Commitments', description: 'Standing behind commitments even when unexpected complexities arise.' },
+      { id: 'sk_beh_6_5', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AC-605', name: 'Error Acknowledgment & Corrective Action', description: 'Owning mistakes constructively and driving immediate root-cause correction.' },
+      { id: 'sk_beh_6_6', competencyId: 'comp_beh_6', category: 'Behavioral', code: 'SK-AC-606', name: 'Peer & Team Accountability Upholding', description: 'Holding collaborators and team members to mutual standards of excellence.' }
     ]
   },
   {
     id: 'comp_beh_7',
     code: 'BC-07',
-    name: 'Decision Making',
+    name: 'Learning Agility',
     category: 'Behavioral',
-    description: 'Synthesizing evidence, weighing risks, and executing confident decisions aligned with corporate values.',
+    description: 'Actively seeking new knowledge, reflecting on experience, unlearning obsolete habits, and swiftly applying new skills to unfamiliar situations.',
     skills: [
-      { id: 'sk_beh_7_1', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-DM-701', name: 'Data-Driven Decision Frameworks', description: 'Backing critical operational choices with quantitative data points.' },
-      { id: 'sk_beh_7_2', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-DM-702', name: 'High-Impact Prioritization & Triage', description: 'Focusing resources on vital high-leverage activities.' },
-      { id: 'sk_beh_7_3', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-DM-703', name: 'Ethical & Compliance-Centric Judgment', description: 'Upholding uncompromising integrity in business dealings and employee care.' },
-      { id: 'sk_beh_7_4', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-DM-704', name: 'Risk-Reward Evaluation & Scenario Analysis', description: 'Calculating downside exposure against anticipated business yield.' },
-      { id: 'sk_beh_7_5', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-DM-705', name: 'Time-Critical & Real-Time Operational Execution', description: 'Executing decisive calls on the retail floor under tight time constraints.' },
-      { id: 'sk_beh_7_6', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-DM-706', name: 'Strategic Trade-off Analysis & Accountability', description: 'Balancing cost constraints against quality and speed requirements.' }
+      { id: 'sk_beh_7_1', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-LA-701', name: 'Rapid Skill Acquisition & Self-Directed Learning', description: 'Quickly mastering unfamiliar domains, tools, and regulatory guidelines independently.' },
+      { id: 'sk_beh_7_2', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-LA-702', name: 'Growth Mindset & Curiosity Cultivation', description: 'Treating complex operational challenges as opportunities for skill expansion.' },
+      { id: 'sk_beh_7_3', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-LA-703', name: 'Reflective Practice & Feedback Incorporation', description: 'Reflecting on past outcomes and actively applying feedback into daily practice.' },
+      { id: 'sk_beh_7_4', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-LA-704', name: 'Knowledge Application to Unfamiliar Scenarios', description: 'Translating lessons from past scenarios into novel and unprecedented challenges.' },
+      { id: 'sk_beh_7_5', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-LA-705', name: 'Unlearning Outdated Practices & Experimentation', description: 'Letting go of obsolete legacy habits in favor of modern, efficient practices.' },
+      { id: 'sk_beh_7_6', competencyId: 'comp_beh_7', category: 'Behavioral', code: 'SK-LA-706', name: 'Future-Ready Competency Self-Development', description: 'Proactively forecasting skill requirements to stay ahead of industry transformations.' }
     ]
   }
 ];
 
-// Helper to look up Competency by ID
+// Helper to look up Competency by ID (Behavioral first, Functional second)
 export function getCompetencyById(id: string): Competency | undefined {
-  return [...FUNCTIONAL_COMPETENCIES, ...BEHAVIORAL_COMPETENCIES].find(c => c.id === id);
+  return [...BEHAVIORAL_COMPETENCIES, ...FUNCTIONAL_COMPETENCIES].find(c => c.id === id);
 }
 
 // System Rule: Automatically calculate Ideal Proficiency based on Position and Skill
@@ -755,354 +756,354 @@ export const SKILL_TRAINING_CATALOG: Record<string, {
     description: 'Disbursing operational budgets, auditing petty cash ledgers, approving consumable expenses, and fiscal compliance.'
   },
 
-  // Behavioral Competency 1: Leadership (BC-01)
+  // Behavioral Competency 1: Adaptability (BC-01)
   'sk_beh_1_1': {
-    courseCode: 'GANS-LND-LDR-101',
-    title: 'Strategic Vision Alignment, Inspirational Leadership & Culture Building',
-    provider: 'GANS Leadership Academy',
-    duration: '3 Days (24 Hours)',
-    deliveryMethod: 'Classroom',
-    description: 'Articulating compelling strategic goals, unifying diverse teams, and building a high-trust, mission-driven team culture.'
+    courseCode: 'GANS-LND-AD-101',
+    title: 'Organizational Change Resilience & Transition Agility',
+    provider: 'GANS Leadership & Culture Academy',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Mastering personal adaptation strategies, emotional composure during restructuring, and championing agile workplace transitions.'
   },
   'sk_beh_1_2': {
-    courseCode: 'GANS-LND-LDR-102',
-    title: 'Executive Mentoring, Reflective Inquiry & Transformational Coaching',
-    provider: 'GANS Talent Institute',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Applying ICF coaching principles, active inquiry techniques, and empowering team members to solve operational hurdles.'
-  },
-  'sk_beh_1_3': {
-    courseCode: 'GANS-LND-LDR-103',
-    title: 'Empowered Delegation, Task Autonomy & Accountability Architecture',
-    provider: 'GANS Management Center',
-    duration: '2 Days (14 Hours)',
-    deliveryMethod: 'Blended',
-    description: 'Mastering delegation matrices, setting clear boundary conditions, and holding subordinates accountable for outcomes.'
-  },
-  'sk_beh_1_4': {
-    courseCode: 'GANS-LND-LDR-104',
-    title: 'High-Impact Decisive Leadership Under Ambiguity & Pressure',
-    provider: 'GANS Executive Academy',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Classroom',
-    description: 'Navigating complex business trade-offs, calculating downside risks, and executing confident decisions in uncertain environments.'
-  },
-  'sk_beh_1_5': {
-    courseCode: 'GANS-LND-LDR-105',
-    title: 'Constructive Conflict Resolution, Mediation & Difficult Conversations',
-    provider: 'GANS People & Culture Hub',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Resolving entrenched interpersonal disagreements, defusing workplace toxicity, and conducting difficult dialogue.'
-  },
-  'sk_beh_1_6': {
-    courseCode: 'GANS-LND-LDR-106',
-    title: 'Frontline Motivation, Employee Engagement & Morale Sustenance',
+    courseCode: 'GANS-LND-AD-102',
+    title: 'Stress Tolerance, Resilience & Composure Under High-Pressure Operations',
     provider: 'GANS People Development',
     duration: '14 Hours',
     deliveryMethod: 'Blended',
-    description: 'Sustaining high energy during grueling peak shifts, recognizing unsung contributions, and mitigating burnout.'
+    description: 'Techniques for maintaining cognitive focus, emotional balance, and peak decision-making performance during severe peak rushes.'
   },
-
-  // Behavioral Competency 2: Communication (BC-02)
-  'sk_beh_2_1': {
-    courseCode: 'GANS-LND-COM-201',
-    title: 'Executive Briefings, High-Impact Presentations & Boardroom Storytelling',
-    provider: 'GANS Communications Hub',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Structuring persuasive slide decks, distilling operational complexities for C-suite leaders, and mastering vocal delivery.'
-  },
-  'sk_beh_2_2': {
-    courseCode: 'GANS-LND-COM-202',
-    title: 'Cross-Functional Stakeholder Influence & Multi-Department Alignment',
-    provider: 'GANS Corporate Academy',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Influencing without direct authority, bridging operational and IT/Finance jargon, and securing cross-departmental buy-in.'
-  },
-  'sk_beh_2_3': {
-    courseCode: 'GANS-LND-COM-203',
-    title: 'Active Listening Mastery, Non-Verbal Decoding & Empathic Communication',
-    provider: 'GANS Talent Management',
-    duration: '14 Hours',
-    deliveryMethod: 'Blended',
-    description: 'Recognizing hidden emotional cues, practicing reflective restatement, and building psychological safety in conversations.'
-  },
-  'sk_beh_2_4': {
-    courseCode: 'GANS-LND-COM-204',
-    title: 'Crisis Communications, Emergency Broadcasts & Incident Reporting',
-    provider: 'GANS Media & Crisis Bureau',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Classroom',
-    description: 'Communicating urgent directives with composure during emergencies, preventing rumors, and drafting incident releases.'
-  },
-  'sk_beh_2_5': {
-    courseCode: 'GANS-LND-COM-205',
-    title: 'Business Writing Excellence: Executive Memos, Proposals & Formal Reports',
-    provider: 'GANS Corporate Writing Center',
-    duration: '16 Hours',
-    deliveryMethod: 'E-Learning',
-    description: 'Formulating structured business proposals, concise operational emails, and polished formal reports with pyramid logic.'
-  },
-  'sk_beh_2_6': {
-    courseCode: 'GANS-LND-COM-206',
-    title: 'Principled Negotiation, Mutual-Gains Bargaining & Commercial Influence',
-    provider: 'GANS Commercial Institute',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Applying Harvard Negotiation Project techniques (BATNA), expanding the pie, and closing win-win operational contracts.'
-  },
-
-  // Behavioral Competency 3: Customer Focus (BC-03)
-  'sk_beh_3_1': {
-    courseCode: 'GANS-LND-CX-301',
-    title: 'Customer Experience (CX) Architecture, Journey Mapping & Touchpoint Design',
-    provider: 'Global Customer Experience Institute',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Analyzing end-to-end customer emotional curves, removing customer friction points, and crafting memorable brand moments.'
-  },
-  'sk_beh_3_2': {
-    courseCode: 'GANS-LND-VOC-302',
-    title: 'Voice of Customer (VoC) Analytics, NPS Synthesis & Feedback Loops',
-    provider: 'GANS CX & Insights Lab',
-    duration: '2 Days (14 Hours)',
-    deliveryMethod: 'Blended',
-    description: 'Synthesizing Net Promoter Scores, Google/social reviews, and survey feedback into targeted frontline operational fixes.'
-  },
-  'sk_beh_3_3': {
-    courseCode: 'GANS-LND-REC-303',
-    title: 'Service Recovery Mastery: Turning Service Failures into Brand Loyalty',
-    provider: 'GANS Service Excellence Hub',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Mastering the Service Recovery Paradox, empathic listening techniques, and rapid issue resolution algorithms.'
-  },
-  'sk_beh_3_4': {
-    courseCode: 'GANS-LND-VIP-304',
-    title: 'Strategic VIP & Corporate Client Account Management in Aviation/Retail',
-    provider: 'GANS Client Relationship Academy',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Classroom',
-    description: 'Managing VIP protocol standards, relationship mapping, tailored service plans, and long-term customer retention.'
-  },
-  'sk_beh_3_5': {
-    courseCode: 'GANS-LND-CUS-305',
-    title: 'Embedding a Customer-Centric Culture in Back-Office and Frontline Teams',
-    provider: 'GANS Corporate Culture Academy',
-    duration: '14 Hours',
-    deliveryMethod: 'Blended',
-    description: 'Connecting back-office logistics and IT roles to end-customer happiness, eliminating bureaucratic obstacles to good service.'
-  },
-  'sk_beh_3_6': {
-    courseCode: 'GANS-LND-ANT-306',
-    title: 'Proactive Customer Need Anticipation, Personalization & Signature Service',
-    provider: 'Hospitality & Aviation Standards Hub',
-    duration: '2 Days (14 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Anticipating unspoken customer requirements, applying personalization techniques, and exceeding expectations consistently.'
-  },
-
-  // Behavioral Competency 4: Problem Solving (BC-04)
-  'sk_beh_4_1': {
-    courseCode: 'GANS-LND-RCA-401',
-    title: 'Advanced Root Cause Analysis: 5-Whys, Ishikawa Fishbone & Fault-Tree Logic',
-    provider: 'Kepner-Tregoe / GANS Academy',
-    duration: '3 Days (20 Hours)',
-    deliveryMethod: 'Classroom',
-    description: 'Distinguishing symptom from cause, constructing systematic causal diagrams, and verifying permanent corrective remedies.'
-  },
-  'sk_beh_4_2': {
-    courseCode: 'GANS-LND-TRS-402',
-    title: 'Methodical Operational Troubleshooting & Rapid Fault Isolation',
-    provider: 'GANS Technical Training Center',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Blended',
-    description: 'Applying binary search algorithms, isolating software/hardware defects, and restoring disrupted operations swiftly.'
-  },
-  'sk_beh_4_3': {
-    courseCode: 'GANS-LND-STH-403',
-    title: 'Strategic Systems Thinking, Dynamic Feedback Loops & Second-Order Effects',
-    provider: 'MIT Sloan Executive Program Affiliate',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Understanding complex interconnected systems, forecasting unintended consequences, and finding high-leverage intervention points.'
-  },
-  'sk_beh_4_4': {
-    courseCode: 'GANS-LND-CRE-404',
-    title: 'Creative Problem Solving, Lateral Thinking & Design Thinking Sprints',
-    provider: 'Innovation & Design Institute',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Applying SCAMPER, TRIZ principles, rapid prototyping, and lateral brainstorming to solve persistent business gridlocks.'
-  },
-  'sk_beh_4_5': {
-    courseCode: 'GANS-LND-POS-405',
-    title: 'Blame-Free Post-Mortems, Failure Taxonomy & Resilient System Design',
-    provider: 'GANS Safety & Quality Directorate',
-    duration: '16 Hours',
-    deliveryMethod: 'Classroom',
-    description: 'Facilitating objective, psychological safety-oriented post-incident reviews, identifying latent hazards, and updating defense layers.'
-  },
-  'sk_beh_4_6': {
-    courseCode: 'GANS-LND-RSK-406',
-    title: 'Operational Risk Assessment, FMEA Matrix & Contingency Action Planning',
-    provider: 'GANS Risk Management Academy',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Calculating Risk Priority Numbers (RPN) via Failure Mode and Effects Analysis (FMEA) and drafting operational fallback plans.'
-  },
-
-  // Behavioral Competency 5: Teamwork (BC-05)
-  'sk_beh_5_1': {
-    courseCode: 'GANS-LND-TM-501',
-    title: 'High-Performing Team Dynamics, Psychological Safety & Collective Drive',
-    provider: 'GANS People & Culture Directorate',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Implementing Google Project Aristotle findings, building high vulnerability trust, and establishing clear team norms.'
-  },
-  'sk_beh_5_2': {
-    courseCode: 'GANS-LND-TM-502',
-    title: 'Cross-Departmental Collaboration & Eliminating Organizational Silos',
-    provider: 'GANS Corporate Institute',
-    duration: '2 Days (14 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Fostering seamless partnerships across operations, HR, procurement, and commercial divisions.'
-  },
-  'sk_beh_5_3': {
-    courseCode: 'GANS-LND-DIV-503',
-    title: 'Inclusive Leadership & Multicultural Team Synergy in Global Enterprises',
-    provider: 'GANS Diversity & Inclusion Hub',
-    duration: '14 Hours',
-    deliveryMethod: 'Blended',
-    description: 'Leveraging cultural cognitive diversity, navigating cross-cultural communication norms, and building an inclusive environment.'
-  },
-  'sk_beh_5_4': {
-    courseCode: 'GANS-LND-KNO-504',
-    title: 'Peer Mentorship, Knowledge Harvesting & Tacit Skill Transfer',
-    provider: 'GANS Knowledge Management Center',
-    duration: '16 Hours',
-    deliveryMethod: 'Workshop',
-    description: 'Structuring formal peer buddy programs, documenting critical operational know-how, and preventing brain-drain.'
-  },
-  'sk_beh_5_5': {
-    courseCode: 'GANS-LND-CNS-505',
-    title: 'Consensus Building, Collaborative Deliberation & Joint Problem Solving',
-    provider: 'GANS Management Hub',
-    duration: '14 Hours',
-    deliveryMethod: 'Workshop',
-    description: 'Facilitating multi-stakeholder workshops, avoiding groupthink, and driving alignment on complex contentious initiatives.'
-  },
-  'sk_beh_5_6': {
-    courseCode: 'GANS-LND-REM-506',
-    title: 'Hybrid & Dispersed Workforce Collaboration: Tools, Rhythm & Alignment',
-    provider: 'GANS Digital Workplace Team',
-    duration: '12 Hours',
-    deliveryMethod: 'E-Learning',
-    description: 'Establishing asynchronous communication norms, virtual standup cadences, and maintaining team camaraderie across branches.'
-  },
-
-  // Behavioral Competency 6: Adaptability (BC-06)
-  'sk_beh_6_1': {
-    courseCode: 'GANS-LND-CHG-601',
-    title: 'Change Agility & Leading Teams Through Organizational Transformation',
-    provider: 'Prosci / GANS Change Academy',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Workshop',
-    description: 'Applying ADKAR change methodology, neutralizing employee resistance to change, and accelerating new process adoption.'
-  },
-  'sk_beh_6_2': {
-    courseCode: 'GANS-LND-STR-602',
-    title: 'Executive Stress Resilience, Emotional Regulation & Peak Composure',
-    provider: 'GANS Wellness & Performance Center',
-    duration: '14 Hours',
-    deliveryMethod: 'Workshop',
-    description: 'Cognitive reframing techniques, physiological stress response regulation, and sustaining high clarity under intense workloads.'
-  },
-  'sk_beh_6_3': {
-    courseCode: 'GANS-LND-DIG-603',
-    title: 'Digital Fluency & Rapid Adoption of Enterprise AI and Automation Tools',
+  'sk_beh_1_3': {
+    courseCode: 'GANS-LND-AD-103',
+    title: 'Rapid Digital Systems & Enterprise Workflow Adoption',
     provider: 'GANS Digital Transformation Academy',
     duration: '16 Hours',
-    deliveryMethod: 'E-Learning',
-    description: 'Overcoming tech apprehension, accelerating tool onboarding, and leveraging digital dashboards for rapid decision making.'
+    deliveryMethod: 'Classroom',
+    description: 'Fast-track mastering of new digital tools, automated operations platforms, and paperless operational procedures.'
   },
-  'sk_beh_6_4': {
-    courseCode: 'GANS-LND-AMB-604',
-    title: 'Navigating Ambiguity, Autonomous Initiative & Self-Directed Execution',
-    provider: 'GANS Leadership Hub',
-    duration: '2 Days (14 Hours)',
-    deliveryMethod: 'Blended',
-    description: 'Formulating structured action plans when instructions are vague, prioritizing independently, and taking calculated initiative.'
+  'sk_beh_1_4': {
+    courseCode: 'GANS-LND-AD-104',
+    title: 'Navigating Ambiguity, Uncertainty & Self-Directed Problem Solving',
+    provider: 'GANS Management Center',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Classroom',
+    description: 'Formulating structured solutions in unstructured environments with incomplete data and minimum supervision.'
   },
-  'sk_beh_6_5': {
-    courseCode: 'GANS-LND-GRW-605',
-    title: 'Continuous Growth Mindset, Future-Proofing & Continuous Upskilling',
-    provider: 'GANS Talent Institute',
-    duration: '12 Hours',
-    deliveryMethod: 'E-Learning',
-    description: 'Cultivating proactive curiosity, seeking developmental feedback actively, and maintaining an agile personal learning plan.'
-  },
-  'sk_beh_6_6': {
-    courseCode: 'GANS-LND-CRF-606',
-    title: 'Operational Agility, Crisis Reprioritization & Rapid Pivot Protocols',
+  'sk_beh_1_5': {
+    courseCode: 'GANS-LND-AD-105',
+    title: 'Crisis Response Flexibility & Operational Contingency Execution',
     provider: 'GANS Operations Command Center',
     duration: '2 Days (16 Hours)',
     deliveryMethod: 'Classroom',
-    description: 'Executing sudden operational pivots during system outages, weather emergencies, or sudden surges with poise.'
+    description: 'Dynamic re-prioritization of operational tasks and deploying rapid backup workflows during unexpected airport disruptions.'
+  },
+  'sk_beh_1_6': {
+    courseCode: 'GANS-LND-AD-106',
+    title: 'Continuous Workplace Agility & Habit Evolution Masterclass',
+    provider: 'GANS Talent Institute',
+    duration: '14 Hours',
+    deliveryMethod: 'Blended',
+    description: 'Proactively identifying operational bottlenecks, overcoming inertia, and cultivating personal learning routines.'
   },
 
-  // Behavioral Competency 7: Decision Making (BC-07)
-  'sk_beh_7_1': {
-    courseCode: 'GANS-LND-DMD-701',
-    title: 'Data-Driven Decision Making: Quantitative Frameworks & Statistical Logic',
-    provider: 'GANS Business Analytics Academy',
+  // Behavioral Competency 2: Teamwork & Collaboration (BC-02)
+  'sk_beh_2_1': {
+    courseCode: 'GANS-LND-TW-201',
+    title: 'Cross-Departmental Collaboration & Multi-Disciplinary Synergy',
+    provider: 'GANS Corporate Academy',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Eliminating organizational silos, aligning shared KPIs across departments, and building lasting inter-team partnerships.'
+  },
+  'sk_beh_2_2': {
+    courseCode: 'GANS-LND-TW-202',
+    title: 'Inclusive Teamwork & Culturally Diverse Workforce Leadership',
+    provider: 'GANS People & Culture Hub',
+    duration: '14 Hours',
+    deliveryMethod: 'Classroom',
+    description: 'Harnessing multicultural workforce strengths in aviation operations, promoting psychological safety and open dialogue.'
+  },
+  'sk_beh_2_3': {
+    courseCode: 'GANS-LND-TW-203',
+    title: 'Peer Mentorship, Knowledge Transfer & Collaborative Growth',
+    provider: 'GANS Talent Institute',
+    duration: '2 Days (14 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Structuring formal and informal peer coaching, transferring tacit operational know-how, and onboarding successors.'
+  },
+  'sk_beh_2_4': {
+    courseCode: 'GANS-LND-TW-204',
+    title: 'Consensus Building, Negotiation & Joint Problem Solving',
+    provider: 'GANS Management Center',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Navigating differing agendas, resolving team disagreements constructively, and reaching durable consensus.'
+  },
+  'sk_beh_2_5': {
+    courseCode: 'GANS-LND-TW-205',
+    title: 'Remote, Hybrid & Distributed Team Coordination',
+    provider: 'GANS Digital Workplace Center',
+    duration: '14 Hours',
+    deliveryMethod: 'Blended',
+    description: 'Maintaining seamless operational coordination, clear documentation, and mutual trust across remote and dispersed stations.'
+  },
+  'sk_beh_2_6': {
+    courseCode: 'GANS-LND-TW-206',
+    title: 'Collective Accountability, Team Morale & High-Performing Culture',
+    provider: 'GANS Leadership Academy',
     duration: '2 Days (16 Hours)',
     deliveryMethod: 'Classroom',
-    description: 'Eliminating intuition bias, utilizing statistical sample sizes, confidence intervals, and decision tree payoff matrices.'
+    description: 'Fostering shared pride in collective delivery, building peer-to-peer accountability, and maintaining morale under strain.'
   },
-  'sk_beh_7_2': {
-    courseCode: 'GANS-LND-PRI-702',
-    title: 'High-Impact Prioritization: Eisenhower Matrix, MoSCoW & Operational Triage',
+
+  // Behavioral Competency 3: Result Orientation (BC-03)
+  'sk_beh_3_1': {
+    courseCode: 'GANS-LND-RO-301',
+    title: 'Target Attainment, KPI Mastery & Strategic Execution',
+    provider: 'GANS Performance Institute',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Classroom',
+    description: 'Deconstructing strategic goals into actionable weekly milestones and driving uncompromising target realization.'
+  },
+  'sk_beh_3_2': {
+    courseCode: 'GANS-LND-RO-302',
+    title: 'High-Impact Prioritization & Time Management for Operations',
     provider: 'GANS Productivity Center',
     duration: '14 Hours',
     deliveryMethod: 'Workshop',
-    description: 'Classifying competing demands, ruthlessly eliminating non-essential tasks, and focusing resources on 20% high-yield drivers.'
+    description: 'Applying Eisenhower and MoSCoW matrices, eliminating time wasters, and focusing energy on high-value business outcomes.'
   },
-  'sk_beh_7_3': {
-    courseCode: 'GANS-LND-ETH-703',
-    title: 'Corporate Ethics, Compliance Judgment & Uncompromising Integrity',
-    provider: 'GANS Ethics & Legal Directorate',
+  'sk_beh_3_3': {
+    courseCode: 'GANS-LND-RO-303',
+    title: 'Obstacle Resolution, Grit & Operational Perseverance',
+    provider: 'GANS Talent Development',
     duration: '16 Hours',
-    deliveryMethod: 'Classroom',
-    description: 'Navigating ethical gray zones, conflict of interest mitigation, whistleblower protection, and regulatory governance.'
-  },
-  'sk_beh_7_4': {
-    courseCode: 'GANS-LND-RSK-704',
-    title: 'Risk-Reward Evaluation, Probabilistic Thinking & Scenario Modeling',
-    provider: 'Harvard Business Publishing Affiliate',
-    duration: '2 Days (16 Hours)',
     deliveryMethod: 'Blended',
-    description: 'Evaluating best/worst case scenarios, calculating expected monetary value (EMV), and safeguarding against black swan events.'
+    description: 'Navigating project setbacks, developing backup execution routes, and delivering results despite severe operational roadblocks.'
   },
-  'sk_beh_7_5': {
-    courseCode: 'GANS-LND-RTC-705',
-    title: 'Time-Critical Decision Execution in Real-Time Operations',
-    provider: 'GANS Aviation & Operations Directorate',
-    duration: '2 Days (16 Hours)',
-    deliveryMethod: 'Classroom',
-    description: 'Applying OODA loop principles (Observe, Orient, Decide, Act) under tight time-pressure in live operational theaters.'
-  },
-  'sk_beh_7_6': {
-    courseCode: 'GANS-LND-TRD-706',
-    title: 'Strategic Trade-off Analysis, Resource Cost Balancing & Accountability',
-    provider: 'GANS Executive Management Academy',
+  'sk_beh_3_4': {
+    courseCode: 'GANS-LND-RO-304',
+    title: 'Continuous Operational Improvement & Kaizen Delivery',
+    provider: 'GANS Operational Excellence Hub',
     duration: '2 Days (16 Hours)',
     deliveryMethod: 'Workshop',
-    description: 'Balancing cost constraints vs speed vs quality, documenting trade-off rationales, and owning executive outcomes.'
+    description: 'Applying Lean Six Sigma and Kaizen cycles to eliminate operational waste, accelerate cycle times, and optimize outcomes.'
+  },
+  'sk_beh_3_5': {
+    courseCode: 'GANS-LND-RO-305',
+    title: 'Performance Metric Tracking, SLA Governance & Velocity Audits',
+    provider: 'GANS Analytics Academy',
+    duration: '16 Hours',
+    deliveryMethod: 'Classroom',
+    description: 'Establishing operational dashboards, real-time throughput metrics, and early warning indicators for delivery lag.'
+  },
+  'sk_beh_3_6': {
+    courseCode: 'GANS-LND-RO-306',
+    title: 'Resource Optimization & Delivery-Focused Asset Allocation',
+    provider: 'GANS Operations Command',
+    duration: '2 Days (14 Hours)',
+    deliveryMethod: 'Classroom',
+    description: 'Maximizing delivery velocity through disciplined shift planning, asset balancing, and focused operational budgets.'
+  },
+
+  // Behavioral Competency 4: Customer Centricity (BC-04)
+  'sk_beh_4_1': {
+    courseCode: 'GANS-LND-CC-401',
+    title: 'Stakeholder Need Anticipation & Customer Empathy in Aviation',
+    provider: 'GANS Service Academy',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Understanding traveler journeys, anticipating client and regulatory expectations, and designing empathetic service solutions.'
+  },
+  'sk_beh_4_2': {
+    courseCode: 'GANS-LND-CC-402',
+    title: 'Service Excellence & Frictionless Customer Experience Design',
+    provider: 'GANS Hospitality & Retail Academy',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Classroom',
+    description: 'Eliminating friction points in passenger and tenant touchpoints, setting 5-star service benchmarks and quality assurance.'
+  },
+  'sk_beh_4_3': {
+    courseCode: 'GANS-LND-CC-403',
+    title: 'Voice of Customer (VoC) Insights Synthesis & Actionable Metrics',
+    provider: 'GANS Customer Intelligence Hub',
+    duration: '14 Hours',
+    deliveryMethod: 'Classroom',
+    description: 'Transforming CSAT and NPS feedback into prioritized service redesigns and tangible operational fixes.'
+  },
+  'sk_beh_4_4': {
+    courseCode: 'GANS-LND-CC-404',
+    title: 'Advanced Service Recovery, De-escalation & Retention Protocols',
+    provider: 'GANS Service Excellence Bureau',
+    duration: '16 Hours',
+    deliveryMethod: 'Workshop',
+    description: 'Resolving severe passenger and corporate disputes constructively and turning negative experiences into long-term customer trust.'
+  },
+  'sk_beh_4_5': {
+    courseCode: 'GANS-LND-CC-405',
+    title: 'Strategic Client Relationship Building & Key Stakeholder Management',
+    provider: 'GANS Commercial Leadership Academy',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Classroom',
+    description: 'Cultivating enduring commercial relationships with airlines, airport authorities, and institutional concessionaires.'
+  },
+  'sk_beh_4_6': {
+    courseCode: 'GANS-LND-CC-406',
+    title: 'Customer-Centric Culture Championing & Frontline Advocacy',
+    provider: 'GANS People & Culture Directorate',
+    duration: '14 Hours',
+    deliveryMethod: 'Blended',
+    description: 'Embedding a customer-first philosophy across non-customer facing back-office departments and technical support teams.'
+  },
+
+  // Behavioral Competency 5: Effective Communication (BC-05)
+  'sk_beh_5_1': {
+    courseCode: 'GANS-LND-EC-501',
+    title: 'Executive Briefings, Boardroom Storytelling & High-Impact Presentations',
+    provider: 'GANS Executive Communications Center',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Delivering succinct briefings to C-level executives, structuring logic trees, and commanding boardroom authority.'
+  },
+  'sk_beh_5_2': {
+    courseCode: 'GANS-LND-EC-502',
+    title: 'Active Listening Mastery, Empathic Inquiry & Non-Verbal Decoding',
+    provider: 'GANS Communications Hub',
+    duration: '14 Hours',
+    deliveryMethod: 'Workshop',
+    description: 'Listening for unspoken requirements, decoding body language, and asking reflective questions to unlock authentic understanding.'
+  },
+  'sk_beh_5_3': {
+    courseCode: 'GANS-LND-EC-503',
+    title: 'Cross-Functional Message Alignment & Technical-to-Business Translation',
+    provider: 'GANS Management Center',
+    duration: '16 Hours',
+    deliveryMethod: 'Classroom',
+    description: 'Translating complex aviation and IT technical details into clear commercial insights for diverse organizational audiences.'
+  },
+  'sk_beh_5_4': {
+    courseCode: 'GANS-LND-EC-504',
+    title: 'Constructive Feedback, Mediation & Navigating Difficult Conversations',
+    provider: 'GANS People & Culture Academy',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Conducting constructive performance feedback sessions, defusing defensiveness, and setting clear behavioral boundaries.'
+  },
+  'sk_beh_5_5': {
+    courseCode: 'GANS-LND-EC-505',
+    title: 'Clear Technical Documentation, SOP Writing & Formal Executive Memos',
+    provider: 'GANS Corporate Communications',
+    duration: '14 Hours',
+    deliveryMethod: 'E-Learning',
+    description: 'Drafting precise operational documentation, incident memos, and formal policy directives with clarity and zero ambiguity.'
+  },
+  'sk_beh_5_6': {
+    courseCode: 'GANS-LND-EC-506',
+    title: 'Negotiation Mastery, Persuasive Alignment & Stakeholder Buy-In',
+    provider: 'GANS Leadership Academy',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Securing alignment from reluctant internal departments, principled negotiation techniques, and win-win outcome design.'
+  },
+
+  // Behavioral Competency 6: Accountability (BC-06)
+  'sk_beh_6_1': {
+    courseCode: 'GANS-LND-AC-601',
+    title: 'Personal Ownership, Professional Integrity & Follow-Through',
+    provider: 'GANS Professional Standards Directorate',
+    duration: '14 Hours',
+    deliveryMethod: 'Classroom',
+    description: 'Taking uncompromising responsibility for task execution, eliminating blame culture, and seeing commitments through to completion.'
+  },
+  'sk_beh_6_2': {
+    courseCode: 'GANS-LND-AC-602',
+    title: 'Ethical Governance, Compliance Rigor & Aviation Regulatory Integrity',
+    provider: 'GANS Legal & Governance Bureau',
+    duration: '16 Hours',
+    deliveryMethod: 'Classroom',
+    description: 'Upholding strict compliance with aviation safety protocols, ethics guidelines, anti-corruption rules, and statutory laws.'
+  },
+  'sk_beh_6_3': {
+    courseCode: 'GANS-LND-AC-603',
+    title: 'Transparent Reporting, Risk Disclosure & Operational Accountability',
+    provider: 'GANS Risk & Audit Directorate',
+    duration: '2 Days (14 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Early identification and open reporting of operational vulnerabilities, maintaining transparent status tracking and audits.'
+  },
+  'sk_beh_6_4': {
+    courseCode: 'GANS-LND-AC-604',
+    title: 'Reliability & Delivery in High-Stakes Operational Commitments',
+    provider: 'GANS Operations Academy',
+    duration: '16 Hours',
+    deliveryMethod: 'Classroom',
+    description: 'Honoring commitments during critical deadlines, managing contingency reserves, and earning trusted operational credibility.'
+  },
+  'sk_beh_6_5': {
+    courseCode: 'GANS-LND-AC-605',
+    title: 'Blameless Error Analysis, Corrective Action Planning & Recovery',
+    provider: 'GANS Quality & Safety Management',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Classroom',
+    description: 'Fostering psychological safety, conducting blameless post-mortems, owning missteps constructively, and executing corrective CAPA.'
+  },
+  'sk_beh_6_6': {
+    courseCode: 'GANS-LND-AC-606',
+    title: 'Upholding Peer & Subordinate Mutual Accountability in Teams',
+    provider: 'GANS Management Center',
+    duration: '2 Days (14 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Establishing shared team standards, conducting mutual check-ins, and lovingly holding colleagues accountable for excellence.'
+  },
+
+  // Behavioral Competency 7: Learning Agility (BC-07)
+  'sk_beh_7_1': {
+    courseCode: 'GANS-LND-LA-701',
+    title: 'Rapid Skill Acquisition, Self-Directed Learning & Research Mastery',
+    provider: 'GANS Learning & Talent Institute',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Blended',
+    description: 'Mastering techniques for rapidly absorbing unfamiliar domain knowledge, extracting key principles, and practicing self-study.'
+  },
+  'sk_beh_7_2': {
+    courseCode: 'GANS-LND-LA-702',
+    title: 'Growth Mindset, Curiosity Cultivation & Innovation Readiness',
+    provider: 'GANS Innovation & Culture Center',
+    duration: '14 Hours',
+    deliveryMethod: 'Workshop',
+    description: 'Transforming fixed mindsets, embracing complex workplace puzzles as learning grounds, and testing experimental approaches.'
+  },
+  'sk_beh_7_3': {
+    courseCode: 'GANS-LND-LA-703',
+    title: 'Reflective Practice, Feedback Integration & Continuous Adaptation',
+    provider: 'GANS Professional Growth Academy',
+    duration: '14 Hours',
+    deliveryMethod: 'Workshop',
+    description: 'Conducting structured self-reflection after operational cycles, actively soliciting 360-degree feedback, and modifying habits.'
+  },
+  'sk_beh_7_4': {
+    courseCode: 'GANS-LND-LA-704',
+    title: 'Cross-Domain Knowledge Transfer to Novel Operational Scenarios',
+    provider: 'GANS Strategic Capability Center',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Classroom',
+    description: 'Applying insights from aviation, logistics, and retail to novel, unprecedented challenges in unfamiliar operating environments.'
+  },
+  'sk_beh_7_5': {
+    courseCode: 'GANS-LND-LA-705',
+    title: 'Unlearning Obsolete Legacy Practices & Agile Experimentation',
+    provider: 'GANS Operational Transformation Hub',
+    duration: '16 Hours',
+    deliveryMethod: 'Workshop',
+    description: 'Letting go of outdated manual workarounds and adopting modern automated protocols through structured safe-to-fail trials.'
+  },
+  'sk_beh_7_6': {
+    courseCode: 'GANS-LND-LA-706',
+    title: 'Future-Proofing Competencies & Strategic Self-Development Planning',
+    provider: 'GANS Executive Talent Directorate',
+    duration: '2 Days (16 Hours)',
+    deliveryMethod: 'Workshop',
+    description: 'Forecasting evolving industry skills requirements, drafting proactive 3-year individual development roadmaps, and lifelong learning.'
   }
 };
 

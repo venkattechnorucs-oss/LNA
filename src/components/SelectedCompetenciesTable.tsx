@@ -32,7 +32,7 @@ const getProficiencyBadgeStyle = (level: ProficiencyLevel) => {
     case 'Expert':
       return 'bg-purple-100/90 text-purple-900 border-purple-300 shadow-purple-900/10';
     case 'Proficient':
-      return 'bg-sky-100/90 text-[#0275a8] border-sky-300 shadow-sky-900/10';
+      return 'bg-[#211E4E]/10 text-[#211E4E] border-[#C8A977]/40 shadow-xs';
     case 'Intermediate':
       return 'bg-amber-100/90 text-amber-900 border-amber-300 shadow-amber-900/10';
     case 'Foundation':
@@ -50,14 +50,14 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
   onUpdateEmployeeRemarks
 }) => {
   return (
-    <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
+    <section className="rounded-2xl bg-white/90 backdrop-blur-xl border border-[#C8A977]/25 shadow-[0_8px_30px_rgb(33,30,78,0.06)] overflow-hidden">
       {/* Table Section Header */}
-      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
+      <div className="bg-[#211E4E] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2 border-b border-[#C8A977]/30">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-white/15 text-white flex items-center justify-center border border-white/20">
-            <GraduationCap className="w-4 h-4 text-sky-200" />
+          <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center border border-[#C8A977]/30">
+            <GraduationCap className="w-4 h-4 text-[#C8A977]" />
           </div>
-          <h2 className="font-bold text-xs sm:text-sm tracking-wide">
+          <h2 className="font-bold text-xs sm:text-sm tracking-wide text-white">
             Selected Competencies & Mapped Courses
           </h2>
         </div>
@@ -65,11 +65,11 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
 
       {/* Table Area */}
       <div className="p-4 sm:p-5">
-        <div className="border border-slate-200/80 rounded-xl overflow-hidden bg-white/70 shadow-2xs">
+        <div className="border border-slate-200/90 rounded-xl overflow-hidden bg-white shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
+                <tr className="bg-[#fcfaf7] text-[#211E4E] border-b border-[#C8A977]/25 font-extrabold uppercase tracking-wider text-[11px]">
                   <th className="py-3 px-3 text-center w-10 border-r border-slate-200/80">#</th>
                   <th className="py-3 px-4 w-1/5 border-r border-slate-200/80 text-center">Competency</th>
                   <th className="py-3 px-4 w-1/5 border-r border-slate-200/80 text-center">Selected Skill (1 Required)</th>
@@ -120,14 +120,14 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                               <span
                                 className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                                   comp.category === 'Functional'
-                                    ? 'bg-sky-100 text-[#0275a8] border border-sky-200'
-                                    : 'bg-indigo-100 text-indigo-700 border border-indigo-200'
+                                    ? 'bg-[#211E4E]/10 text-[#211E4E] border border-[#C8A977]/30'
+                                    : 'bg-[#C8A977]/20 text-[#211E4E] border border-[#C8A977]/40'
                                 }`}
                               >
                                 {comp.category}
                               </span>
                             </div>
-                            <span className="font-extrabold text-[#1a5075] text-xs">
+                            <span className="font-extrabold text-[#211E4E] text-xs">
                               {comp.name}
                             </span>
                           </div>
@@ -141,7 +141,7 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                               className="text-[10px] font-bold text-slate-600 flex items-center gap-1"
                             >
                               <span>Select Focus Skill:</span>
-                              <span className="text-[#0275a8] font-bold">*</span>
+                              <span className="text-[#C8A977] font-bold">*</span>
                             </label>
 
                             <div className="relative">
@@ -151,7 +151,7 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                                 onChange={(e) => onSelectSkill(comp.id, e.target.value)}
                                 className={`w-full text-xs py-2 px-3 pr-8 border rounded-xl font-medium transition-all appearance-none cursor-pointer shadow-2xs ${
                                   item.selectedSkillId
-                                    ? 'bg-white/95 border-[#0275a8] text-slate-900 focus:ring-2 focus:ring-[#0275a8]/30 focus:outline-hidden'
+                                    ? 'bg-white/95 border-[#211E4E] text-slate-900 focus:ring-2 focus:ring-[#C8A977]/30 focus:outline-hidden'
                                     : 'bg-amber-50/80 border-amber-300 text-amber-900 focus:ring-2 focus:ring-amber-400/30 focus:outline-hidden'
                                 }`}
                               >
@@ -172,10 +172,10 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                         {/* Column 4: Recommended Training Course (System-Mapped, Read-Only) */}
                         <td className="py-3.5 px-4 border-r border-slate-100 align-top pt-3">
                           {mappedCourse ? (
-                            <div className="bg-gradient-to-br from-[#f0f7fb] to-[#e6f1f8] p-3 rounded-xl border border-[#cfe1ed] shadow-2xs">
-                              <span className="font-extrabold text-[#1a5075] text-xs leading-snug flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-md bg-[#0275a8]/15 flex items-center justify-center shrink-0">
-                                  <BookOpen className="w-3.5 h-3.5 text-[#0275a8]" />
+                            <div className="bg-[#211E4E]/5 p-3 rounded-xl border border-[#C8A977]/30 shadow-2xs">
+                              <span className="font-extrabold text-[#211E4E] text-xs leading-snug flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-md bg-[#211E4E]/10 flex items-center justify-center shrink-0">
+                                  <BookOpen className="w-3.5 h-3.5 text-[#C8A977]" />
                                 </div>
                                 {mappedCourse.title}
                               </span>
@@ -215,7 +215,7 @@ export const SelectedCompetenciesTable: React.FC<SelectedCompetenciesTableProps>
                               onUpdateEmployeeRemarks &&
                               onUpdateEmployeeRemarks(comp.id, e.target.value)
                             }
-                            className="w-full text-xs p-2.5 border border-slate-200 rounded-xl bg-white/95 text-slate-800 focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 outline-hidden font-normal leading-relaxed resize-y shadow-2xs"
+                            className="w-full text-xs p-2.5 border border-slate-200 rounded-xl bg-white/95 text-slate-800 focus:border-[#211E4E] focus:ring-2 focus:ring-[#C8A977]/20 outline-hidden font-normal leading-relaxed resize-y shadow-2xs"
                           />
                         </td>
                       </tr>

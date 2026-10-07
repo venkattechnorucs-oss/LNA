@@ -56,7 +56,7 @@ export const CircleDP: React.FC<CircleDPProps> = ({
       <div
         className={`${sizeClasses} rounded-full flex items-center justify-center font-bold text-white shadow-xs transition-transform transform ${
           isManager
-            ? 'bg-gradient-to-br from-[#1a5075] via-[#0275a8] to-[#084166] ring-2 ring-[#0275a8]/30 border-2 border-white'
+            ? 'bg-[#211E4E] text-[#C8A977] ring-2 ring-[#C8A977]/30 border-2 border-white'
             : 'bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-800 ring-2 ring-emerald-400/30 border-2 border-white'
         }`}
         title={`${name} (${isManager ? 'Manager' : 'Employee'})`}
@@ -68,7 +68,7 @@ export const CircleDP: React.FC<CircleDPProps> = ({
       {showBadge && (
         <div
           className={`absolute ${badgeSizeClasses} rounded-full flex items-center justify-center border border-white shadow-xs ${
-            isManager ? 'bg-[#0275a8] text-white' : 'bg-emerald-600 text-white'
+            isManager ? 'bg-[#211E4E] text-[#C8A977]' : 'bg-emerald-600 text-white'
           }`}
           title={isManager ? 'Verified Manager' : 'Employee'}
         >
@@ -136,12 +136,12 @@ export const LnaChatbox: React.FC<LnaChatboxProps> = ({
   return (
     <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden flex flex-col">
       {/* Chatbox Header - Clean Comment History Title */}
-      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3 flex items-center justify-between">
+      <div className="bg-[#211E4E] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#C8A977]/30">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-white/15 text-white flex items-center justify-center border border-white/20">
-            <MessageSquare className="w-4 h-4 text-sky-200" />
+          <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center border border-[#C8A977]/30">
+            <MessageSquare className="w-4 h-4 text-[#C8A977]" />
           </div>
-          <h3 className="font-bold text-xs sm:text-sm tracking-wide">
+          <h3 className="font-bold text-xs sm:text-sm tracking-wide text-white">
             Comment History
           </h3>
         </div>
@@ -150,10 +150,10 @@ export const LnaChatbox: React.FC<LnaChatboxProps> = ({
       {/* Modern Chat Message Canvas with Circular DPs */}
       <div
         ref={chatContainerRef}
-        className="p-4 sm:p-5 overflow-y-auto space-y-3.5 min-h-[160px] max-h-[320px] bg-[#f7f9fb]/70 backdrop-blur-xs relative"
+        className="p-4 sm:p-5 overflow-y-auto space-y-3.5 min-h-[160px] max-h-[320px] bg-[#fcfaf7]/70 backdrop-blur-xs relative"
         style={{
           backgroundImage:
-            'radial-gradient(circle at 50% 50%, rgba(200, 215, 225, 0.25) 1px, transparent 1px)',
+            'radial-gradient(circle at 50% 50%, rgba(200, 169, 119, 0.15) 1px, transparent 1px)',
           backgroundSize: '24px 24px'
         }}
       >
@@ -185,7 +185,7 @@ export const LnaChatbox: React.FC<LnaChatboxProps> = ({
                 <div
                   className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3 shadow-xs text-xs relative ${
                     isManager
-                      ? 'bg-gradient-to-br from-[#eaf4fb] to-[#d8ecf8] text-slate-900 border border-[#b8dcfa] rounded-tr-xs'
+                      ? 'bg-[#211E4E]/5 text-slate-900 border border-[#C8A977]/30 rounded-tr-xs'
                       : 'bg-gradient-to-br from-[#eafaf1] to-[#daf5e4] text-slate-900 border border-[#bbf7b8] rounded-tl-xs'
                   }`}
                 >
@@ -194,7 +194,7 @@ export const LnaChatbox: React.FC<LnaChatboxProps> = ({
                     <div className="flex items-center gap-1.5">
                       <span
                         className={`font-bold ${
-                          isManager ? 'text-[#1a5075]' : 'text-emerald-950'
+                          isManager ? 'text-[#211E4E]' : 'text-emerald-950'
                         }`}
                       >
                         {msg.senderName}
@@ -220,7 +220,7 @@ export const LnaChatbox: React.FC<LnaChatboxProps> = ({
 
       {/* Separate Dedicated Comments / Development Thoughts Box */}
       <div className="p-4 sm:p-5 bg-white/95 border-t border-slate-200/90">
-        <label htmlFor="lna-comment-input" className="block text-xs font-bold text-[#1a5075] uppercase tracking-wider mb-2 flex items-center justify-between">
+        <label htmlFor="lna-comment-input" className="block text-xs font-bold text-[#211E4E] uppercase tracking-wider mb-2 flex items-center justify-between">
           <span className="flex items-center gap-1">
             <span>{initialRole === 'manager' ? 'Manager Review Remarks' : 'Development Thoughts'}</span>
             <span className="text-red-500 font-bold text-sm" title="Required">*</span>
@@ -240,7 +240,7 @@ export const LnaChatbox: React.FC<LnaChatboxProps> = ({
                 : 'Enter your development thoughts, notes, or developmental remarks here...'
             }
             disabled={isReadOnly}
-            className="w-full text-xs p-3 border border-slate-300 rounded-xl bg-slate-50/70 text-slate-900 focus:outline-hidden focus:border-[#0275a8] focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 placeholder:text-slate-400 disabled:bg-slate-100 disabled:text-slate-400 shadow-inner resize-y leading-relaxed font-normal"
+            className="w-full text-xs p-3 border border-slate-300 rounded-xl bg-slate-50/70 text-slate-900 focus:outline-hidden focus:border-[#211E4E] focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 placeholder:text-slate-400 disabled:bg-slate-100 disabled:text-slate-400 shadow-inner resize-y leading-relaxed font-normal"
           />
           {!isReadOnly && initialRole === 'manager' && (
             <p className="text-[11px] text-slate-500">

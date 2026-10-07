@@ -193,20 +193,20 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  // Avatar background colors aligned with GANS brand palette (Navy, Teal, Ocean, Sky, Slate)
+  // Avatar background colors aligned with GANS brand palette (Night, Gold, Slate)
   const getAvatarBg = (name: string, isFrom = true) => {
     const colors = isFrom
       ? [
-          'bg-[#1a5075] text-white',
-          'bg-[#154668] text-white',
-          'bg-[#0f344d] text-white',
-          'bg-slate-700 text-white'
+          'bg-[#211E4E] text-[#C8A977]',
+          'bg-[#2c2865] text-[#C8A977]',
+          'bg-[#1a1740] text-[#C8A977]',
+          'bg-slate-800 text-white'
         ]
       : [
-          'bg-[#0275a8] text-white',
-          'bg-[#01628d] text-white',
-          'bg-[#0388c4] text-white',
-          'bg-[#0e7490] text-white'
+          'bg-[#C8A977] text-[#211E4E]',
+          'bg-[#b59563] text-white',
+          'bg-[#d4b98c] text-[#211E4E]',
+          'bg-[#211E4E]/80 text-[#C8A977]'
         ];
     const index = Math.abs(name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)) % colors.length;
     return colors[index];
@@ -216,21 +216,21 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
     <div className="space-y-5 animate-in fade-in duration-150">
       
       {/* =========================================================================
-          TOP ACTION BAR (Matches GANS Blue Banner styling)
+          TOP ACTION BAR (Client Night & Gold Theme)
           ========================================================================= */}
-      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0d314a] rounded-xl p-5 text-white shadow-md border border-[#2b658f] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-[#211E4E] rounded-xl p-5 text-white shadow-md border border-[#C8A977]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         
         {/* Title */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white/15 text-sky-300 flex items-center justify-center border border-white/20 shadow-2xs">
-            <UserCheck className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-white/10 text-[#C8A977] flex items-center justify-center border border-[#C8A977]/30 shadow-2xs">
+            <UserCheck className="w-5 h-5 text-[#C8A977]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 Delegation
               </h1>
-              <span className="bg-white/20 text-sky-200 text-xs font-black px-2.5 py-0.5 rounded-full border border-white/20">
+              <span className="bg-white/10 text-[#dfcaa8] text-xs font-black px-2.5 py-0.5 rounded-full border border-[#C8A977]/30">
                 {delegations.length} Records
               </span>
             </div>
@@ -250,7 +250,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                 setCurrentPage(1);
               }}
               placeholder="Search delegation..."
-              className="w-full pl-8 pr-7 py-2 text-xs bg-white text-slate-800 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all"
+              className="w-full pl-8 pr-7 py-2 text-xs bg-white text-slate-800 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#C8A977] focus:ring-2 focus:ring-[#C8A977]/25 transition-all"
             />
             {searchQuery && (
               <button
@@ -270,9 +270,9 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
           <button
             type="button"
             onClick={handleOpenNewModal}
-            className="px-4 py-2 bg-gradient-to-r from-[#0275a8] to-sky-600 hover:from-[#02628d] hover:to-sky-500 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-400/40"
+            className="px-4 py-2 bg-[#C8A977] hover:bg-[#b89763] text-[#211E4E] font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-[#211E4E]" />
             <span>Add Delegation</span>
           </button>
         </div>
@@ -280,13 +280,13 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
       </div>
 
       {/* =========================================================================
-          DELEGATION TABLE (Matches GANS Master Tables Header Theme)
+          DELEGATION TABLE (Matches Client Master Tables Header Theme)
           ========================================================================= */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
         <div className="overflow-x-auto min-h-[340px]">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#f0f7fb] text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px] shadow-2xs">
+              <tr className="bg-[#fcfaf7] text-[#211E4E] border-b border-[#C8A977]/25 font-extrabold uppercase tracking-wider text-[11px] shadow-2xs">
                 <th className="py-3.5 px-5 min-w-[220px] border-r border-slate-200/80">From</th>
                 <th className="py-3.5 px-5 min-w-[220px] border-r border-slate-200/80">To</th>
                 <th className="py-3.5 px-4 min-w-[140px] text-center border-r border-slate-200/80">Start Date</th>
@@ -309,7 +309,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                       <button
                         type="button"
                         onClick={handleOpenNewModal}
-                        className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white text-xs font-bold rounded-xl shadow-xs hover:from-[#154668] hover:to-[#01628d] cursor-pointer"
+                        className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 text-xs font-bold rounded-xl shadow-xs cursor-pointer active:scale-95"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Create First Delegation</span>
@@ -381,7 +381,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                           <button
                             type="button"
                             onClick={() => handleOpenEditModal(item)}
-                            className="p-1.5 rounded-lg bg-slate-50 hover:bg-sky-50 text-slate-600 hover:text-[#0275a8] border border-slate-200 hover:border-sky-300 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg bg-slate-50 hover:bg-[#211E4E]/10 text-slate-600 hover:text-[#211E4E] border border-slate-200 hover:border-[#C8A977]/40 transition-colors cursor-pointer"
                             title="Edit Delegation"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
@@ -452,7 +452,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                   onClick={() => setCurrentPage(pageNum)}
                   className={`w-7 h-7 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     currentPage === pageNum
-                      ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white shadow-xs'
+                      ? 'bg-[#211E4E] text-[#C8A977] border border-[#C8A977]/30 shadow-xs'
                       : 'text-slate-700 hover:bg-slate-100'
                   }`}
                 >
@@ -492,16 +492,16 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
           <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col">
             
             {/* Modal Header */}
-            <div className="p-5 bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white flex items-center justify-between gap-4 border-b border-white/10 shrink-0">
+            <div className="p-5 bg-[#211E4E] text-[#C8A977] flex items-center justify-between gap-4 border-b border-[#C8A977]/20 shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center text-white backdrop-blur-xs">
+                <div className="w-8 h-8 rounded-xl bg-[#C8A977]/20 flex items-center justify-center text-[#C8A977] border border-[#C8A977]/30">
                   <UserCheck className="w-4 h-4" />
                 </div>
                 <div>
                   <h2 className="text-base font-black tracking-tight text-white">
                     {editingDelegation ? 'Edit Delegation' : 'New Delegation'}
                   </h2>
-                  <p className="text-[11px] text-sky-100">
+                  <p className="text-[11px] text-[#C8A977]/80">
                     Configure manager review authority and assignment dates
                   </p>
                 </div>
@@ -509,7 +509,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="p-1.5 rounded-xl hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
                 title="Close"
               >
                 <X className="w-4 h-4" />
@@ -522,7 +522,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
               {/* Field 1: From * */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-slate-700 flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <User className="w-3.5 h-3.5 text-[#211E4E]" />
                   <span>From</span> <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -533,7 +533,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                       setFormErrors((prev) => ({ ...prev, fromEmpId: '' }));
                     }
                   }}
-                  className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all ${
+                  className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#211E4E]/20 transition-all ${
                     formErrors.fromEmpId ? 'border-red-400 bg-red-50/20' : 'border-slate-200'
                   }`}
                 >
@@ -555,7 +555,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
               {/* Field 2: To * */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-slate-700 flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <UserCheck className="w-3.5 h-3.5 text-[#211E4E]" />
                   <span>To</span> <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -566,7 +566,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                       setFormErrors((prev) => ({ ...prev, toEmpId: '' }));
                     }
                   }}
-                  className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all ${
+                  className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#211E4E]/20 transition-all ${
                     formErrors.toEmpId ? 'border-red-400 bg-red-50/20' : 'border-slate-200'
                   }`}
                 >
@@ -590,7 +590,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
               {/* Field 3: Start Date * */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-slate-700 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <Calendar className="w-3.5 h-3.5 text-[#211E4E]" />
                   <span>Start Date</span> <span className="text-red-500">*</span>
                 </label>
                 <div className="relative flex items-center">
@@ -603,11 +603,11 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                         setFormErrors((prev) => ({ ...prev, startDate: '' }));
                       }
                     }}
-                    className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all ${
+                    className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#211E4E]/20 transition-all ${
                       formErrors.startDate ? 'border-red-400 bg-red-50/20' : 'border-slate-200'
                     }`}
                   />
-                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#0275a8] text-white p-1.5 rounded-lg pointer-events-none">
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#211E4E] text-[#C8A977] p-1.5 rounded-lg pointer-events-none">
                     <Calendar className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -622,7 +622,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
               {/* Field 4: End Date * */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-slate-700 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-[#0275a8]" />
+                  <Calendar className="w-3.5 h-3.5 text-[#211E4E]" />
                   <span>End Date</span> <span className="text-red-500">*</span>
                 </label>
                 <div className="relative flex items-center">
@@ -635,11 +635,11 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                         setFormErrors((prev) => ({ ...prev, endDate: '' }));
                       }
                     }}
-                    className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all ${
+                    className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#211E4E]/20 transition-all ${
                       formErrors.endDate ? 'border-red-400 bg-red-50/20' : 'border-slate-200'
                     }`}
                   />
-                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#0275a8] text-white p-1.5 rounded-lg pointer-events-none">
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#211E4E] text-[#C8A977] p-1.5 rounded-lg pointer-events-none">
                     <Calendar className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -661,7 +661,7 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                   placeholder="e.g. Leave Coverage, Interim Line Manager..."
-                  className="w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:border-[#0275a8] focus:ring-2 focus:ring-[#0275a8]/20 transition-all placeholder:text-slate-400"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:border-[#211E4E] focus:ring-2 focus:ring-[#211E4E]/20 transition-all placeholder:text-slate-400"
                 />
               </div>
 
@@ -677,9 +677,9 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154668] hover:to-[#01628d] text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  className="px-6 py-2.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/40 text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
                 >
-                  <Send className="w-3.5 h-3.5" />
+                  <Send className="w-3.5 h-3.5 text-[#C8A977]" />
                   <span>Save</span>
                 </button>
               </div>

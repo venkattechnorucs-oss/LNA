@@ -43,15 +43,18 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
       {/* Welcome & Overview Glass Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a5075] via-[#104060] to-[#0d2f47] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(26,80,117,0.35)] border border-white/20 backdrop-blur-xl">
-        <div className="absolute -right-8 -top-8 w-56 h-56 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-teal-400/15 rounded-full blur-2xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-[#211E4E] p-5 sm:p-6 text-[#C8A977] shadow-[0_12px_36px_-6px_rgba(33,30,78,0.25)] border border-[#C8A977]/30 backdrop-blur-xl">
+        <div className="absolute -right-8 -top-8 w-56 h-56 bg-[#C8A977]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-[#C8A977]/5 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white drop-shadow-xs">
               Welcome, {employee.name}
             </h1>
+            <p className="text-xs text-[#C8A977]/80 mt-1 font-medium">
+              Employee Learning Needs Analysis Portal • Professional Competency & Growth
+            </p>
           </div>
         </div>
       </div>
@@ -59,33 +62,33 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
       {/* ================================================== */}
       {/* Learning Needs Analysis (LNA) LIST (CURRENT & PREVIOUS)     */}
       {/* ================================================== */}
-      <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
-        <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3.5 flex items-center justify-between">
+      <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] overflow-hidden">
+        <div className="bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/20 px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2.5 font-bold text-xs sm:text-sm">
-            <div className="w-7 h-7 rounded-lg bg-white/15 text-white flex items-center justify-center border border-white/20">
-              <GraduationCap className="w-4 h-4 text-sky-200" />
+            <div className="w-7 h-7 rounded-lg bg-[#C8A977]/20 text-[#C8A977] flex items-center justify-center border border-[#C8A977]/30">
+              <GraduationCap className="w-4 h-4 text-[#C8A977]" />
             </div>
-            <span>Learning Needs Analysis (LNA)</span>
+            <span className="text-white">Learning Needs Analysis (LNA)</span>
           </div>
         </div>
 
         <div className="p-4 sm:p-5">
           <div className="border border-slate-200/80 rounded-xl overflow-hidden bg-white/70 shadow-2xs">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
+              <thead className="bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/30 font-extrabold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="p-3 border-r border-slate-200/80 text-center">Year</th>
-                  <th className="p-3 border-r border-slate-200/80 text-center whitespace-nowrap">Date</th>
-                  <th className="p-3 border-r border-slate-200/80 text-center">Manager</th>
-                  <th className="p-3 border-r border-slate-200/80 text-center">Status</th>
+                  <th className="p-3 border-r border-white/10 text-center">Year</th>
+                  <th className="p-3 border-r border-white/10 text-center whitespace-nowrap">Date</th>
+                  <th className="p-3 border-r border-white/10 text-center">Manager</th>
+                  <th className="p-3 border-r border-white/10 text-center">Status</th>
                   <th className="p-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {/* 2026 Annual Cycle (New / Current Submission) */}
-                <tr className="bg-sky-50/50 hover:bg-sky-100/60 transition-colors">
-                  <td className="p-3 font-bold text-[#1a5075] border-r border-slate-100 text-center">
-                    <span className="bg-[#1a5075]/10 text-[#1a5075] px-2.5 py-0.5 rounded-md font-bold text-xs inline-block">
+                <tr className="bg-[#211E4E]/5 hover:bg-[#211E4E]/10 transition-colors">
+                  <td className="p-3 font-bold text-[#211E4E] border-r border-slate-100 text-center">
+                    <span className="bg-[#211E4E] text-[#C8A977] border border-[#C8A977]/30 px-2.5 py-0.5 rounded-md font-bold text-xs inline-block">
                       2026
                     </span>
                   </td>
@@ -107,13 +110,13 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
                         Returned
                       </span>
                     ) : submission?.status === 'SUBMITTED FOR MANAGER REVIEW' ? (
-                      <span className="inline-flex items-center gap-1.5 bg-sky-100/80 text-[#0275a8] border border-sky-300/70 px-2.5 py-1 rounded-full font-bold text-[10px] shadow-2xs">
-                        <Clock className="w-3 h-3 text-[#0275a8]" />
+                      <span className="inline-flex items-center gap-1.5 bg-[#211E4E]/10 text-[#211E4E] border border-[#C8A977]/30 px-2.5 py-1 rounded-full font-bold text-[10px] shadow-2xs">
+                        <Clock className="w-3 h-3 text-[#211E4E]" />
                         Pending Approval
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 bg-blue-100/80 text-blue-900 border border-blue-300/70 px-2.5 py-1 rounded-full font-bold text-[10px] shadow-2xs">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                      <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full font-bold text-[10px] shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                         Not Started
                       </span>
                     )}
@@ -122,7 +125,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
                     <button
                       type="button"
                       onClick={onNavigateToLna}
-                      className="text-[#0275a8] hover:text-[#014d70] hover:underline font-bold text-center cursor-pointer inline-flex items-center justify-center group"
+                      className="text-[#211E4E] hover:underline font-bold text-center cursor-pointer inline-flex items-center justify-center group"
                     >
                       <span className="font-extrabold">
                         {submission?.status === 'MANAGER APPROVED' || submission?.status === 'SUBMITTED FOR MANAGER REVIEW'
@@ -157,7 +160,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
                       <button
                         type="button"
                         onClick={onNavigateToLna}
-                        className="text-[#0275a8] hover:text-[#014d70] hover:underline font-bold text-center cursor-pointer inline-flex items-center justify-center gap-1"
+                        className="text-[#211E4E] hover:underline font-bold text-center cursor-pointer inline-flex items-center justify-center gap-1"
                       >
                         <span>View</span>
                       </button>

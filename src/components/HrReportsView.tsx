@@ -161,14 +161,10 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
     <div className="space-y-6 animate-in fade-in duration-300">
       
       {/* Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a5075] via-[#104060] to-[#0d2f47] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(26,80,117,0.35)] border border-white/20 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        {/* Ambient background light orbs */}
-        <div className="absolute -right-8 -top-8 w-56 h-56 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-teal-400/15 rounded-full blur-2xl pointer-events-none" />
-
+      <div className="relative overflow-hidden rounded-2xl bg-[#211E4E] p-5 sm:p-6 text-white shadow-[0_12px_36px_-6px_rgba(33,30,78,0.25)] border border-[#C8A977]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="relative z-10">
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5 drop-shadow-xs">
-            <FileSpreadsheet className="w-6 h-6 text-sky-300" />
+            <FileSpreadsheet className="w-6 h-6 text-[#C8A977]" />
             <span>Reports</span>
           </h1>
         </div>
@@ -176,42 +172,42 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
         {/* Entity & Year Selectors in Banner */}
         <div className="relative z-10 flex flex-wrap items-center gap-3">
           {/* Entity Selector in Banner */}
-          <div className="flex items-center gap-2 bg-white/15 hover:bg-white/20 transition-colors backdrop-blur-md px-3 py-2 rounded-xl border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.15)] shrink-0">
-            <Building2 className="w-4 h-4 text-sky-300 shrink-0" />
-            <label htmlFor="report-entity-select" className="text-xs font-bold text-sky-100 whitespace-nowrap">
+          <div className="flex items-center gap-2 bg-white/10 hover:bg-white/15 transition-colors backdrop-blur-md px-3 py-2 rounded-xl border border-[#C8A977]/30 shadow-xs shrink-0">
+            <Building2 className="w-4 h-4 text-[#C8A977] shrink-0" />
+            <label htmlFor="report-entity-select" className="text-xs font-bold text-[#dfcaa8] whitespace-nowrap">
               Entity:
             </label>
             <select
               id="report-entity-select"
               value={selectedEntity}
               onChange={(e) => setSelectedEntity(e.target.value)}
-              className="bg-[#0b3350] text-white font-bold text-xs rounded-lg px-2.5 py-1.5 border border-white/30 focus:outline-hidden focus:ring-2 focus:ring-sky-400 cursor-pointer transition-all shadow-inner"
+              className="bg-[#19163d] text-white font-bold text-xs rounded-lg px-2.5 py-1.5 border border-[#C8A977]/40 focus:outline-hidden focus:ring-2 focus:ring-[#C8A977] cursor-pointer transition-all shadow-inner"
             >
-              <option value="ALL" className="bg-[#104060] text-white font-medium">All Entities</option>
-              <option value="GANS" className="bg-[#104060] text-white font-medium">GANS</option>
-              <option value="Eshara" className="bg-[#104060] text-white font-medium">Eshara</option>
-              <option value="YHA" className="bg-[#104060] text-white font-medium">YHA</option>
+              <option value="ALL" className="bg-[#211E4E] text-white font-medium">All Entities</option>
+              <option value="GANS" className="bg-[#211E4E] text-white font-medium">GANS</option>
+              <option value="Eshara" className="bg-[#211E4E] text-white font-medium">Eshara</option>
+              <option value="YHA" className="bg-[#211E4E] text-white font-medium">YHA</option>
             </select>
           </div>
 
           {/* Year Selector in Banner */}
-          <div className="flex items-center gap-2 bg-white/15 hover:bg-white/20 transition-colors backdrop-blur-md px-3 py-2 rounded-xl border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.15)] shrink-0">
-            <Calendar className="w-4 h-4 text-sky-300 shrink-0" />
-            <label htmlFor="report-year-select" className="text-xs font-bold text-sky-100 whitespace-nowrap">
+          <div className="flex items-center gap-2 bg-white/10 hover:bg-white/15 transition-colors backdrop-blur-md px-3 py-2 rounded-xl border border-[#C8A977]/30 shadow-xs shrink-0">
+            <Calendar className="w-4 h-4 text-[#C8A977] shrink-0" />
+            <label htmlFor="report-year-select" className="text-xs font-bold text-[#dfcaa8] whitespace-nowrap">
               Report Year:
             </label>
             <select
               id="report-year-select"
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="bg-[#0b3350] text-white font-bold text-xs rounded-lg px-2.5 py-1.5 border border-white/30 focus:outline-hidden focus:ring-2 focus:ring-sky-400 cursor-pointer transition-all shadow-inner"
+              className="bg-[#19163d] text-white font-bold text-xs rounded-lg px-2.5 py-1.5 border border-[#C8A977]/40 focus:outline-hidden focus:ring-2 focus:ring-[#C8A977] cursor-pointer transition-all shadow-inner"
             >
               {years.map((yr) => (
-                <option key={yr} value={yr} className="bg-[#104060] text-white font-medium">
+                <option key={yr} value={yr} className="bg-[#211E4E] text-white font-medium">
                   {yr} {yr === '2026' ? '(Active)' : ''}
                 </option>
               ))}
-              <option value="ALL" className="bg-[#104060] text-white font-medium">All Years</option>
+              <option value="ALL" className="bg-[#211E4E] text-white font-medium">All Years</option>
             </select>
           </div>
         </div>
@@ -220,14 +216,14 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
       {/* Export Action Center Card */}
       <div className="max-w-xl">
         {/* Card: Comprehensive Employee LNA Report */}
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-6 shadow-[0_8px_30px_rgb(26,80,117,0.05)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+        <div className="rounded-2xl bg-white border border-[#C8A977]/25 p-6 shadow-[0_8px_30px_rgb(33,30,78,0.05)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
           <div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1a5075]/15 to-[#0275a8]/20 text-[#1a5075] flex items-center justify-center font-bold border border-[#1a5075]/20 shadow-2xs group-hover:scale-105 transition-transform">
-                <FileText className="w-5 h-5 text-[#1a5075]" />
+              <div className="w-10 h-10 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center font-bold border border-[#C8A977]/30 shadow-2xs group-hover:scale-105 transition-transform">
+                <FileText className="w-5 h-5 text-[#211E4E]" />
               </div>
               <div>
-                <h3 className="font-extrabold text-slate-800 text-sm tracking-tight">LNA Master Report</h3>
+                <h3 className="font-extrabold text-[#211E4E] text-sm tracking-tight">LNA Master Report</h3>
               </div>
             </div>
           </div>
@@ -235,9 +231,9 @@ export const HrReportsView: React.FC<HrReportsViewProps> = ({ records }) => {
           <button
             type="button"
             onClick={handleExportLnaReport}
-            className="mt-6 w-full py-3 px-4 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 shadow-md shadow-sky-950/15 transition-all cursor-pointer active:scale-98"
+            className="mt-6 w-full py-3 px-4 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/40 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer active:scale-98"
           >
-            <Download className="w-4 h-4 text-sky-200" />
+            <Download className="w-4 h-4 text-[#C8A977]" />
             <span>Export</span>
           </button>
         </div>

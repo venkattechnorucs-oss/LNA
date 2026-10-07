@@ -137,8 +137,8 @@ export const HrGradeMasterView: React.FC = () => {
     <div id="grade-master-container" className="space-y-6 pb-16 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {actionToast && (
-        <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg bg-[#1a5075] text-white text-xs font-bold animate-in fade-in">
-          <CheckCircle2 className="w-4 h-4 text-sky-300" />
+        <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg bg-[#211E4E] text-white border border-[#C8A977]/30 text-xs font-bold animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 text-[#C8A977]" />
           <span>{actionToast.message}</span>
           <button
             type="button"
@@ -151,10 +151,10 @@ export const HrGradeMasterView: React.FC = () => {
       )}
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0d314a] rounded-xl p-5 text-white shadow-md border border-[#2b658f] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[#211E4E] rounded-xl p-5 text-white shadow-md border border-[#C8A977]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
-            <Award className="w-6 h-6 text-sky-300" />
+            <Award className="w-6 h-6 text-[#C8A977]" />
             <span>Grade Master</span>
           </h1>
         </div>
@@ -164,9 +164,9 @@ export const HrGradeMasterView: React.FC = () => {
           <button
             type="button"
             onClick={handleOpenAdd}
-            className="px-4 py-2 bg-gradient-to-r from-[#0275a8] to-sky-600 hover:from-[#02628d] hover:to-sky-500 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95 border border-sky-400/40"
+            className="px-4 py-2 bg-[#C8A977] hover:bg-[#b89763] text-[#211E4E] font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-[#211E4E]" />
             <span>Add</span>
           </button>
         </div>
@@ -181,7 +181,7 @@ export const HrGradeMasterView: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search grades..."
-            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#C8A977]/30 focus:border-[#C8A977]"
           />
         </div>
       </div>
@@ -190,7 +190,7 @@ export const HrGradeMasterView: React.FC = () => {
       <div className="rounded-xl bg-white border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50 text-slate-700 font-extrabold border-b border-slate-200 uppercase text-[11px]">
+            <thead className="bg-[#211E4E] text-[#C8A977] font-extrabold border-b border-[#C8A977]/30 uppercase text-[11px]">
               <tr>
                 <th className="py-3 px-4">Grade Name</th>
                 <th className="py-3 px-4 text-center w-24">Action</th>
@@ -258,7 +258,7 @@ export const HrGradeMasterView: React.FC = () => {
                 <select
                   value={formEntity}
                   onChange={(e) => setFormEntity(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#C8A977]/30 focus:border-[#C8A977]"
                 >
                   <option value="GANS">GANS</option>
                   <option value="Eshara">Eshara</option>
@@ -278,7 +278,7 @@ export const HrGradeMasterView: React.FC = () => {
                     if (formError) setFormError('');
                   }}
                   placeholder="Enter grade name..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#0275a8]/20 focus:border-[#0275a8]"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#C8A977]/30 focus:border-[#C8A977]"
                   autoFocus
                 />
                 {formError && <p className="text-[11px] text-red-600 mt-1 font-semibold">{formError}</p>}
@@ -294,7 +294,7 @@ export const HrGradeMasterView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-[#1a5075] to-[#0275a8] text-white font-bold rounded-xl cursor-pointer"
+                  className="px-5 py-2 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/40 font-bold rounded-xl cursor-pointer transition-colors shadow-sm"
                 >
                   {formMode === 'add' ? 'Add' : 'Save'}
                 </button>

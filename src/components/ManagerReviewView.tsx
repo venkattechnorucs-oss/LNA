@@ -290,8 +290,8 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
         );
       case 'SUBMITTED FOR MANAGER REVIEW':
         return (
-          <span className="bg-sky-100 text-[#0275a8] border border-sky-300 font-bold px-2 py-0.5 rounded text-[11px] inline-flex items-center gap-1">
-            <Clock className="w-3 h-3 text-[#0275a8]" />
+          <span className="bg-[#211E4E]/10 text-[#211E4E] border border-[#C8A977]/30 font-bold px-2.5 py-0.5 rounded-full text-[11px] inline-flex items-center gap-1 shadow-2xs">
+            <Clock className="w-3 h-3 text-[#C8A977]" />
             PENDING APPROVAL
           </span>
         );
@@ -376,11 +376,12 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
     return (
       <div className="space-y-6">
         {/* Top Header Card */}
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-5 sm:p-6 shadow-[0_8px_30px_rgb(26,80,117,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="rounded-2xl bg-[#211E4E] p-5 sm:p-6 shadow-[0_8px_30px_rgb(33,30,78,0.08)] border border-[#C8A977]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white">
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-[#1a5075] tracking-tight">
-              Learning Needs Analysis (LNA) – Approvals
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
+              <span>Learning Needs Analysis (LNA) – Approvals</span>
             </h1>
+            <p className="text-xs text-slate-300 mt-1">Review team submissions, evaluate skill alignment, and endorse or return for revisions.</p>
           </div>
         </div>
 
@@ -391,17 +392,17 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             onClick={() => setStatusFilter(statusFilter === 'SUBMITTED FOR MANAGER REVIEW' ? 'ALL' : 'SUBMITTED FOR MANAGER REVIEW')}
             className={`p-5 rounded-2xl border transition-all cursor-pointer shadow-sm relative overflow-hidden backdrop-blur-xl ${
               statusFilter === 'SUBMITTED FOR MANAGER REVIEW'
-                ? 'bg-gradient-to-br from-sky-500/15 to-sky-600/10 border-sky-400 ring-2 ring-sky-500/20'
-                : 'bg-white/85 border-white/80 hover:border-sky-300 hover:shadow-md'
+                ? 'bg-[#211E4E]/10 border-[#C8A977] ring-2 ring-[#C8A977]/30'
+                : 'bg-white/85 border-white/80 hover:border-[#C8A977]/50 hover:shadow-md'
             }`}
           >
             <div className="flex items-center justify-between">
               <span className="text-slate-600 font-bold uppercase text-[11px] tracking-wider">Pending Approval</span>
-              <div className="w-8 h-8 rounded-xl bg-sky-100 text-[#0275a8] flex items-center justify-center">
-                <Clock className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center">
+                <Clock className="w-4 h-4 text-[#C8A977]" />
               </div>
             </div>
-            <div className="text-3xl font-black text-[#0275a8] mt-2">
+            <div className="text-3xl font-black text-[#211E4E] mt-2">
               {stats.submitted}
             </div>
           </div>
@@ -411,7 +412,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             onClick={() => setStatusFilter(statusFilter === 'SENT BACK TO EMPLOYEE' ? 'ALL' : 'SENT BACK TO EMPLOYEE')}
             className={`p-5 rounded-2xl border transition-all cursor-pointer shadow-sm relative overflow-hidden backdrop-blur-xl ${
               statusFilter === 'SENT BACK TO EMPLOYEE'
-                ? 'bg-gradient-to-br from-amber-500/15 to-amber-600/10 border-amber-400 ring-2 ring-amber-500/20'
+                ? 'bg-amber-500/15 border-amber-400 ring-2 ring-amber-500/20'
                 : 'bg-white/85 border-white/80 hover:border-amber-300 hover:shadow-md'
             }`}
           >
@@ -431,7 +432,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             onClick={() => setStatusFilter(statusFilter === 'MANAGER APPROVED' ? 'ALL' : 'MANAGER APPROVED')}
             className={`p-5 rounded-2xl border transition-all cursor-pointer shadow-sm relative overflow-hidden backdrop-blur-xl ${
               statusFilter === 'MANAGER APPROVED'
-                ? 'bg-gradient-to-br from-emerald-500/15 to-emerald-600/10 border-emerald-400 ring-2 ring-emerald-500/20'
+                ? 'bg-emerald-500/15 border-emerald-400 ring-2 ring-emerald-500/20'
                 : 'bg-white/85 border-white/80 hover:border-emerald-300 hover:shadow-md'
             }`}
           >
@@ -457,7 +458,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
               placeholder="Search team members by name, position..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50/80 text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#0275a8] focus:bg-white focus:ring-2 focus:ring-[#0275a8]/20 text-xs transition-all shadow-inner"
+              className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50/80 text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-[#211E4E] focus:bg-white focus:ring-2 focus:ring-[#C8A977]/20 text-xs transition-all shadow-inner"
             />
           </div>
 
@@ -473,7 +474,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                 onClick={() => setStatusFilter(st)}
                 className={`px-3 py-1.5 rounded-full font-bold text-[11px] transition-all cursor-pointer ${
                   statusFilter === st
-                    ? 'bg-[#1a5075] text-white shadow-xs'
+                    ? 'bg-[#211E4E] text-[#C8A977] border border-[#C8A977]/30 shadow-xs'
                     : 'bg-white/90 text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
@@ -492,13 +493,13 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
         </div>
 
         {/* Team Members Roster Table */}
-        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
-          <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3.5 flex items-center justify-between">
+        <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] overflow-hidden">
+          <div className="bg-[#211E4E] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#C8A977]/30">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-white/15 text-white flex items-center justify-center border border-white/20">
-                <Users className="w-4 h-4 text-sky-200" />
+              <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center border border-[#C8A977]/30">
+                <Users className="w-4 h-4 text-[#C8A977]" />
               </div>
-              <h2 className="font-bold text-xs sm:text-sm tracking-wide">
+              <h2 className="font-bold text-xs sm:text-sm tracking-wide text-white">
                 Employee LNA Submissions
               </h2>
             </div>
@@ -509,7 +510,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
+                    <tr className="bg-[#fcfaf7] text-[#211E4E] border-b border-[#C8A977]/25 font-extrabold uppercase tracking-wider text-[11px]">
                       <th className="py-3 px-3 border-r border-slate-200/80 text-center w-10">#</th>
                       <th className="py-3 px-4 border-r border-slate-200/80">Employee Name</th>
                       <th className="py-3 px-4 border-r border-slate-200/80">Position</th>
@@ -552,15 +553,15 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                             {/* Employee Details */}
                             <td className="py-3.5 px-4 border-r border-slate-100">
                               <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="font-extrabold text-[#1a5075] text-xs">
+                                <span className="font-extrabold text-[#211E4E] text-xs">
                                   {record.employee.name}
                                 </span>
                                 {isRecordDelegated(record) && (
                                   <span
-                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200 shadow-2xs"
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#C8A977]/20 text-[#211E4E] border border-[#C8A977]/40 shadow-2xs"
                                     title={record.delegatedFrom ? `Delegated from ${record.delegatedFrom}` : 'Delegation'}
                                   >
-                                    <UserCheck className="w-2.5 h-2.5 text-purple-600" />
+                                    <UserCheck className="w-2.5 h-2.5 text-[#C8A977]" />
                                     <span>Delegation</span>
                                   </span>
                                 )}
@@ -604,7 +605,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                                 }}
                                 className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 w-full cursor-pointer transition-all shadow-xs ${
                                   currentStatus === 'SUBMITTED FOR MANAGER REVIEW'
-                                    ? 'bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white shadow-sky-900/10'
+                                    ? 'bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 shadow-sm active:scale-95'
                                     : currentStatus === 'MANAGER APPROVED'
                                     ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200'
                                     : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
@@ -651,15 +652,15 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/90 hover:bg-slate-200/90 text-[#1a5075] border border-slate-200 rounded-xl font-bold text-xs cursor-pointer transition-all self-start shadow-2xs"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/90 hover:bg-slate-200/90 text-[#211E4E] border border-slate-200 rounded-xl font-bold text-xs cursor-pointer transition-all self-start shadow-2xs"
         >
-          <ArrowLeft className="w-4 h-4 text-[#0275a8]" />
+          <ArrowLeft className="w-4 h-4 text-[#C8A977]" />
           <span>{activeRole === 'hr' ? 'Back to HR Dashboard' : 'Back to Approvals List'}</span>
         </button>
 
         {/* Status Indicators in top bar */}
         <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto text-xs">
-          <div className="bg-sky-50/80 border border-sky-200/80 px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-2xs">
+          <div className="bg-[#211E4E]/5 border border-[#C8A977]/30 px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-2xs">
             <span className="text-slate-600 font-bold">Status:</span>
             {getStatusBadge(activeRecord.status)}
           </div>
@@ -667,11 +668,14 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
       </div>
 
       {/* Header Banner for Manager Review */}
-      <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 p-5 sm:p-6 shadow-[0_8px_30px_rgb(26,80,117,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="rounded-2xl bg-[#211E4E] p-5 sm:p-6 shadow-[0_8px_30px_rgb(33,30,78,0.08)] border border-[#C8A977]/30 flex flex-col md:flex-row md:items-center justify-between gap-3 text-white">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#1a5075] tracking-tight">
-            Learning Needs Analysis (LNA) – Review
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
+            <span>Learning Needs Analysis (LNA) – Review</span>
           </h1>
+          <p className="text-xs text-slate-300 mt-1">
+            Review competency needs, verify system-recommended training courses, and provide managerial endorsement.
+          </p>
         </div>
       </div>
 
@@ -717,9 +721,9 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
         )}
 
         {/* Talent Management Course Incorporation Notice Banner (Beginning of Form) */}
-        <div className="bg-sky-50/90 border border-sky-200/80 rounded-2xl p-4 sm:p-4.5 text-xs text-slate-700 flex items-start gap-3.5 shadow-2xs">
-          <div className="w-8 h-8 rounded-xl bg-sky-100/90 text-[#0275a8] flex items-center justify-center border border-sky-200 shrink-0 mt-0.5">
-            <Info className="w-4 h-4 text-[#0275a8]" />
+        <div className="bg-[#211E4E]/5 border border-[#C8A977]/30 rounded-2xl p-4 sm:p-4.5 text-xs text-slate-700 flex items-start gap-3.5 shadow-2xs">
+          <div className="w-8 h-8 rounded-xl bg-[#211E4E]/10 text-[#211E4E] flex items-center justify-center border border-[#C8A977]/30 shrink-0 mt-0.5">
+            <Info className="w-4 h-4 text-[#C8A977]" />
           </div>
           <div className="leading-relaxed">
             <p className="font-semibold text-slate-800">
@@ -729,15 +733,15 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
         </div>
 
         {/* SECTION 1: EMPLOYEE INFORMATION */}
-        <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
-          <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3.5 flex items-center justify-between">
+        <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] overflow-hidden">
+          <div className="bg-[#211E4E] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#C8A977]/30">
             <div className="flex items-center gap-2.5 font-bold text-xs sm:text-sm tracking-wide">
-              <div className="w-7 h-7 rounded-lg bg-white/15 text-white flex items-center justify-center border border-white/20">
-                <UserCheck className="w-4 h-4 text-sky-200" />
+              <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center border border-[#C8A977]/30">
+                <UserCheck className="w-4 h-4 text-[#C8A977]" />
               </div>
-              <span>Employee Information</span>
+              <span className="text-white">Employee Information</span>
             </div>
-            <span className="text-[11px] text-sky-100 font-medium bg-white/10 px-2.5 py-0.5 rounded-full border border-white/20">
+            <span className="text-[11px] text-[#C8A977] font-semibold bg-white/10 px-2.5 py-0.5 rounded-full border border-[#C8A977]/30">
               Submitted: {effectiveSubmission.submissionDate}
             </span>
           </div>
@@ -827,13 +831,13 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
         </section>
 
         {/* SECTION 2: SUBMITTED COMPETENCIES & SKILLS */}
-        <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
-          <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3.5 flex items-center justify-between">
+        <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(33,30,78,0.05)] overflow-hidden">
+          <div className="bg-[#211E4E] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#C8A977]/30">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-white/15 text-white flex items-center justify-center border border-white/20">
-                <GraduationCap className="w-4 h-4 text-sky-200" />
+              <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center border border-[#C8A977]/30">
+                <GraduationCap className="w-4 h-4 text-[#C8A977]" />
               </div>
-              <h2 className="font-bold text-xs sm:text-sm tracking-wide">
+              <h2 className="font-bold text-xs sm:text-sm tracking-wide text-white">
                 Submitted Competencies &amp; Skills Selection
               </h2>
             </div>
@@ -844,7 +848,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-[#f0f7fb]/90 backdrop-blur-xs text-[#1a5075] border-b border-[#c8d8e5] font-extrabold uppercase tracking-wider text-[11px]">
+                    <tr className="bg-[#fcfaf7] text-[#211E4E] border-b border-[#C8A977]/25 font-extrabold uppercase tracking-wider text-[11px]">
                       <th className="py-3 px-3 border-r border-slate-200/80 text-center w-10">#</th>
                       <th className="py-3 px-3 border-r border-slate-200/80 w-24 text-center">Type</th>
                       <th className="py-3 px-4 border-r border-slate-200/80 w-1/5 text-center">Competency Name</th>
@@ -874,8 +878,8 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                           <span
                             className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                               item.competency.category === 'Functional'
-                                ? 'bg-sky-100 text-[#0275a8] border border-sky-200'
-                                : 'bg-indigo-100 text-indigo-700 border border-indigo-200'
+                                ? 'bg-[#211E4E]/10 text-[#211E4E] border border-[#C8A977]/30'
+                                : 'bg-[#C8A977]/20 text-[#211E4E] border border-[#C8A977]/40'
                             }`}
                           >
                             {item.competency.category}
@@ -884,7 +888,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
 
                         {/* Competency Name */}
                         <td className="py-3.5 px-4 border-r border-slate-100">
-                          <span className="font-extrabold text-[#1a5075] text-xs">
+                          <span className="font-extrabold text-[#211E4E] text-xs">
                             {item.competency.name}
                           </span>
                         </td>
@@ -911,10 +915,10 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
 
                         {/* System-Generated Training Course */}
                         <td className="py-3.5 px-4 border-r border-slate-100 align-middle">
-                          <div className="bg-gradient-to-br from-[#f0f7fb] to-[#e6f1f8] p-3 rounded-xl border border-[#cfe1ed] shadow-2xs">
-                            <span className="font-extrabold text-[#1a5075] text-xs leading-snug flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-[#0275a8]/15 flex items-center justify-center shrink-0">
-                                <BookOpen className="w-3.5 h-3.5 text-[#0275a8]" />
+                          <div className="bg-[#211E4E]/5 p-3 rounded-xl border border-[#C8A977]/30 shadow-2xs">
+                            <span className="font-extrabold text-[#211E4E] text-xs leading-snug flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-md bg-[#211E4E]/10 flex items-center justify-center shrink-0">
+                                <BookOpen className="w-3.5 h-3.5 text-[#C8A977]" />
                               </div>
                               {item.trainingCourse.title}
                             </span>
@@ -924,7 +928,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                         {/* Course Alternative per Competency */}
                         <td className="py-3.5 px-4 align-middle bg-white/40">
                           {item.employeeRemarks && item.employeeRemarks.trim() ? (
-                            <div className="p-2.5 bg-sky-50/80 border border-sky-200/80 rounded-xl text-xs text-slate-800 font-normal leading-relaxed shadow-2xs">
+                            <div className="p-2.5 bg-[#211E4E]/5 border border-[#C8A977]/30 rounded-xl text-xs text-slate-800 font-normal leading-relaxed shadow-2xs">
                               <span className="whitespace-pre-wrap">{item.employeeRemarks}</span>
                             </div>
                           ) : (
@@ -969,8 +973,8 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
           )}
 
           {/* Talent Management Course Incorporation Notice (Point of Submission) */}
-          <div className="mb-4 p-3.5 bg-sky-50/90 border border-sky-200/80 rounded-xl text-xs text-slate-700 flex items-start gap-2.5 shadow-2xs">
-            <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+          <div className="mb-4 p-3.5 bg-[#211E4E]/5 border border-[#C8A977]/30 rounded-xl text-xs text-slate-700 flex items-start gap-2.5 shadow-2xs">
+            <Info className="w-4 h-4 text-[#C8A977] shrink-0 mt-0.5" />
             <p className="text-[11px] sm:text-xs leading-relaxed text-slate-700 font-medium">
               “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
             </p>
@@ -1003,9 +1007,9 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                 type="button"
                 onClick={() => handleActionClick('approve')}
                 disabled={isAlreadyApproved}
-                className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-extrabold rounded-xl text-xs transition-all shadow-md shadow-emerald-700/20 flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 font-extrabold rounded-xl text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <CheckCircle2 className="w-4 h-4 text-white" />
+                <CheckCircle2 className="w-4 h-4 text-[#C8A977]" />
                 <span>Approve LNA</span>
               </button>
             </div>
@@ -1020,14 +1024,14 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             <div
               className={`p-5 text-white flex items-center justify-between ${
                 showConfirmModal === 'approve'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-700'
+                  ? 'bg-[#211E4E] text-[#C8A977] border-b border-[#C8A977]/20'
                   : 'bg-gradient-to-r from-amber-600 to-orange-700'
               }`}
             >
               <h3 className="font-extrabold text-sm flex items-center gap-2">
                 {showConfirmModal === 'approve' ? (
                   <>
-                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <CheckCircle2 className="w-4 h-4 text-[#C8A977]" />
                     <span>Approve this LNA?</span>
                   </>
                 ) : (
@@ -1048,8 +1052,8 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                     <br />
                     This will change the status to <strong className="text-emerald-700 font-bold">APPROVED</strong> and forward the record to the HR Department.
                   </p>
-                  <div className="p-3 bg-sky-50/90 border border-sky-200/90 rounded-xl text-[11px] text-slate-700 flex items-start gap-2.5">
-                    <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+                  <div className="p-3 bg-[#211E4E]/5 border border-[#C8A977]/30 rounded-xl text-[11px] text-slate-700 flex items-start gap-2.5">
+                    <Info className="w-4 h-4 text-[#C8A977] shrink-0 mt-0.5" />
                     <p className="font-medium text-slate-800">
                       “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
                     </p>
@@ -1075,7 +1079,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                 onClick={handleConfirmAction}
                 className={`px-5 py-2 text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-md transition-all active:scale-95 ${
                   showConfirmModal === 'approve'
-                    ? 'bg-emerald-700 hover:bg-emerald-800 shadow-emerald-700/20'
+                    ? 'bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30'
                     : 'bg-amber-700 hover:bg-amber-800 shadow-amber-700/20'
                 }`}
               >
@@ -1129,8 +1133,8 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
             </p>
 
             {/* Talent Management Notification Banner */}
-            <div className="mt-4 p-3.5 bg-sky-50/90 border border-sky-200/90 rounded-2xl text-[11px] text-slate-700 leading-relaxed text-left flex items-start gap-2.5 shadow-2xs">
-              <Info className="w-4 h-4 text-[#0275a8] shrink-0 mt-0.5" />
+            <div className="mt-4 p-3.5 bg-[#211E4E]/5 border border-[#C8A977]/30 rounded-2xl text-[11px] text-slate-700 leading-relaxed text-left flex items-start gap-2.5 shadow-2xs">
+              <Info className="w-4 h-4 text-[#C8A977] shrink-0 mt-0.5" />
               <p className="font-medium text-slate-800">
                 “Talent Management will strive to incorporate the selected courses into the training calendar. In the event this is not feasible, alternative courses will be suggested.”
               </p>
@@ -1143,7 +1147,7 @@ export const ManagerReviewView: React.FC<ManagerReviewViewProps> = ({
                   setShowApprovalSuccessPopup(false);
                   onSelectEmployee(null);
                 }}
-                className="w-full py-2.5 bg-gradient-to-r from-[#1a5075] to-[#0275a8] hover:from-[#154261] hover:to-[#01628d] text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md active:scale-95"
+                className="w-full py-2.5 bg-[#211E4E] hover:bg-[#2c2865] text-[#C8A977] border border-[#C8A977]/30 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md active:scale-95"
               >
                 Acknowledge &amp; Return to List
               </button>

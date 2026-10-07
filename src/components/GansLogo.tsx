@@ -55,14 +55,14 @@ export const HrWeyakLogo: React.FC<{ className?: string }> = ({ className = '' }
     <div className={`inline-flex items-center gap-1.5 select-none ${className}`}>
       <div className="flex flex-col items-end text-right">
         <div className="flex items-center gap-1">
-          <span className="text-[#096f9c] font-extrabold text-[15px] tracking-tight leading-none">
+          <span className="text-[#C8A977] font-extrabold text-[15px] tracking-tight leading-none">
             HR
           </span>
-          <span className="text-[#1a5075] font-serif text-[18px] italic leading-none font-bold text-sky-800">
+          <span className="text-[#211E4E] font-serif text-[18px] italic leading-none font-bold">
             ويّاك
           </span>
         </div>
-        <span className="text-[9px] text-[#0275a8] font-medium tracking-tighter leading-none -mt-0.5">
+        <span className="text-[9px] text-[#C8A977] font-semibold tracking-tighter leading-none -mt-0.5">
           weyak
         </span>
       </div>

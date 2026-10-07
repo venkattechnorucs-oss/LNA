@@ -8,11 +8,11 @@ interface EmployeeDetailsSectionProps {
 
 export const EmployeeDetailsSection: React.FC<EmployeeDetailsSectionProps> = ({ employee }) => {
   return (
-    <section className="rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(26,80,117,0.05)] overflow-hidden">
-      <div className="bg-gradient-to-r from-[#1a5075] via-[#154668] to-[#0275a8] text-white px-5 py-3 flex items-center justify-between">
+    <section className="rounded-2xl bg-white/90 backdrop-blur-xl border border-[#C8A977]/25 shadow-[0_8px_30px_rgb(33,30,78,0.06)] overflow-hidden">
+      <div className="bg-[#211E4E] text-white px-5 py-3 flex items-center justify-between border-b border-[#C8A977]/30">
         <div className="flex items-center gap-2.5 font-bold text-xs sm:text-sm tracking-wide">
-          <div className="w-7 h-7 rounded-lg bg-white/15 text-white flex items-center justify-center border border-white/20">
-            <UserCheck className="w-4 h-4 text-sky-200" />
+          <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center border border-[#C8A977]/30">
+            <UserCheck className="w-4 h-4 text-[#C8A977]" />
           </div>
           <span>Employee Details</span>
         </div>
@@ -20,10 +20,10 @@ export const EmployeeDetailsSection: React.FC<EmployeeDetailsSectionProps> = ({ 
 
       {/* Structured Enterprise Form Table Layout with Glassmorphic Cells */}
       <div className="p-4 sm:p-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200/80 border border-slate-200/90 rounded-xl overflow-hidden text-xs shadow-2xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200/90 border border-slate-200 rounded-xl overflow-hidden text-xs shadow-2xs">
           
           {/* Row 1: Name & ID */}
-          <div className="bg-[#f2f7fa]/90 p-3 font-extrabold text-slate-700 flex items-center justify-between">
+          <div className="bg-[#fcfaf7] p-3 font-extrabold text-[#211E4E] flex items-center justify-between">
             <span>Employee Name</span>
           </div>
           <div className="bg-white/95 p-3 text-xs font-semibold text-slate-800 flex items-center">
