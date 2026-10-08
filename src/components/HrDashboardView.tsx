@@ -290,9 +290,6 @@ export const HrDashboardView: React.FC<HrDashboardViewProps> = ({
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white drop-shadow-xs">
               Learning Needs Analysis (LNA) – HR Dashboard
             </h1>
-            <p className="text-xs text-[#C8A977]/80 mt-0.5 font-medium">
-              High-level organizational competency readiness, submission cycles, and skills tracking
-            </p>
           </div>
 
           {/* Year Filter Option */}

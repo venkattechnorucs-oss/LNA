@@ -226,14 +226,9 @@ export const HrDelegationView: React.FC<HrDelegationViewProps> = ({
             <UserCheck className="w-5 h-5 text-[#C8A977]" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                Delegation
-              </h1>
-              <span className="bg-white/10 text-[#dfcaa8] text-xs font-black px-2.5 py-0.5 rounded-full border border-[#C8A977]/30">
-                {delegations.length} Records
-              </span>
-            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              Delegation
+            </h1>
           </div>
         </div>
 

@@ -4,7 +4,10 @@ import {
   Search,
   Users,
   CheckCircle2,
-  Calendar,
+  Clock,
+  RotateCcw,
+  AlertCircle,
+  Check,
   AlertTriangle
 } from 'lucide-react';
 import {
@@ -63,12 +66,13 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
   onClose,
   employees,
   orgRecords,
-  skippedEmployees
+  skippedEmployees,
+  onToggleSkipEmployee
 }) => {
   // Modal internal state
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Build employee list for this release with only released employees
+  // Build employee list for this release
   const recipientEmployees = useMemo(() => {
     if (!releaseRun) return [];
 
@@ -80,93 +84,83 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
       ])
     );
 
-    return allEmpIds
-      .map((empId) => {
-        // Check if recorded in releaseRun.outcomes
+    return allEmpIds.map((empId) => {
+      // 1. Check in passed employees
+      let profile = employees.find((e) => e.employeeId === empId);
+
+      // 2. Check in orgRecords
+      if (!profile) {
+        const rec = orgRecords.find((r) => r.employee.employeeId === empId);
+        if (rec) profile = rec.employee;
+      }
+
+      // 3. Check fallback directory
+      if (!profile && KNOWN_EMPLOYEE_DIRECTORY[empId]) {
+        const fallback = KNOWN_EMPLOYEE_DIRECTORY[empId];
+        profile = {
+          employeeId: empId,
+          name: fallback.name || `Employee ${empId}`,
+          position: fallback.position || 'Staff',
+          department: fallback.department || 'Operations',
+          division: fallback.division || 'Corporate',
+          reportingManager: fallback.reportingManager !== undefined ? fallback.reportingManager : 'Suresh Nair',
+          email: `${empId.toLowerCase()}@gans.aero`,
+          grade: 7,
+          location: fallback.location || 'Abu Dhabi HQ'
+        };
+      }
+
+      // 4. Default placeholder / outcome override
+      if (!profile) {
         const recordedOutcome = releaseRun.outcomes?.find((o) => o.employeeId === empId);
-
-        // 1. Check in passed employees
-        let profile = employees.find((e) => e.employeeId === empId);
-        
-        // 2. Check in orgRecords
-        if (!profile) {
-          const rec = orgRecords.find((r) => r.employee.employeeId === empId);
-          if (rec) profile = rec.employee;
-        }
-
-        // 3. Check fallback directory
-        if (!profile && KNOWN_EMPLOYEE_DIRECTORY[empId]) {
-          const fallback = KNOWN_EMPLOYEE_DIRECTORY[empId];
-          profile = {
-            employeeId: empId,
-            name: fallback.name || `Employee ${empId}`,
-            position: fallback.position || 'Staff',
-            department: fallback.department || 'Operations',
-            division: fallback.division || 'Corporate',
-            reportingManager: fallback.reportingManager !== undefined ? fallback.reportingManager : 'Suresh Nair',
-            email: `${empId.toLowerCase()}@gans.aero`,
-            grade: 7,
-            location: fallback.location || 'Abu Dhabi HQ'
-          };
-        }
-
-        // 4. Default placeholder / outcome override
-        if (!profile) {
-          profile = {
-            employeeId: empId,
-            name: recordedOutcome?.employeeName || `Employee ${empId}`,
-            position: 'Staff Member',
-            department: recordedOutcome?.department || 'Operations',
-            division: 'General',
-            reportingManager: 'Manager',
-            email: `${empId.toLowerCase()}@gans.aero`,
-            grade: 7,
-            location: 'Abu Dhabi HQ'
-          };
-        } else if (recordedOutcome?.employeeName && profile.name.startsWith('Employee EMP')) {
+        profile = {
+          employeeId: empId,
+          name: recordedOutcome?.employeeName || `Employee ${empId}`,
+          position: 'Staff Member',
+          department: recordedOutcome?.department || 'Operations',
+          division: 'General',
+          reportingManager: 'Manager',
+          email: `${empId.toLowerCase()}@gans.aero`,
+          grade: 7,
+          location: 'Abu Dhabi HQ'
+        };
+      } else if (profile.name.startsWith('Employee EMP')) {
+        const recordedOutcome = releaseRun.outcomes?.find((o) => o.employeeId === empId);
+        if (recordedOutcome?.employeeName) {
           profile = {
             ...profile,
             name: recordedOutcome.employeeName,
             department: recordedOutcome.department || profile.department
           };
         }
+      }
 
-        // Check if in skippedEmployees state
-        const skipRecord = skippedEmployees.find(
-          (s) => s.employeeId === empId && (s.releaseId === releaseRun.releaseId || s.releaseId === 'ALL')
-        );
-
-        // Evaluate Status: 'Delivered' | 'Skipped' | 'Failed'
-        let deliveryStatus: 'Delivered' | 'Skipped' | 'Failed' = 'Delivered';
-        let outcomeReason = 'Delivered';
-        let outcomeDetails = profile.email || 'Email sent';
-
-        if (recordedOutcome) {
-          deliveryStatus = recordedOutcome.status;
-          outcomeReason = recordedOutcome.reason || outcomeReason;
-          outcomeDetails = recordedOutcome.details || outcomeDetails;
-        } else if (skipRecord) {
-          deliveryStatus = 'Skipped';
-          outcomeReason = skipRecord.reason;
-          outcomeDetails = skipRecord.remarks || 'Exempted';
-        } else if (!profile.reportingManager || profile.reportingManager.trim() === '' || profile.reportingManager.toLowerCase() === 'unassigned') {
-          deliveryStatus = 'Failed';
-          outcomeReason = 'Missing Reporting Manager';
-          outcomeDetails = 'No manager assigned in HRMS';
-        } else if (!profile.email || !profile.email.includes('@')) {
-          deliveryStatus = 'Failed';
-          outcomeReason = 'Invalid Email';
-          outcomeDetails = 'Email missing or invalid';
+      // Check LNA submission status in orgRecords
+      const orgRec = orgRecords.find((r) => r.employee.employeeId === empId);
+      let lnaStatus: 'Not Started' | 'Pending Approval' | 'Returned' | 'Approved' = 'Not Started';
+      if (orgRec) {
+        if (orgRec.status === 'MANAGER APPROVED') {
+          lnaStatus = 'Approved';
+        } else if (orgRec.status === 'SUBMITTED FOR MANAGER REVIEW') {
+          lnaStatus = 'Pending Approval';
+        } else if (orgRec.status === 'SENT BACK TO EMPLOYEE') {
+          lnaStatus = 'Returned';
+        } else if (orgRec.status === 'PENDING EMPLOYEE SUBMISSION') {
+          lnaStatus = 'Not Started';
         }
+      }
 
-        return {
-          profile,
-          deliveryStatus,
-          outcomeReason,
-          outcomeDetails
-        };
-      })
-      .filter((item) => item.deliveryStatus === 'Delivered');
+      // Check if in skippedEmployees
+      const isSkipped = skippedEmployees.some(
+        (s) => s.employeeId === empId && (s.releaseId === releaseRun.releaseId || s.releaseId === 'ALL')
+      );
+
+      return {
+        profile,
+        lnaStatus,
+        isSkipped
+      };
+    });
   }, [releaseRun, employees, orgRecords, skippedEmployees]);
 
   // Filtered list based on search query
@@ -175,11 +169,9 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchName = item.profile.name.toLowerCase().includes(q);
-        const matchId = item.profile.employeeId.toLowerCase().includes(q);
-        const matchDept = (item.profile.department || '').toLowerCase().includes(q);
         const matchMgr = (item.profile.reportingManager || '').toLowerCase().includes(q);
-        const matchReason = (item.outcomeReason || '').toLowerCase().includes(q);
-        if (!matchName && !matchId && !matchDept && !matchMgr && !matchReason) return false;
+        const matchStatus = item.lnaStatus.toLowerCase().includes(q);
+        if (!matchName && !matchMgr && !matchStatus) return false;
       }
       return true;
     });
@@ -196,7 +188,7 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
           <div>
             <h2 className="text-lg font-black tracking-tight text-white flex items-center gap-2">
               <Users className="w-5 h-5 text-[#C8A977]" />
-              <span>Delivery Manifest & Audit Log</span>
+              <span>Release Distribution</span>
             </h2>
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-300 mt-1">
               <span className="font-mono font-bold bg-white/10 px-2 py-0.5 rounded text-[#C8A977] border border-[#C8A977]/30">{releaseRun.releaseId}</span>
@@ -219,28 +211,15 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
           </div>
         </div>
 
-        {/* ================= 2. RELEASE METRIC & SEARCH TOOLBAR ================= */}
-        <div className="p-3.5 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
-          
-          {/* Released Count Card */}
-          <div className="flex items-center gap-2.5">
-            <div className="px-3.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <div className="text-xs font-bold">
-                <span>Released Employees: </span>
-                <strong className="text-sm font-black text-emerald-800">{recipientEmployees.length}</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Search Box */}
-          <div className="relative min-w-[220px] sm:w-72">
+        {/* ================= 2. SEARCH TOOLBAR ================= */}
+        <div className="p-3.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3 shrink-0">
+          <div className="relative w-full max-w-sm">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search released employees, managers..."
+              placeholder="Search employee, manager, or status..."
               className="w-full pl-8 pr-7 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#211E4E] focus:ring-1 focus:ring-[#C8A977]/40 transition-all"
             />
             {searchQuery && (
@@ -255,23 +234,24 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
           </div>
         </div>
 
-        {/* ================= 3. RELEASED EMPLOYEES AUDIT TABLE ================= */}
+        {/* ================= 3. RELEASED EMPLOYEES TABLE ================= */}
         <div className="flex-1 overflow-y-auto overflow-x-auto min-h-[260px]">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="sticky top-0 z-10">
               <tr className="bg-[#fcfaf7] text-[#211E4E] border-b border-[#C8A977]/25 font-extrabold uppercase tracking-wider text-[11px] shadow-2xs">
-                <th className="py-3 px-3 text-center w-12 border-r border-slate-200/80">#</th>
-                <th className="py-3 px-4 border-r border-slate-200/80 text-left min-w-[220px]">Employee</th>
+                <th className="py-3 px-3 text-center w-14 border-r border-slate-200/80">S.No</th>
+                <th className="py-3 px-4 border-r border-slate-200/80 text-left min-w-[200px]">Employee</th>
                 <th className="py-3 px-4 border-r border-slate-200/80 text-center min-w-[160px]">Reporting Manager</th>
-                <th className="py-3 px-4 text-center min-w-[150px]">Status</th>
+                <th className="py-3 px-4 border-r border-slate-200/80 text-center min-w-[150px]">Status</th>
+                <th className="py-3 px-4 text-center min-w-[110px]">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredList.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-12 text-center text-slate-500 bg-white italic">
+                  <td colSpan={5} className="py-12 text-center text-slate-500 bg-white italic">
                     <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                    <p className="font-bold text-slate-700">No released records found</p>
+                    <p className="font-bold text-slate-700">No records found</p>
                     <p className="text-xs text-slate-400 mt-0.5">
                       Try adjusting the search query.
                     </p>
@@ -279,7 +259,7 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
                 </tr>
               ) : (
                 filteredList.map((item, index) => {
-                  const { profile, outcomeDetails } = item;
+                  const { profile, lnaStatus, isSkipped } = item;
                   const hasMissingManager = !profile.reportingManager || profile.reportingManager.trim() === '' || profile.reportingManager.toLowerCase() === 'unassigned';
 
                   return (
@@ -289,12 +269,12 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
                         index % 2 === 0 ? 'bg-white' : 'bg-slate-50/40'
                       }`}
                     >
-                      {/* # Index */}
+                      {/* S.No */}
                       <td className="py-3 px-3 text-center text-slate-400 font-bold border-r border-slate-100">
                         {index + 1}
                       </td>
 
-                      {/* Employee Name */}
+                      {/* Employee Name Only */}
                       <td className="py-3 px-4 border-r border-slate-100 font-bold text-slate-900">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 border bg-[#211E4E]/10 text-[#211E4E] border-[#C8A977]/30">
@@ -304,10 +284,7 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
                               .slice(0, 2)
                               .join('')}
                           </div>
-                          <div>
-                            <span className="text-slate-900 font-bold text-xs block">{profile.name}</span>
-                            <span className="text-[10px] text-slate-400 font-normal">{profile.employeeId} • {profile.department}</span>
-                          </div>
+                          <span className="text-slate-900 font-bold text-xs">{profile.name}</span>
                         </div>
                       </td>
 
@@ -323,17 +300,70 @@ export const HrReleaseDetailModal: React.FC<HrReleaseDetailModalProps> = ({
                         )}
                       </td>
 
-                      {/* Status Badge & Delivery Details */}
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex flex-col items-center">
-                          <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full font-bold text-[11px]">
+                      {/* Status */}
+                      <td className="py-3 px-4 text-center border-r border-slate-100">
+                        {lnaStatus === 'Approved' ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full font-bold text-[11px] shadow-2xs">
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Delivered</span>
+                            <span>Approved</span>
                           </span>
-                          <span className="text-[10px] text-slate-500 font-medium mt-1 max-w-[220px] text-center truncate" title={outcomeDetails || profile.email}>
-                            {outcomeDetails || profile.email || 'Email sent'}
+                        ) : lnaStatus === 'Pending Approval' ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full font-bold text-[11px] shadow-2xs">
+                            <Clock className="w-3.5 h-3.5 text-amber-600" />
+                            <span>Pending Approval</span>
                           </span>
-                        </div>
+                        ) : lnaStatus === 'Returned' ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-800 border border-rose-300 rounded-full font-bold text-[11px] shadow-2xs">
+                            <RotateCcw className="w-3.5 h-3.5 text-rose-600" />
+                            <span>Returned</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded-full font-bold text-[11px] shadow-2xs">
+                            <AlertCircle className="w-3.5 h-3.5 text-slate-500" />
+                            <span>Not Started</span>
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Action: Skip option enabled except in Approved status */}
+                      <td className="py-3 px-4 text-center">
+                        {lnaStatus === 'Approved' ? (
+                          <button
+                            type="button"
+                            disabled
+                            className="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
+                            title="Approved records cannot be skipped"
+                          >
+                            Skip
+                          </button>
+                        ) : isSkipped ? (
+                          <button
+                            type="button"
+                            onClick={() => onToggleSkipEmployee?.(profile.employeeId, releaseRun.releaseId, false)}
+                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white transition-all cursor-pointer shadow-2xs"
+                            title="Click to unskip / restore"
+                          >
+                            <Check className="w-3 h-3 stroke-[3]" />
+                            <span>Skipped</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onToggleSkipEmployee?.(
+                                profile.employeeId,
+                                releaseRun.releaseId,
+                                true,
+                                'Exempted by HR',
+                                'Skipped from Release Distribution'
+                              )
+                            }
+                            className="px-3.5 py-1 rounded-lg text-xs font-bold bg-[#211E4E] text-[#C8A977] hover:bg-[#2c2865] border border-[#C8A977]/40 transition-all cursor-pointer shadow-2xs active:scale-95"
+                            title="Skip this employee"
+                          >
+                            Skip
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );

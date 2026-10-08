@@ -176,9 +176,6 @@ export const HrAssessmentHistoryView: React.FC<HrAssessmentHistoryViewProps> = (
           <History className="w-6 h-6 text-[#C8A977]" />
           <span>Release History</span>
         </h1>
-        <p className="text-xs text-[#C8A977]/80 mt-1 font-medium">
-          Comprehensive log of all LNA assessment release runs, deadlines, and delivery statuses.
-        </p>
       </div>
 
       {/* 2. Search & Filter Bar */}

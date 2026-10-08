@@ -666,9 +666,8 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between px-1 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                    <span>{filteredAvailableDepartments.length} departments</span>
-                    {selectedDepartments.length > 0 && (
+                  {selectedDepartments.length > 0 && (
+                    <div className="flex items-center justify-end px-1 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                       <button
                         type="button"
                         onClick={() => setSelectedDepartments([])}
@@ -676,8 +675,8 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
                       >
                         Clear All
                       </button>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Department Checkbox List */}
                   <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
@@ -798,9 +797,8 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between px-1 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                    <span>{filteredPositions.length} positions</span>
-                    {selectedPositions.length > 0 && (
+                  {selectedPositions.length > 0 && (
+                    <div className="flex items-center justify-end px-1 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                       <button
                         type="button"
                         onClick={() => setSelectedPositions([])}
@@ -808,8 +806,8 @@ export const HrFunctionalMasterView: React.FC<HrFunctionalMasterViewProps> = () 
                       >
                         Clear All
                       </button>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Position list */}
                   <div className="max-h-56 overflow-y-auto space-y-1 pr-1">

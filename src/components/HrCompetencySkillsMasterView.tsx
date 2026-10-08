@@ -1495,7 +1495,6 @@ export const HrCompetencySkillsMasterView: React.FC<HrCompetencySkillsMasterView
             </div>
             <span>Competency &amp; Skills Master</span>
           </h1>
-          <p className="text-xs text-slate-300 mt-1">Configure and manage competencies, functional divisions, departments, and mapped skills.</p>
         </div>
 
         <div className="flex items-center gap-2.5 relative z-10 shrink-0 flex-wrap sm:flex-nowrap">

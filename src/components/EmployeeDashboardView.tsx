@@ -52,9 +52,6 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white drop-shadow-xs">
               Welcome, {employee.name}
             </h1>
-            <p className="text-xs text-[#C8A977]/80 mt-1 font-medium">
-              Employee Learning Needs Analysis Portal • Professional Competency & Growth
-            </p>
           </div>
         </div>
       </div>

@@ -351,11 +351,11 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
   const handleOpenAddModal = () => {
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     setModalMode('add');
-    const initialEntity = 'Eshara';
+    const initialEntity = 'GANS';
     const funcs = getEntityFunctionals(initialEntity);
-    const initialFunc = funcs.functional[0] || 'Air Traffic Management';
+    const initialFunc = funcs.functional[0] || 'Air Operations';
     const depts = getDepartmentsForEntityAndFunctional(initialEntity, initialFunc);
-    const initialDept = depts[0] || availableDepartments[0] || 'ATM Operations';
+    const initialDept = depts[0] || 'Air Traffic Management';
 
     setFormData({
       name: '',
@@ -1050,7 +1050,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#211E4E] text-[#C8A977] font-bold border-b border-[#C8A977]/30">
+              <tr className="bg-[#211E4E] text-[#C8A977] font-bold border-b border-[#C8A977]/30 text-xs">
                 {isSelectionMode && (
                   <th className="py-2.5 px-3 w-10 text-center">
                     <input
@@ -1062,16 +1062,16 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                     />
                   </th>
                 )}
-                <th className="py-2.5 px-3.5 w-12 text-center">#</th>
-                <th className="py-2.5 px-4 w-48">Employee Name</th>
-                <th className="py-2.5 px-4">Position/Designation</th>
-                <th className="py-2.5 px-4">Functional</th>
-                <th className="py-2.5 px-4">Department</th>
-                <th className="py-2.5 px-4">Division</th>
-                <th className="py-2.5 px-3 text-center w-16">Grade</th>
-                <th className="py-2.5 px-4">Manager</th>
-                <th className="py-2.5 px-4">Location</th>
-                <th className="py-2.5 px-3 text-center w-24">Actions</th>
+                <th className="py-2.5 px-3.5 w-14 text-center">S.No</th>
+                <th className="py-2.5 px-4 min-w-[180px]">Employee Name</th>
+                <th className="py-2.5 px-4 min-w-[170px]">Position</th>
+                <th className="py-2.5 px-4 min-w-[100px]">Entity</th>
+                <th className="py-2.5 px-4 min-w-[160px]">Department</th>
+                <th className="py-2.5 px-4 min-w-[160px]">Function</th>
+                <th className="py-2.5 px-4 min-w-[110px]">DOJ</th>
+                <th className="py-2.5 px-4 min-w-[160px]">Reporting Manager</th>
+                <th className="py-2.5 px-4 min-w-[130px]">Location</th>
+                <th className="py-2.5 px-3 text-center min-w-[100px] whitespace-nowrap">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -1114,52 +1114,72 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                           />
                         </td>
                       )}
-                      <td className="py-3 px-3.5 text-center text-slate-400 font-mono text-[11px]">
+                      {/* 1. S.No */}
+                      <td className="py-3 px-3.5 text-center text-slate-500 font-mono text-[11px] font-semibold">
                         {index + 1}
                       </td>
+
+                      {/* 2. Employee Name */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
                           <div className="w-8 h-8 rounded-full bg-[#211E4E]/10 border border-[#211E4E]/20 flex items-center justify-center text-[#211E4E] font-bold text-[11px] shrink-0">
                             {initials}
                           </div>
-                          <div>
-                            <div className="font-bold text-slate-800 text-xs">{emp.name}</div>
-                            {emp.entity && (
-                              <span className="text-[10px] text-slate-400 font-semibold">{emp.entity}</span>
-                            )}
-                          </div>
+                          <div className="font-bold text-slate-800 text-xs">{emp.name}</div>
                         </div>
                       </td>
+
+                      {/* 3. Position */}
                       <td className="py-3 px-4">
                         <span className="font-semibold text-slate-700 block">{emp.position}</span>
                       </td>
+
+                      {/* 4. Entity */}
                       <td className="py-3 px-4">
-                        <span className="font-medium text-slate-800 block">{emp.function || emp.section || 'Air Traffic Management'}</span>
+                        <span className={`inline-block px-2.5 py-0.5 rounded text-[11px] font-bold ${
+                          (emp.entity || 'GANS') === 'GANS'
+                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                            : (emp.entity || 'GANS') === 'Eshara'
+                            ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                            : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        }`}>
+                          {emp.entity || 'GANS'}
+                        </span>
                       </td>
+
+                      {/* 5. Department */}
                       <td className="py-3 px-4">
                         <span className="text-slate-600 block">{emp.department}</span>
                       </td>
+
+                      {/* 6. Function */}
                       <td className="py-3 px-4">
-                        <span className="text-slate-600 block">{emp.division}</span>
+                        <span className="font-medium text-slate-800 block">{emp.function || emp.section || 'Air Operations'}</span>
                       </td>
-                      <td className="py-3 px-3 text-center">
-                        <span className="inline-block bg-[#211E4E]/10 text-[#211E4E] font-bold px-2 py-0.5 rounded text-[11px] border border-[#211E4E]/20">
-                          {emp.grade}
-                        </span>
+
+                      {/* 7. DOJ */}
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <span className="text-slate-600 font-medium block">{emp.joinDate || '12/May/2021'}</span>
                       </td>
+
+                      {/* 8. Reporting Manager */}
                       <td className="py-3 px-4">
                         <span className="font-medium text-slate-700 block">{emp.reportingManager}</span>
                       </td>
+
+                      {/* 9. Location */}
                       <td className="py-3 px-4">
                         <span className="text-slate-600 block">{emp.location || 'Abu Dhabi HQ'}</span>
                       </td>
+
+                      {/* 10. Action(Edit ,Delete) */}
                       <td className="py-3 px-3 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           <button
                             type="button"
                             title="Edit Employee"
                             onClick={() => handleOpenEditModal(emp)}
-                            className="p-1 text-slate-500 hover:text-[#211E4E] hover:bg-[#C8A977]/15 rounded transition-colors cursor-pointer"
+                            className="p-1.5 text-slate-500 hover:text-[#211E4E] hover:bg-[#C8A977]/20 rounded transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
@@ -1170,7 +1190,7 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                               onClick={() => {
                                 setDeleteConfirmEmp({ id: emp.employeeId, name: emp.name });
                               }}
-                              className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -1321,9 +1341,9 @@ export const HrEmployeeMasterView: React.FC<HrEmployeeMasterViewProps> = ({
                       formErrors.entity ? 'border-red-400 bg-red-50/40' : 'border-slate-300'
                     }`}
                   >
+                    <option value="GANS">GANS</option>
                     <option value="Eshara">Eshara</option>
                     <option value="YHA">YHA</option>
-                    {formData.entity === 'GANS' && <option value="GANS">GANS (Synced)</option>}
                   </select>
                   {formErrors.entity && <span className="text-[10px] text-red-500 mt-0.5 block">{formErrors.entity}</span>}
                 </div>
